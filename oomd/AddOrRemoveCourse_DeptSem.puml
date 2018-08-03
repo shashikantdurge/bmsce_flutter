@@ -1,0 +1,14 @@
+permission: HOD and some teachers that HOD Allows
+
+@startuml
+"add"  --> "input branch and sem"
+"input branch and sem" --> "input Course"
+"input Course" --> "add Course in CourseGroup"
+"add Course in CourseGroup" --> "update in Firebase"
+
+"remove"  --> "input branch, sem & courseCode"
+"input branch, sem & courseCode" --> "remove Course in CourseGroup"
+"remove Course in CourseGroup" --> "update in Firebase"
+
+-->(*)
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+
+abstract User{
+    name
+    emailId
+    mobileNumber
+    dept
+}
+
+User<|--Teacher
+User<|--Student
+
+class Teacher{
+}
+
+
+class Student{
+    usn
+    currentSem
+
+}
+@enduml

@@ -1,0 +1,61 @@
+@startuml
+
+Course<..Portion
+Notes--Course:> of
+Course "*" --o "1" MyCourse
+Course --o CourseGroup
+CourseGroup --o DeptSemCourses
+
+class MyCourse {
+    branch
+    sem
+    []courseCodes
+    addToMyCourse(courseCode)
+    removeFrmMyCourse(courseCode)
+}
+
+class Portion{
+    version
+    courseCode
+    signature
+    isOutDated
+    []FrmTo
+}
+
+class Notes{
+    courseName
+    description
+    signature
+    filePath
+    edit(courseName,description)
+    {static}uploadNotes(description,courseName,filePath)
+}
+
+class CourseGroup{
+    courseType
+    courseOfferedFor
+    []courseCodes
+}
+class Course{
+    courseName
+    courseCode
+    version
+    branch
+    sem
+    l,t,p,s
+    totalCredits
+    editSyllabus(byTeacher)
+    {static}updateSyllabus()
+    {static}addCourse()
+    removeCourse()
+}
+class DeptSemCourses{
+    branch
+    sem
+    CourseGroup[] courseGroups
+    addCourseToDeptSem(courseCode)
+    removeCourseFrmDeptSem(courseCode)
+}
+
+
+@enduml

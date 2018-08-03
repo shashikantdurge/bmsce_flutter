@@ -1,5 +1,5 @@
 class Course{
-  String courseName,shortName,courseCode,branch;
+  String courseName,courseCode,branch;
   double version;
   int sem,l,t,p,s,totalCredits;
 

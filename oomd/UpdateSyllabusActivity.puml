@@ -1,0 +1,13 @@
+//On refresh of the Courses
+Permission: All
+@startuml
+(*)  --> "check Portions dependency on this Course"
+if "input is boolean" then
+--> [No] "delete old syllabus"
+--> "add latest syllabus"
+else
+--> [Yes] "Notify Portions :'Syllabus Modified'"
+--> "add latest syllabus"
+endif
+-->(*)
+@enduml

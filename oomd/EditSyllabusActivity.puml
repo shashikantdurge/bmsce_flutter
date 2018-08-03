@@ -1,0 +1,17 @@
+//Edit the Syllabus of any course
+Permission: Teacher
+
+@startuml
+"Course"  --> "Select Edit Syllabus"
+"Select Edit Syllabus" --> "Check for Course Updates"
+
+if "is update available" then
+--> [Yes] "UpdateSyllabusActivity"
+--> "Edit Syllabus"
+else
+--> [No] "Edit Syllabus"
+"Edit Syllabus" --> "Save"
+
+endif
+-->(*)
+@enduml

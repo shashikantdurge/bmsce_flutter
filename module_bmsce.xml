@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_bmsce" default="compile.module.bmsce">
+  <dirname property="module.bmsce.basedir" file="${ant.file.module_bmsce}"/>
+  
+  <property name="module.jdk.home.bmsce" value=""/>
+  <property name="module.jdk.bin.bmsce" value=""/>
+  <property name="module.jdk.classpath.bmsce" value=""/>
+  
+  <property name="compiler.args.bmsce" value="-encoding UTF-8 -source 10 -target 10 ${compiler.args}"/>
+  
+  <property name="bmsce.output.dir" value="${module.bmsce.basedir}/out/production/bmsce"/>
+  <property name="bmsce.testoutput.dir" value="${module.bmsce.basedir}/out/test/bmsce"/>
+  
+  <path id="bmsce.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="bmsce.module.production.classpath">
+    <path refid="library.dart_sdk.classpath"/>
+    <path refid="library.dart_packages.classpath"/>
+  </path>
+  
+  <path id="bmsce.runtime.production.module.classpath">
+    <pathelement location="${bmsce.output.dir}"/>
+    <path refid="library.dart_sdk.classpath"/>
+    <path refid="library.dart_packages.classpath"/>
+  </path>
+  
+  <path id="bmsce.module.classpath">
+    <pathelement location="${bmsce.output.dir}"/>
+    <path refid="library.dart_sdk.classpath"/>
+    <path refid="library.dart_packages.classpath"/>
+  </path>
+  
+  <path id="bmsce.runtime.module.classpath">
+    <pathelement location="${bmsce.testoutput.dir}"/>
+    <pathelement location="${bmsce.output.dir}"/>
+    <path refid="library.dart_sdk.classpath"/>
+    <path refid="library.dart_packages.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.bmsce">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.bmsce">
+    <patternset refid="excluded.from.module.bmsce"/>
+  </patternset>
+  
+  
+  <target name="compile.module.bmsce" depends="compile.module.bmsce.production,compile.module.bmsce.tests" description="Compile module bmsce"/>
+  
+  <target name="compile.module.bmsce.production" depends="register.custom.compilers" description="Compile module bmsce; production classes"/>
+  
+  <target name="compile.module.bmsce.tests" depends="register.custom.compilers,compile.module.bmsce.production" description="compile module bmsce; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.bmsce" description="cleanup module">
+    <delete dir="${bmsce.output.dir}"/>
+    <delete dir="${bmsce.testoutput.dir}"/>
+  </target>
+</project>

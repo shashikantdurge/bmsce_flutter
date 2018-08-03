@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_bmsce_android" default="compile.module.bmsce_android">
+  <dirname property="module.bmsce_android.basedir" file="${ant.file.module_bmsce_android}"/>
+  
+  <property name="module.jdk.home.bmsce_android" value="${jdk.home.android_api_28_platform}"/>
+  <property name="module.jdk.bin.bmsce_android" value="${jdk.bin.android_api_28_platform}"/>
+  <property name="module.jdk.classpath.bmsce_android" value="jdk.classpath.android_api_28_platform"/>
+  
+  <property name="compiler.args.bmsce_android" value="-encoding UTF-8 -source 10 -target 10 ${compiler.args}"/>
+  
+  <property name="bmsce_android.output.dir" value="${module.bmsce_android.basedir}/out/production/bmsce_android"/>
+  <property name="bmsce_android.testoutput.dir" value="${module.bmsce_android.basedir}/out/test/bmsce_android"/>
+  
+  <path id="bmsce_android.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="bmsce_android.module.production.classpath">
+    <path refid="${module.jdk.classpath.bmsce_android}"/>
+    <path refid="library.flutter_for_android.classpath"/>
+  </path>
+  
+  <path id="bmsce_android.runtime.production.module.classpath">
+    <pathelement location="${bmsce_android.output.dir}"/>
+    <path refid="library.flutter_for_android.classpath"/>
+  </path>
+  
+  <path id="bmsce_android.module.classpath">
+    <path refid="${module.jdk.classpath.bmsce_android}"/>
+    <pathelement location="${bmsce_android.output.dir}"/>
+    <path refid="library.flutter_for_android.classpath"/>
+  </path>
+  
+  <path id="bmsce_android.runtime.module.classpath">
+    <pathelement location="${bmsce_android.testoutput.dir}"/>
+    <pathelement location="${bmsce_android.output.dir}"/>
+    <path refid="library.flutter_for_android.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.bmsce_android">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.bmsce_android">
+    <patternset refid="excluded.from.module.bmsce_android"/>
+  </patternset>
+  
+  <path id="bmsce_android.module.sourcepath">
+    <dirset dir="${module.bmsce_android.basedir}/android">
+      <include name="app/src/main/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.bmsce_android" depends="compile.module.bmsce_android.production,compile.module.bmsce_android.tests" description="Compile module bmsce_android"/>
+  
+  <target name="compile.module.bmsce_android.production" depends="register.custom.compilers" description="Compile module bmsce_android; production classes">
+    <mkdir dir="${bmsce_android.output.dir}"/>
+    <javac2 destdir="${bmsce_android.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.bmsce_android}/javac">
+      <compilerarg line="${compiler.args.bmsce_android}"/>
+      <bootclasspath refid="bmsce_android.module.bootclasspath"/>
+      <classpath refid="bmsce_android.module.production.classpath"/>
+      <src refid="bmsce_android.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.bmsce_android"/>
+    </javac2>
+    
+    <copy todir="${bmsce_android.output.dir}">
+      <fileset dir="${module.bmsce_android.basedir}/android/app/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.bmsce_android.tests" depends="register.custom.compilers,compile.module.bmsce_android.production" description="compile module bmsce_android; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.bmsce_android" description="cleanup module">
+    <delete dir="${bmsce_android.output.dir}"/>
+    <delete dir="${bmsce_android.testoutput.dir}"/>
+  </target>
+</project>

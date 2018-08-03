@@ -5,16 +5,54 @@ class SyllabusView extends StatefulWidget {
 }
 
 class SyllabusViewState extends State<SyllabusView> {
+
+  static var syllabus = """UNIT-1
+SET THEORY AND RELATIONS 11 Hours 
+Introduction to sets and subsets, operations on sets, laws of set theory. Duality, Principle of duality for the equality of sets. Countable and uncountable sets. Addition Principle. Introduction to Relations. Definition, Types of functions, operations on relations, matrix representation of relations, composition of relations, properties of relations, equivalence relations, partial orders, Hasse diagram. Posets- extremal elements on posets.(8L+3T)
+ Suggested Reading: Some particular functions- Floor and ceiling functions, Projection, Unary and Binary operations.
+ 
+UNIT-2
+ALGEBRAIC STRUCTURES-GROUPS 10 Hours
+ Groups, properties of groups. Some particular groups- The Klein 4-group, additive group of integers modulo n, multiplicative group of integers mod p, permutation groups. Subgroups, Cyclic groups, Coset decomposition of a group, homomorphism, isomorphism.(7L+3T) 
+Suggested Reading: Lagrange's theorem and its consequences.
+
+UNIT-3
+COMBINATORICS 09 Hours 
+Principles of counting: The rules of sum and product, permutations. Combinations- Binomial and multinomial theorems. Catalan numbers, Ramsey numbers. The Pigeon hole principle, the principle of inclusion and exclusion. Derangements, Rook polynomials. (7L+2T) 
+Suggested Reading: Ordinary Generating Functions, Partitions of integers and their generating functions, exponential generating functions.
+
+UNIT-4
+GRAPH THEORY 09 Hours
+Basic concepts: Types of graphs, order and size of a graph, in-degree and out-degree, connected and disconnected graphs, Eulerian graph, Hamiltonian graphs, sub-graphs, dual graphs, isomorphic graphs. Matrix representation of graphs: adjacency matrix, incidence matrix. Trees: spanning tree, breadth first search. Minimal spanning tree: Kruskal's algorithm, Prim's algorithm, shortest path-Dijkstra's algorithm. (7L+2T) 
+Suggested Reading: Konigsberg bridge problem, Utilities problem, seating problem.
+
+UNIT-5
+NUMBER THEORY 09 Hours 
+Introduction: Integers, properties of integers. Primes. Congruences-: Introduction, Equivalence Relations, Linear Congruences, Linear Diophantine Equations and the Chinese Remainder Theorem, Modular Arithmetic: Fermat's Theorem, Wilson's Theorem and Fermat Numbers. Polynomial congruences, Pythagorean equations. (7L+2T)  
+Suggested Reading: Prime counting function, Test of primality by trial division, Sieve of Eratosthenes, Canonical factorization, Fundamental theorem of arithmetic, determining the Canonical factorization of a natural number.
+
+Mathematics Lab
+• Hasse diagram
+• Rook Polynomials
+• Minimal spanning tree- Kruskal's algorithm, Prim's algorithm.
+• Shortest Path- Dijkstra'salgorithm.
+""";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Data Structures'),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.info_outline), onPressed: () {})
+          IconButton(
+              icon: Icon(Icons.info_outline),
+              onPressed: () {
+                showLtpsTable();
+              })
         ],
       ),
       body: SingleChildScrollView(
+        controller: ScrollController(),
         child: Padding(
           padding: EdgeInsets.all(12.0),
           child: Text(
@@ -26,24 +64,40 @@ class SyllabusViewState extends State<SyllabusView> {
       ),
     );
   }
+
+  showLtpsTable() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return SizedBox(
+            //height: 100.0,
+            child: BottomSheet(
+                onClosing: () {},
+                builder: (context) {
+                  return Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Table(
+                      border: TableBorder.all(color: Colors.black38),
+                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                      children: [
+                        getTableRow(['L','T','P','S']),
+                        getTableRow(['2','3','2','1'])
+                      ],
+                    ),
+                  );
+                }),
+          );
+        });
+  }
+
+  TableRow getTableRow(List<String> data){
+    assert(data.length==4);
+    return TableRow(
+      children: List.generate(data.length, (index){
+        return TableCell(child: Text(data[index],textAlign: TextAlign.center,style: TextStyle(fontSize: 16.0),));
+      })
+    );
+  }
 }
 
-final syllabus = """
-UNIT-1
-Water Treatment
-Introduction, hardness of water, units of hardness, determination of hardness by EDTA method, disadvantages of hard water – boiler scales, boiler corrosion and caustic embrittlement, qualities of drinking water, treatment of water for municipal supply, desalination of water – reverse osmosis and electro dialysis, waste water – COD and BOD, treatment of waste water – primary, secondary and tertiary treatment methods, Principle and experimental determination of COD of waste water, estimation of dissolved alkali and alkaline earth metals in water by flame photometry, applications of nanotechnology in water treatment, problems [09 hours]
-
-UNIT-2
-Electrochemical Energy Systems
-a) Electrode potential and cells – Introduction, classification of cells-primary, secondary and concentration cells, reference electrodes–calomel electrode and Ag/AgCl electrode, ion-selective electrode- glass electrode, determination of pHusing glass electrode, applications of these electrodes in determining strength of acids, bases and red-ox reactions, numerical problems b) Batteries - Basic concepts, battery characteristics, classification of batteries– primary, secondary and reserve batteries, modern batteries - construction, working and applications of zinc–air, nickel-metal hydride and Li-MnO batteries 2 c) Fuel cells - Introduction, types of fuel cells - alkaline, phosphoric acid, molten carbonate, solid polymer electrolyte and solid oxide fuel cells, construction and working of methanol-oxygen fuel cell. [10 hours]
-
-UNIT-3
-Chemical Fuels and Photovoltaic Cells
-a) Chemical fuels - Definition, classification, calorific value-definition, gross and net calorific values, determination of calorific value of a solid / liquid fuel using Bomb calorimeter and problems on calorific value, petroleum cracking - fluidized bed catalytic cracking, reformation of petrol, octane number, cetane number, knocking – mechanism, prevention of knocking, anti-knocking agents, unleaded petrol, synthetic petrol – Fischer-Tropsch's process, power alcohol, biodiesel and hydrogen as a fuel. b) Photovoltaic cells – Production of solar grade silicon, physical and chemical properties of silicon relevant to photovoltaics, doping of silicon, construction and working of a PV- cell and uses. [09 hours] 
-
-UNIT-4
-Corrosion Science and Metal Finishing
-a) Corrosion – Definition of chemical corrosion, electrochemical theory of corrosion, types of corrosion - differential metal, differential aeration corrosion (pitting and water line corrosion),stress corrosion, factors affecting the rate of corrosion, corrosion control: inorganic coatings – galvanizing and phosphating, metal coatings – galvanizing and tinning, corrosion inhibitors,cathodic protection by sacrificial anode method. b) Metal finishing - Technological importance of metal finishing, significance of polarization, decomposition potential and over-voltage in electroplating processes. Electroplating – Process, effect of plating variables on the nature of electro - deposit, surface preparation, electroplating of Cr and Au, estimation of copper in the effluent of electroplating industries by colorimetric method Electroless plating - Distinction between electroplating and electroless plating, advantages of electroless plating, electroless plating of copper on PCB [10 hours]
-
-UNIT-5
-Polymer Chemistry Polymers-Introduction, mechanism of coordination polymerization (Zeigler-Natta polymerization), methods of polymerization – bulk, solution, suspension and emulsion polymerization, glass transition temperature, structure and property relationship of polymers, number average molecular weight, weight average molecular weight and their determination a) Plastics - Definition of resins and plastics, compounding of resins to plastics, (mouldingconstituents), synthesis, properties and applications of PMMA and UF. b) Elastomers - Synthesis and application of butyl rubber and nitrile rubber c) Adhesives - Preparation and applications of epoxy resins d) Polymer composites, Wood polymer composites (WPC),Nano compositescomposition, effect of size on properties and usese) Conducting polymers – Definition, structure, properties and mechanism of  conduction in polyaniline and uses [10 hours] """;
+var reg = '[a-zA-Z].[a-zA-Z]';

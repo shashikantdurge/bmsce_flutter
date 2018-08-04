@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'Chat/Dummy.dart' as chat;
 import 'Map/Dummy.dart' as map;
 import 'TimeTable/Dummy.dart' as tt;
-import 'package:bmsce/firebaseTest.dart';
 
-void main() => runApp(new FirebaseAnalyticsTest());
+void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
   @override

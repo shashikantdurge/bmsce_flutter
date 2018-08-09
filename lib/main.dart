@@ -1,11 +1,26 @@
-import 'package:bmsce/Syllabus/SyllabusTabs.dart' as syllabus;
+import 'package:bmsce/homeTabs/syllabusTabs.dart' as syllabus;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'Chat/Dummy.dart' as chat;
 import 'Map/Dummy.dart' as map;
 import 'TimeTable/Dummy.dart' as tt;
+import 'syllabus/AddCourse.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() => runApp(new MyApp());
+void main() async {
+  print("Main");
+  final app =await FirebaseApp.configure(
+    name: 'test',
+    options: const FirebaseOptions(
+      googleAppID: '1:131447312475:android:c4c1a65536326ae6',
+      gcmSenderID: '131447312475',
+      apiKey: 'AIzaSyCmjqBV_OzUO8wQ01mSC8BSYLcP8v4jV4s',
+      projectID: 'bmsce-flutter',
+    ),
+  );
+  runApp(new AddCourse(firestore: Firestore(app: app),));
+}
 
 class MyApp extends StatelessWidget {
   @override

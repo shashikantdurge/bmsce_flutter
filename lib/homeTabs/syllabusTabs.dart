@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'MyCourses.dart';
-import 'Notes.dart';
-import 'Portion.dart';
+import 'package:bmsce/syllabus/MyCourses.dart';
+import 'package:bmsce/syllabus/Notes.dart';
+import 'package:bmsce/syllabus/Portion.dart';
 
 class SyllabusTabs extends StatefulWidget {
   SyllabusTabsState createState() => SyllabusTabsState();

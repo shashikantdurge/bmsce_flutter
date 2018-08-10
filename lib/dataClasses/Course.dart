@@ -4,6 +4,7 @@ class Course {
   String courseName, courseCode, branch;
   int version;
   int sem, l, t, p, s, totalCredits;
+  bool isInMyCourses;
 
   Course(
       {@required this.courseName,
@@ -14,8 +15,12 @@ class Course {
       @required this.t,
       @required this.p,
       @required this.s,
-      @required this.version}) {
-    this.totalCredits = l + t + p + s;
+      @required this.version,
+      this.isInMyCourses: false,
+      this.totalCredits}) {
+    if(totalCredits == null){
+      this.totalCredits = l + t + p + s;
+    }
   }
 
   void editSyllabus() {}
@@ -37,117 +42,117 @@ final courses = [
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
   Course(
       courseName: 'Data Structures',
       courseCode: '10CS3DCDST',
       l: 3,
       t: 0,
       p: 1,
-      s: 0),
+     version: 1534291200,  s: 0),
 ];

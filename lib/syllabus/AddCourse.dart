@@ -5,16 +5,26 @@ import 'package:bmsce/dataClasses/Course.dart';
 import 'package:bmsce/dataClasses/DeptSemCourses.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:bmsce/courseProviderSqf.dart';
 import 'SyllabusView.dart';
 
 class AddCourse extends StatefulWidget {
   AddCourse({this.firestore});
+  final CourseProviderSqf courseProviderSqf = CourseProviderSqf();
   final Firestore firestore;
+
   AddCourseState createState() => AddCourseState();
 }
 
 class AddCourseState extends State<AddCourse> {
+  @override
+  initState(){
+    super.initState();
+  }
+  @override
+  dispose(){
+    super.dispose();
+  }
   AddCourseState();
 
   String selectedBranch;
@@ -129,7 +139,7 @@ class AddCourseState extends State<AddCourse> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: List.generate(snapshot.data.length, (index) {
-                    return getCourseCatCard(snapshot.data[index],context);
+                    return getCourseCatCard(snapshot.data[index], context);
                   }),
                 ),
               );
@@ -164,8 +174,7 @@ class AddCourseState extends State<AddCourse> {
         .where("registeredDepts." + dept, isGreaterThanOrEqualTo: sem)
         .where("registeredDepts." + dept, isLessThan: lessThanSem)
         .getDocuments()
-        .catchError((error) {
-    });
+        .catchError((error) {});
     final courseGrpMap = HashMap<String, CourseGroup>();
     courses.documents.forEach((courseDocument) {
       var courseCat; // is CourseGroup.courseGroup
@@ -226,6 +235,28 @@ class AddCourseState extends State<AddCourse> {
           return SyllabusView();
         }));
       },
+      trailing: AnimatedCrossFade(
+        firstChild: IconButton(
+            icon: Icon(Icons.add_circle_outline),
+            onPressed: () {
+              widget.courseProviderSqf.insertCourse(course);
+              setState(() {
+                course.isInMyCourses = true;
+              });
+
+            }),
+        secondChild: IconButton(
+          icon: Icon(
+            Icons.done,
+            size: 24.0,
+          ),
+          onPressed: null,
+        ),
+        crossFadeState: course.isInMyCourses
+            ? CrossFadeState.showSecond
+            : CrossFadeState.showFirst,
+        duration: Duration(milliseconds: 500),
+      ),
     );
   }
 
@@ -236,7 +267,7 @@ class AddCourseState extends State<AddCourse> {
           side: BorderSide(color: const Color(0xFFFFEBEE))),
       child: Column(
         children: List.generate(courseGrp.courses.length, (index) {
-          return getCourseTile(courseGrp.courses[index],context);
+          return getCourseTile(courseGrp.courses[index], context);
         })
           ..insert(
             0,

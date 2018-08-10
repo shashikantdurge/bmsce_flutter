@@ -5,11 +5,9 @@ import 'package:flutter/material.dart';
 import 'Chat/Dummy.dart' as chat;
 import 'Map/Dummy.dart' as map;
 import 'TimeTable/Dummy.dart' as tt;
-import 'syllabus/AddCourse.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
-  print("Main");
   final app =await FirebaseApp.configure(
     name: 'test',
     options: const FirebaseOptions(
@@ -19,10 +17,13 @@ void main() async {
       projectID: 'bmsce-flutter',
     ),
   );
-  runApp(new AddCourse(firestore: Firestore(app: app),));
+  final Firestore firestore = Firestore(app: app);
+  runApp(MyApp(firestore: firestore,));
 }
 
 class MyApp extends StatelessWidget {
+  final Firestore firestore;
+  MyApp({this.firestore}):assert(firestore!=null);
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyBottomNavBar extends StatefulWidget {
+  MyBottomNavBar();
   MyBottomNavBarState createState() => MyBottomNavBarState();
 }
 
@@ -68,7 +70,6 @@ class MyBottomNavBarState extends State<MyBottomNavBar>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     currentHomeTab = syllabus.SyllabusTabs();
   }

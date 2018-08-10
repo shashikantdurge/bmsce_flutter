@@ -12,7 +12,6 @@ class PortionState extends State<Portion> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     portions = dataPortion.portions;
   }

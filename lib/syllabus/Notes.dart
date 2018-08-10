@@ -10,7 +10,6 @@ class NotesState extends State<Notes>{
   List<dataNotes.Notes> notes;
   @override
   void initState(){
-    // TODO: implement initState
     super.initState();
     notes = dataNotes.notes;
   }

@@ -13,7 +13,6 @@ class PortionViewState extends State<PortionView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     i=0;
     wordsCount = processSyllabus(portion);

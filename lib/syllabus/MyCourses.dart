@@ -2,9 +2,11 @@ import 'package:bmsce/dataClasses/Course.dart' as dataCourse;
 import 'package:flutter/material.dart';
 import 'package:bmsce/dataClasses/Course.dart';
 import 'SyllabusView.dart';
+import 'package:bmsce/courseProviderSqf.dart';
 
 class MyCourse extends StatefulWidget {
   MyCourseState createState() => MyCourseState();
+  final courseSqf = CourseProviderSqf();
 }
 
 class MyCourseState extends State<MyCourse> {
@@ -12,18 +14,68 @@ class MyCourseState extends State<MyCourse> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    courses = dataCourse.courses;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-        children: List.generate(courses.length, (index) {
-      return getCourseTile(courses[index]);
-    })
-          ..add(ListTile()));
+    return FutureBuilder<List<Course>>(
+        future: widget.courseSqf.getAllCourses(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+              return Center(
+                child: Text('Loading...'),
+              );
+              break;
+            case ConnectionState.done:
+              if (snapshot.hasData) {
+                if (snapshot.data.isNotEmpty) {
+                  return ListView(
+                    children: List.generate(snapshot.data.length, (index) {
+                      return getCourseTile(snapshot.data[index]);
+                    }),
+                  );
+                } else if (snapshot.data.isEmpty) {
+                  return Center(
+                    child: Text('Chill!!!'),
+                  );
+                }
+              } else {
+                return Center(
+                  child: Text('Something is wrong? ${snapshot.hasError}'),
+                );
+              }
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData && snapshot.data.isNotEmpty) {
+              return ListView(
+                children: List.generate(snapshot.data.length, (index) {
+                  return getCourseTile(snapshot.data[index]);
+                }),
+              );
+            } else if (snapshot.hasData && snapshot.data.isEmpty) {
+              return Center(
+                child: Text('Chill!!!'),
+              );
+            } else {
+              return Center(
+                child: Text('Something is wrong!!! ${snapshot.hasData}'),
+              );
+            }
+          } else {
+            return Center(
+              child: Text('Loading...'),
+            );
+          }
+        });
   }
 
   ListTile getCourseTile(Course course) {

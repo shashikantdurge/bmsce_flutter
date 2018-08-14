@@ -1,4 +1,4 @@
-import 'package:bmsce/homeTabs/syllabusTabs.dart' as syllabus;
+import 'package:bmsce/home_tabs/syllabus_tabs.dart' as syllabus;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -18,18 +18,13 @@ void main() async {
     ),
   );
   final Firestore firestore = Firestore(app: app);
-  runApp(MyApp(firestore: firestore,));
+  runApp(MyApp(firestore: firestore,));//MaterialApp(home: PortionCreate(),));//
 }
 
 class MyApp extends StatelessWidget {
-  final Firestore firestore;
-  MyApp({this.firestore}):assert(firestore!=null);
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      title: 'BMSCE',
-      theme: new ThemeData(
-        /*primaryColor: Colors.red[400],
+
+  static final mainTheme = ThemeData(
+  /*primaryColor: Colors.red[400],
         buttonColor: Colors.red[400],
         accentColor: Colors.red[300],
         canvasColor: Colors.grey[50],*/
@@ -52,7 +47,15 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.red[500],
 
         //primarySwatch: Colors.red[400],
-      ),
+
+);
+  final Firestore firestore;
+  MyApp({this.firestore}):assert(firestore!=null);
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: 'BMSCE',
+      theme: mainTheme,
       home: MyBottomNavBar(),
     );
   }

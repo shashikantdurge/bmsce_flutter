@@ -1,10 +1,10 @@
-import 'package:bmsce/syllabus/AddCourse.dart';
+import 'package:bmsce/syllabus/course_add.dart';
+import 'package:bmsce/syllabus/course_list.dart';
+import 'package:bmsce/syllabus/portion_create.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import 'package:bmsce/syllabus/MyCourses.dart';
-import 'package:bmsce/syllabus/Notes.dart';
-import 'package:bmsce/syllabus/Portion.dart';
+import 'package:bmsce/syllabus/notes.dart';
+import 'package:bmsce/syllabus/portion_list.dart';
 
 class SyllabusTabs extends StatefulWidget {
   const SyllabusTabs({Key key,}):super(key: key);
@@ -55,6 +55,9 @@ class SyllabusTabsState extends State<SyllabusTabs>
               }));
               break;
             case 2:
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return PortionCreate();
+              }));
               break;
           }
         },

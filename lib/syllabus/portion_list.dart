@@ -1,7 +1,7 @@
-import 'package:bmsce/dataClasses/Portion.dart' as dataPortion;
+import 'package:bmsce/data_classes/Portion.dart' as dataPortion;
 import 'package:flutter/material.dart';
 
-import 'PortionView.dart';
+import 'portion_view.dart';
 
 class Portion extends StatefulWidget {
   PortionState createState() => PortionState();

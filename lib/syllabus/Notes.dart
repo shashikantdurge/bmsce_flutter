@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bmsce/dataClasses/Notes.dart' as dataNotes;
+import 'package:bmsce/data_classes/notes.dart' as dataNotes;
 
 class Notes extends StatefulWidget{
   NotesState createState()=>NotesState();

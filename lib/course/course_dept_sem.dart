@@ -1,6 +1,7 @@
 import 'dart:collection' as coll;
 
-import 'Course.dart';
+import 'package:bmsce/course/course.dart';
+
 
 class DeptSemCourses {
   String branch;

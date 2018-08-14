@@ -8,12 +8,12 @@ class SyllabusViewState extends State<SyllabusView> {
 
   static var syllabus = """UNIT-1
 SET THEORY AND RELATIONS 11 Hours 
-Introduction to sets and subsets, operations on sets, laws of set theory. Duality, Principle of duality for the equality of sets. Countable and uncountable sets. Addition Principle. Introduction to Relations. Definition, Types of functions, operations on relations, matrix representation of relations, composition of relations, properties of relations, equivalence relations, partial orders, Hasse diagram. Posets- extremal elements on posets.(8L+3T)
+Introduction to sets and subsets, operations on sets, laws of set theory. Duality, Principle of duality for the equality of sets. Countable and uncountable sets. Addition Principle. Introduction to Relations. Definition, Types of functions, operations on relations, matrix representation of relations, composition of relations, properties of relations, equivalence relations, partial orders, Hasse diagram. Posets- extremal elements on posets. (8L+3T)
  Suggested Reading: Some particular functions- Floor and ceiling functions, Projection, Unary and Binary operations.
- 
+
 UNIT-2
 ALGEBRAIC STRUCTURES-GROUPS 10 Hours
- Groups, properties of groups. Some particular groups- The Klein 4-group, additive group of integers modulo n, multiplicative group of integers mod p, permutation groups. Subgroups, Cyclic groups, Coset decomposition of a group, homomorphism, isomorphism.(7L+3T) 
+ Groups, properties of groups. Some particular groups- The Klein 4-group, additive group of integers modulo n, multiplicative group of integers mod p, permutation groups. Subgroups, Cyclic groups, Coset decomposition of a group, homomorphism, isomorphism. (7L+3T) 
 Suggested Reading: Lagrange's theorem and its consequences.
 
 UNIT-3
@@ -30,7 +30,7 @@ UNIT-5
 NUMBER THEORY 09 Hours 
 Introduction: Integers, properties of integers. Primes. Congruences-: Introduction, Equivalence Relations, Linear Congruences, Linear Diophantine Equations and the Chinese Remainder Theorem, Modular Arithmetic: Fermat's Theorem, Wilson's Theorem and Fermat Numbers. Polynomial congruences, Pythagorean equations. (7L+2T)  
 Suggested Reading: Prime counting function, Test of primality by trial division, Sieve of Eratosthenes, Canonical factorization, Fundamental theorem of arithmetic, determining the Canonical factorization of a natural number.
-
+ 
 Mathematics Lab
 • Hasse diagram
 • Rook Polynomials
@@ -71,7 +71,7 @@ Mathematics Lab
         builder: (context) {
           return SizedBox(
             //height: 100.0,
-            child: BottomSheet(
+            child: BottomSheet(//TODO Animation Controller
                 onClosing: () {},
                 builder: (context) {
                   return Padding(

@@ -1,8 +1,8 @@
-import 'package:bmsce/dataClasses/Course.dart' as dataCourse;
+import 'package:bmsce/course/course.dart' as dataCourse;
+import 'package:bmsce/course/course.dart';
+import 'package:bmsce/syllabus/course_content_view.dart';
 import 'package:flutter/material.dart';
-import 'package:bmsce/dataClasses/Course.dart';
-import 'SyllabusView.dart';
-import 'package:bmsce/courseProviderSqf.dart';
+import 'package:bmsce/course/course_provider_sqf.dart';
 
 class MyCourse extends StatefulWidget {
   MyCourseState createState() => MyCourseState();

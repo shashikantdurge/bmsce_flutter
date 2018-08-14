@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dataClasses/Course.dart';
 
 main(){
  var list =["1","2","3"];

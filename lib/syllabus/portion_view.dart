@@ -1,6 +1,5 @@
+import 'package:bmsce/syllabus/course_content_view.dart';
 import 'package:flutter/material.dart';
-
-import 'SyllabusView.dart';
 
 class PortionView extends StatefulWidget {
   PortionViewState createState() => PortionViewState();

@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:bmsce/course/course.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'dataClasses/Course.dart';
 
 class CourseProviderSqf {
   final table = "coursesTable";
@@ -25,7 +25,8 @@ class CourseProviderSqf {
     });
     assert(db != null);
   }
-  Future close()async{
+
+  Future close() async {
     await db.close();
   }
 

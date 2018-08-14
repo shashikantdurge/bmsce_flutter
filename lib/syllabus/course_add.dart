@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:bmsce/dataClasses/Course.dart';
-import 'package:bmsce/dataClasses/DeptSemCourses.dart';
+import 'package:bmsce/course/course.dart';
+import 'package:bmsce/course/course_provider_sqf.dart';
+import 'package:bmsce/course/course_dept_sem.dart';
+import 'package:bmsce/syllabus/course_content_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:bmsce/courseProviderSqf.dart';
-import 'SyllabusView.dart';
 
 class AddCourse extends StatefulWidget {
   AddCourse({this.firestore});
@@ -17,14 +17,22 @@ class AddCourse extends StatefulWidget {
 }
 
 class AddCourseState extends State<AddCourse> {
+  Set<String> localCourses = Set<String>();
   @override
-  initState(){
+  initState() {
     super.initState();
+    widget.courseProviderSqf.getAllCourses().then((courseList) {
+      courseList.forEach((course) {
+        localCourses.add(course.courseCode);
+      });
+    });
   }
+
   @override
-  dispose(){
+  dispose() {
     super.dispose();
   }
+
   AddCourseState();
 
   String selectedBranch;
@@ -197,6 +205,7 @@ class AddCourseState extends State<AddCourse> {
         p: courseDocument.data["p"],
         s: courseDocument.data["s"],
         version: courseDocument.data["version"],
+        isInMyCourses: localCourses.contains(courseDocument.documentID)
       );
       var courseGrp = courseGrpMap[courseCat] ??
           CourseGroup(courseGroup: courseCat, courses: []);
@@ -243,7 +252,6 @@ class AddCourseState extends State<AddCourse> {
               setState(() {
                 course.isInMyCourses = true;
               });
-
             }),
         secondChild: IconButton(
           icon: Icon(

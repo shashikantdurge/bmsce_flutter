@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bmsce/HomePageTabs.dart';
+import 'package:bmsce/home_page_tabs.dart';
 class DummyTabs extends StatefulWidget{
   DummyTabsState createState()=> DummyTabsState();
 }

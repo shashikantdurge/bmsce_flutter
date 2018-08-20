@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bmsce/course/course.dart';
 import 'package:sqflite/sqflite.dart';
 
-
 class CourseProviderSqf {
   final table = "coursesTable";
   final courseName = "courseName";
@@ -52,7 +51,7 @@ class CourseProviderSqf {
       p: course.p,
       s: course.s,
       totalCredits: course.totalCredits,
-      version: version
+      version: course.version
     };
   }
 
@@ -62,7 +61,7 @@ class CourseProviderSqf {
       bool p: false,
       bool s: false,
       bool version: false}) async {
-    if (this.db == null ) {
+    if (this.db == null) {
       await open();
     }
     final cols = [courseName, courseCode, totalCredits];
@@ -78,6 +77,17 @@ class CourseProviderSqf {
       courses.add(courseFrmMap(courseMap));
     });
     return courses;
+  }
+
+  Future<Course> getCourse(String courseCode, int version) async {
+    if (this.db == null) {
+      await open();
+    }
+    final courseRes = await db.query(table,
+        columns: [],
+        where:
+            " ${this.courseCode}='$courseCode' and ${this.version}=$version");
+    return courseFrmMap(courseRes.first);
   }
 
   Future<void> insertCourse(Course course) async {

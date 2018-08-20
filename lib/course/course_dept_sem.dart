@@ -2,25 +2,17 @@ import 'dart:collection' as coll;
 
 import 'package:bmsce/course/course.dart';
 
-
-class DeptSemCourses {
-  String branch;
-  int sem;
-  List<CourseGroup> courseGroups;
-
-  void addCourseToDeptSem(String courseCode) {}
-
-  void removeCourseFrmDeptSem(String courseCode) {}
-}
-
 class CourseGroup {
   String coursesType, courseOfferedFor, courseGroup;
   List<Course> courses;
 
-  CourseGroup({this.courseGroup,this.courses});
+  CourseGroup({this.courseGroup, this.courses});
 
   static String getCourseGroup(String offeredForAndType) {
-    String offeredFor,type;
+    if (offeredForAndType.toUpperCase().trim() == 'CC') return 'C Cycle';
+    if (offeredForAndType.toUpperCase().trim() == 'PC') return 'P Cycle';
+
+    String offeredFor, type;
     switch (offeredForAndType[0].toUpperCase()) {
       case 'D':
         offeredFor = "Dept";
@@ -50,7 +42,8 @@ class CourseGroup {
       default:
         type = offeredForAndType[1].toUpperCase();
     }
-    return '$offeredFor $type ${offeredForAndType.replaceRange(0, 2, '')}'.trim();
+    return '$offeredFor $type ${offeredForAndType.replaceRange(0, 2, '')}'
+        .trim();
   }
 }
 
@@ -61,15 +54,14 @@ final depts = coll.SplayTreeMap.from(<String, String>{
 });
 
 final semesters = coll.SplayTreeMap.from(<String, String>{
-  "1":"C Cycle",
-  "2":"P Cycle",
-  "3":"3",
-  "4":"4",
-  "5":"5",
-  "6":"6",
-  "7":"7",
-  "8":"8",
-  "9":"9",
-  "X":"X",
+  "1": "1",
+  "2": "2",
+  "3": "3",
+  "4": "4",
+  "5": "5",
+  "6": "6",
+  "7": "7",
+  "8": "8",
+  "9": "9",
+  "X": "X",
 });
-

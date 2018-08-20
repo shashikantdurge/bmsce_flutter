@@ -1,17 +1,18 @@
-import 'package:bmsce/course/course.dart' as dataCourse;
 import 'package:bmsce/course/course.dart';
 import 'package:bmsce/syllabus/course_content_view.dart';
 import 'package:flutter/material.dart';
 import 'package:bmsce/course/course_provider_sqf.dart';
 
-class MyCourse extends StatefulWidget {
-  MyCourseState createState() => MyCourseState();
+class MyCourseList extends StatefulWidget {
+  MyCourseList({Key key, this.isDirectToPortionCreate: false})
+      : super(key: key);
+
+  MyCourseStateList createState() => MyCourseStateList();
   final courseSqf = CourseProviderSqf();
+  final isDirectToPortionCreate;
 }
 
-class MyCourseState extends State<MyCourse> {
-  List<dataCourse.Course> courses;
-
+class MyCourseStateList extends State<MyCourseList> {
   @override
   void initState() {
     super.initState();
@@ -25,7 +26,7 @@ class MyCourseState extends State<MyCourse> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Course>>(
-        future: widget.courseSqf.getAllCourses(),
+        future: widget.courseSqf.getAllCourses(version: true),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -54,27 +55,6 @@ class MyCourseState extends State<MyCourse> {
                 );
               }
           }
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData && snapshot.data.isNotEmpty) {
-              return ListView(
-                children: List.generate(snapshot.data.length, (index) {
-                  return getCourseTile(snapshot.data[index]);
-                }),
-              );
-            } else if (snapshot.hasData && snapshot.data.isEmpty) {
-              return Center(
-                child: Text('Chill!!!'),
-              );
-            } else {
-              return Center(
-                child: Text('Something is wrong!!! ${snapshot.hasData}'),
-              );
-            }
-          } else {
-            return Center(
-              child: Text('Loading...'),
-            );
-          }
         });
   }
 
@@ -95,9 +75,20 @@ class MyCourseState extends State<MyCourse> {
         ],
       ),
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return SyllabusView();
-        }));
+        if (widget.isDirectToPortionCreate) {
+          if(Navigator.of(context).canPop()){
+            Navigator.of(context).pop(course);
+          }
+        } else {
+          Navigator
+              .of(context)
+              .push(MaterialPageRoute(builder: (context) {
+            return CourseContentView(
+              course: course,
+              isFetchFromOnline: false,
+            );
+          }));
+        }
       },
     );
   }

@@ -1,13 +1,11 @@
 import 'dart:async';
 
+import 'package:bmsce/course/course.dart';
 import 'package:bmsce/my_widgets/color_radio_button.dart';
+import 'package:bmsce/portion/portion_provider_sqf.dart';
+import 'package:bmsce/syllabus/course_content_view.dart';
 import 'package:flutter/material.dart';
 import 'dart:collection';
-import 'course_content_view.dart';
-
-class PortionCreate extends StatefulWidget {
-  PortionCreateState createState() => PortionCreateState();
-}
 
 final List<Color> highlightColors = [
   Colors.amber[100],
@@ -17,154 +15,280 @@ final List<Color> highlightColors = [
   Colors.indigo[100]
 ];
 
-class PortionCreateState extends State<PortionCreate>
-    with SingleTickerProviderStateMixin {
-  final List<CourseContent> syllabus = [];
-  List<Color> toggleHighlight;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+class PortionCreate extends StatelessWidget {
+  final Course course;
+  final String description;
+  PortionCreate({Key key, @required this.course, @required this.description})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              '${course.courseName}',
+              overflow: TextOverflow.fade,
+            ),
+            Text(
+              '$description',
+              overflow: TextOverflow.fade,
+              style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w400),
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.save),
+              onPressed: () {
+                save(context);
+              }),
+        ],
+      ),
+      body: FutureBuilder<List<CourseContentPart>>(
+        future: processSyllabus(course.courseCode, course.version),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          print(
+              'PortionCreate ${snapshot.connectionState} hasData:${snapshot.hasData} hasError:${snapshot.hasError}');
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData)
+            return PortionEditEnv(
+              courseContent: snapshot.data,
+            );
+          else
+            return Center(child: CircularProgressIndicator());
+        },
+      ),
+    );
+  }
 
+  Future<List<CourseContentPart>> processSyllabus(
+      String courseCode, int version) async {
+    String courseContent = (await CourseContentViewState.fetchCourseContent(
+            courseCode: courseCode, version: version, isFetchFromOnline: false))
+        .content;
+    final List<CourseContentPart> courseContentParts = [];
+
+    int processUnit(String unitContent) {
+      int wordsCount = 0;
+      unitContent.split(RegExp(r'[\n]{1,}')).forEach((unitContentPara) {
+        if (unitContentPara.trim() != '') {
+          final unitContentWords =
+              unitContentPara.trim().split(RegExp(r'[\s]{1,}'));
+          courseContentParts.add(UnitContent(unitContentWords));
+          wordsCount += unitContentWords.length;
+        }
+      });
+
+      return wordsCount;
+    }
+
+    int wordsCount = 0;
+    List<String> units =
+        courseContent.split(RegExp(r'[\n]{1,}[\s]{0,}[\n]{1,}'));
+    for (var i = 0; i < units.length; i++) {
+      if (units[i].trim() != '') {
+        courseContentParts.add(UnitDivider('\n'));
+        wordsCount += processUnit(units[i]);
+      }
+    }
+    UnitContent.totalWordsCount = wordsCount;
+    return courseContentParts;
+  }
+
+  Future<void> save(BuildContext context) async {
+    final toggleHighlight = PortionEditEnvState.toggleHighlight;
+    List<int> saveToggleBorderIndexes = [0];
+    List<int> toggleColorIndexes = [];
+    for (var i = 1; i < UnitContent.totalWordsCount; i++) {
+      if (toggleHighlight[i] == toggleHighlight[i - 1])
+        continue;
+      else {
+        saveToggleBorderIndexes.add(i);
+        toggleColorIndexes.add(highlightColors.indexOf(toggleHighlight[i - 1]));
+      }
+    }
+    saveToggleBorderIndexes.add(UnitContent.totalWordsCount);
+    toggleColorIndexes.add(highlightColors
+        .indexOf(toggleHighlight[UnitContent.totalWordsCount - 1]));
+    String toggleBordIndexesStr = saveToggleBorderIndexes.join(",");
+    String toggleColorIndexesStr = toggleColorIndexes.join(",");
+    await PortionProvider().insert(Portion(
+        courseCode: course.courseCode,
+        courseName: course.courseName,
+        courseVersion: course.version,
+        createdBy: "admin",
+        createdOn: DateTime.now().millisecondsSinceEpoch,
+        description: description,
+        isOutdated: 0,
+        isTeacherSignature: 0,
+        toggleBordColorIndexes: toggleBordIndexesStr,
+        toggleColorIndexes: toggleColorIndexesStr));
+    Navigator.of(context).pop();
+  }
+}
+
+class PortionEditEnv extends StatefulWidget {
+  final List<CourseContentPart> courseContent;
+
+  const PortionEditEnv({Key key, this.courseContent}) : super(key: key);
+  PortionEditEnvState createState() => PortionEditEnvState();
+}
+
+class PortionEditEnvState extends State<PortionEditEnv>
+    with SingleTickerProviderStateMixin {
+  static const double editToolKitHeight = 110.0;
+  static List<Color> toggleHighlight;
   int highlightIndex;
-  int wordsCount;
   Color curHighlightColor = highlightColors[2];
   bool isLongPressed = false;
   bool isStackEmpty = true;
+
   @override
   void initState() {
     super.initState();
-    final courseContent = SyllabusViewState.syllabus;
-    wordsCount = processSyllabus(courseContent);
-    toggleHighlight = List(wordsCount);
-    toggleHighlight.fillRange(0, wordsCount, Colors.transparent);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    toggleHighlight = List<Color>(UnitContent.totalWordsCount);
+    toggleHighlight.fillRange(
+        0, UnitContent.totalWordsCount, Colors.transparent);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: AppBar(
-        title: Text('Data Structure'),
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.info_outline), onPressed: () {})
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: List.generate(highlightColors.length, (index) {
-                    return ColorRadioButton(
-                      value: highlightColors[index],
-                      groupValue: curHighlightColor,
-                      onChanged: (Color value) {
-                        setState(() {
-                          curHighlightColor = highlightColors[index];
-                        });
-                      },
-                    );
-                  })),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  OutlineButton(
-                    onPressed: isStackEmpty
-                        ? null
-                        : () {
-                            undo();
-                          },
-                    child: Icon(Icons.undo),
-                  ),
-                  Listener(
-                    onPointerDown: (down) async {
-                      print('down listener');
-                      if (highlightIndex == null) return;
-                      isLongPressed = true;
-                      while (isLongPressed && highlightIndex < wordsCount) {
-                        await Future.delayed(
-                            Duration(milliseconds: 234), forwardSelection());
-                      }
-                    },
-                    onPointerUp: (down) {
-                      print('Up listener');
-                      isLongPressed = false;
-                    },
-                    child: OutlineButton(
-                      onPressed: highlightIndex == null ? null : () {},
-                      child: Icon(
-                        Icons.chevron_right,
-                      ),
-                    ),
-                  ),
-                  FlatButton(
-                    child: Text('RESET'),
-                    onPressed: () {
-                      reset();
-                    },
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-      //TODO: make it FutureBuilder
-      body: buildCourseContent(),
+    return Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        buildCourseContent(),
+        Positioned(
+          child: Container(
+            height: editToolKitHeight,
+            child: buildEditKit(),
+            decoration: BoxDecoration(
+                color: Colors.white, border: Border.all(color: Colors.grey)),
+          ),
+          bottom: 1.0,
+          left: 1.0,
+          right: 1.0,
+        )
+      ],
     );
   }
 
-Widget buildCourseContent(){
-  return SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(5.0),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(syllabus.length, (index) {
-                final contentOrDivider = syllabus[index];
-                var lastToggleIndex = index;
-                var curFirstWordIndex = 0;
-                while (lastToggleIndex > 0) {
-                  final lastContentOrDivider = syllabus[--lastToggleIndex];
-                  if (lastContentOrDivider is UnitContent)
-                    curFirstWordIndex = curFirstWordIndex +
-                        lastContentOrDivider.unitContent.length;
-                }
-                if (contentOrDivider is UnitDivider) {
-                  return Text('${contentOrDivider.heading}');
-                } else if (contentOrDivider is UnitContent) {
-                  return Wrap(
-                    children: List.generate(contentOrDivider.unitContent.length,
-                        (index) {
-                      return GestureDetector(
-                        onTap: () {
-                          onTextTap(curFirstWordIndex + index);
-                        },
-                        child: Container(
-                            color: toggleHighlight[curFirstWordIndex + index],
-                            padding: EdgeInsets.all(2.0),
-                            child: Text(contentOrDivider.unitContent[index])),
-                      );
-                    }),
-                  );
-                }
+  Widget buildEditKit() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(highlightColors.length, (index) {
+                return ColorRadioButton(
+                  color: highlightColors[index],
+                  groupColor: curHighlightColor,
+                  onChanged: (Color value) {
+                    setState(() {
+                      curHighlightColor = highlightColors[index];
+                    });
+                  },
+                );
               })),
         ),
-      );
-}
+        Padding(
+          padding: EdgeInsets.only(bottom: 12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              OutlineButton(
+                onPressed: isStackEmpty
+                    ? null
+                    : () {
+                        undo();
+                      },
+                child: Icon(Icons.undo),
+              ),
+              Listener(
+                onPointerDown: (down) async {
+                  print('down listener');
+                  if (highlightIndex == null) return;
+                  isLongPressed = true;
+                  while (isLongPressed &&
+                      highlightIndex < UnitContent.totalWordsCount) {
+                    await Future.delayed(
+                        Duration(milliseconds: 222), forwardSelection());
+                  }
+                },
+                onPointerUp: (up) {
+                  print('Up listener');
+                  isLongPressed = false;
+                },
+                child: OutlineButton(
+                  onPressed: highlightIndex == null ? null : () {},
+                  child: Icon(
+                    Icons.chevron_right,
+                  ),
+                ),
+              ),
+              FlatButton(
+                child: Text('RESET'),
+                onPressed: () {
+                  reset();
+                },
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildCourseContent() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(widget.courseContent.length, (index) {
+              final contentOrDivider = widget.courseContent[index];
+              var lastToggleIndex = index;
+              var curFirstWordIndex = 0;
+              while (lastToggleIndex > 0) {
+                final lastContentOrDivider =
+                    widget.courseContent[--lastToggleIndex];
+                if (lastContentOrDivider is UnitContent)
+                  curFirstWordIndex = curFirstWordIndex +
+                      lastContentOrDivider.unitContent.length;
+              }
+              if (contentOrDivider is UnitDivider) {
+                return Text('${contentOrDivider.divider}');
+              } else if (contentOrDivider is UnitContent) {
+                return Wrap(
+                  children: List.generate(contentOrDivider.unitContent.length,
+                      (index) {
+                    return GestureDetector(
+                      onTap: () {
+                        onTextTap(curFirstWordIndex + index);
+                      },
+                      child: Container(
+                          color: toggleHighlight[curFirstWordIndex + index],
+                          padding: EdgeInsets.all(2.0),
+                          child: Text(contentOrDivider.unitContent[index])),
+                    );
+                  }),
+                );
+              }
+            })
+              ..add(Container(height: editToolKitHeight))),
+      ),
+    );
+  }
+
   reset() {
     setState(() {
-      toggleHighlight.fillRange(0, wordsCount, Colors.transparent);
+      toggleHighlight.fillRange(
+          0, UnitContent.totalWordsCount, Colors.transparent);
       highlightIndex = null;
       HighlightStack.stack.clear();
       isStackEmpty = true;
@@ -182,7 +306,7 @@ Widget buildCourseContent(){
         toggleHighlight[tapIndex] = curHighlightColor;
         highlightIndex = ++tapIndex;
       }
-      if (HighlightStack.stack.length == 1) isStackEmpty = false;
+      if (HighlightStack.stack.length > 0) isStackEmpty = false;
     });
   }
 
@@ -219,32 +343,6 @@ Widget buildCourseContent(){
         });
     }
   }
-
-  int processSyllabus(String courseContent) {
-    int wordsCount = 0;
-    List<String> units =
-        courseContent.split(RegExp(r'[\n]{1,}[\s]{0,}[\n]{1,}'));
-    for (var i = 0; i < units.length; i++) {
-      if (units[i].trim() != '') {
-        syllabus.add(UnitDivider('\n'));
-        wordsCount += processUnit(units[i]);
-      }
-    }
-    return wordsCount;
-  }
-
-  int processUnit(String unitContent) {
-    int wordsCount = 0;
-    unitContent.split(RegExp(r'[\n]{1,}')).forEach((unitContentPara) {
-      if (unitContentPara.trim() != '') {
-        final unitContentWords =
-            unitContentPara.trim().split(RegExp(r'[\s]{1,}'));
-        syllabus.add(UnitContent(unitContentWords));
-        wordsCount += unitContentWords.length;
-      }
-    });
-    return wordsCount;
-  }
 }
 
 enum FunctionName { ON_TEXT_TAP, FORWARD_SELECTION }
@@ -269,15 +367,16 @@ class HighlightStack {
   }
 }
 
-abstract class CourseContent {}
+abstract class CourseContentPart {}
 
-class UnitDivider extends CourseContent {
-  String heading;
+class UnitDivider extends CourseContentPart {
+  String divider;
 
-  UnitDivider(this.heading);
+  UnitDivider(this.divider);
 }
 
-class UnitContent extends CourseContent {
+class UnitContent extends CourseContentPart {
+  static int totalWordsCount;
   List<String> unitContent;
 
   UnitContent(this.unitContent);

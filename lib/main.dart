@@ -8,7 +8,7 @@ import 'TimeTable/Dummy.dart' as tt;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
-  final app =await FirebaseApp.configure(
+  final app = await FirebaseApp.configure(
     name: 'test',
     options: const FirebaseOptions(
       googleAppID: '1:131447312475:android:c4c1a65536326ae6',
@@ -18,39 +18,32 @@ void main() async {
     ),
   );
   final Firestore firestore = Firestore(app: app);
-  runApp(MyApp(firestore: firestore,));//MaterialApp(home: PortionCreate(),));//
+  runApp(MyApp(
+    firestore: firestore,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-
   static final mainTheme = ThemeData(
-  /*primaryColor: Colors.red[400],
-        buttonColor: Colors.red[400],
-        accentColor: Colors.red[300],
-        canvasColor: Colors.grey[50],*/
-        //brightness: Brightness.light,
-        primarySwatch: const MaterialColor(
-          0xFFF44336,
-          const <int, Color>{
-            50: const Color(0xFFFFEBEE),
-            100: const Color(0xFFFFCDD2),
-            200: const Color(0xFFEF9A9A),
-            300: const Color(0xFFE57373),
-            400: const Color(0xFFEF5350),
-            500: const Color(0xFFF44336),
-            600: const Color(0xFFE53935),
-            700: const Color(0xFFD32F2F),
-            800: const Color(0xFFC62828),
-            900: const Color(0xFFB71C1C),
-          },
-        ),
-        primaryColor: Colors.red[500],
-
-        //primarySwatch: Colors.red[400],
-
-);
+    primarySwatch: const MaterialColor(
+      0xFFF44336,
+      const <int, Color>{
+        50: const Color(0xFFFFEBEE),
+        100: const Color(0xFFFFCDD2),
+        200: const Color(0xFFEF9A9A),
+        300: const Color(0xFFE57373),
+        400: const Color(0xFFEF5350),
+        500: const Color(0xFFF44336),
+        600: const Color(0xFFE53935),
+        700: const Color(0xFFD32F2F),
+        800: const Color(0xFFC62828),
+        900: const Color(0xFFB71C1C),
+      },
+    ),
+    primaryColor: Colors.red[500],
+  );
   final Firestore firestore;
-  MyApp({this.firestore}):assert(firestore!=null);
+  MyApp({this.firestore}) : assert(firestore != null);
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(

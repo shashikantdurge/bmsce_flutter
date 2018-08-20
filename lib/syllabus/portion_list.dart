@@ -1,23 +1,50 @@
-import 'package:bmsce/data_classes/Portion.dart' as dataPortion;
+import 'package:bmsce/portion/portion_provider_sqf.dart';
 import 'package:flutter/material.dart';
 
 import 'portion_view.dart';
 
-class Portion extends StatefulWidget {
+class PortionList extends StatefulWidget {
   PortionState createState() => PortionState();
 }
 
-class PortionState extends State<Portion> {
-  List<dataPortion.Portion> portions;
-
+class PortionState extends State<PortionList> {
   @override
   void initState() {
     super.initState();
-    portions = dataPortion.portions;
   }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<List<Portion>>(
+        future: PortionProvider().getPortionsList(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+              return Center(
+                child: Text('Loading...'),
+              );
+              break;
+            case ConnectionState.done:
+              if (snapshot.hasData) {
+                if (snapshot.data.isNotEmpty) {
+                  return getPortionListView(snapshot.data);
+                } else if (snapshot.data.isEmpty) {
+                  return Center(
+                    child: Text('Chill!!!'),
+                  );
+                }
+              } else {
+                return Center(
+                  child: Text('Something is wrong? ${snapshot.hasError}'),
+                );
+              }
+          }
+        });
+  }
+
+  Widget getPortionListView(List<Portion> portions) {
     return ListView(
       children: List.generate(portions.length, (index) {
         final portion = portions[index];
@@ -32,12 +59,12 @@ class PortionState extends State<Portion> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          trailing: portion.isOutdated
+          trailing: portion.isOutdated == 1
               ? (Icon(
                   Icons.error_outline,
                   color: Colors.red,
                 ))
-              : (portion.teacherSignature
+              : (portion.isTeacherSignature == 1
                   ? Icon(
                       Icons.verified_user,
                       color: Colors.green,
@@ -45,7 +72,12 @@ class PortionState extends State<Portion> {
                   : Icon(Icons.info_outline)),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return PortionView();
+              return PortionView(
+                courseName: portion.courseName,
+                createdBy: portion.createdBy,
+                createdOn: portion.createdOn,
+                description: portion.description,
+              );
             }));
           },
         );

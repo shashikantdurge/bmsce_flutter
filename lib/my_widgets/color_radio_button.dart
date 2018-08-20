@@ -3,33 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-
 const double _kOuterRadius = 16.0;
 const double _kInnerRadius = 15.0;
 
 class ColorRadioButton extends StatefulWidget {
-  const ColorRadioButton({
-    Key key,
-    @required this.value,
-    @required this.groupValue,
-    @required this.onChanged,
-    this.activeColor
-  }) : super(key: key);
+  const ColorRadioButton(
+      {Key key,
+      @required this.color,
+      @required this.groupColor,
+      @required this.onChanged,
+      this.activeColor})
+      : super(key: key);
 
   /// The value represented by this radio button.
-  final Color value;
+  final Color color;
 
   /// The currently selected value for this group of radio buttons.
   ///
-  /// This radio button is considered selected if its [value] matches the
-  /// [groupValue].
-  final Color groupValue;
+  /// This radio button is considered selected if its [color] matches the
+  /// [groupColor].
+  final Color groupColor;
 
   /// Called when the user selects this radio button.
   ///
-  /// The radio button passes [value] as a parameter to this callback. The radio
+  /// The radio button passes [color] as a parameter to this callback. The radio
   /// button does not actually change state until the parent widget rebuilds the
-  /// radio button with the new [groupValue].
+  /// radio button with the new [groupColor].
   ///
   /// If null, the radio button will be displayed as disabled.
   ///
@@ -56,10 +55,12 @@ class ColorRadioButton extends StatefulWidget {
   final Color activeColor;
 
   @override
-  _RadioState<Color> createState() => new _RadioState<Color>(myRadioColor:  value);
+  _RadioState<Color> createState() =>
+      new _RadioState<Color>(myRadioColor: color);
 }
 
-class _RadioState<T> extends State<ColorRadioButton> with TickerProviderStateMixin {
+class _RadioState<T> extends State<ColorRadioButton>
+    with TickerProviderStateMixin {
   _RadioState({this.myRadioColor});
 
   bool get _enabled => widget.onChanged != null;
@@ -69,8 +70,7 @@ class _RadioState<T> extends State<ColorRadioButton> with TickerProviderStateMix
   }
 
   void _handleChanged(bool selected) {
-    if (selected)
-      widget.onChanged(widget.value);
+    if (selected) widget.onChanged(widget.color);
   }
 
   @override
@@ -78,7 +78,7 @@ class _RadioState<T> extends State<ColorRadioButton> with TickerProviderStateMix
     assert(debugCheckHasMaterial(context));
     final ThemeData themeData = Theme.of(context);
     return new _RadioRenderObjectWidget(
-      selected: widget.value == widget.groupValue,
+      selected: widget.color == widget.groupColor,
       activeColor: myRadioColor,
       inactiveColor: _getInactiveColor(themeData),
       onChanged: _enabled ? _handleChanged : null,
@@ -96,11 +96,11 @@ class _RadioRenderObjectWidget extends LeafRenderObjectWidget {
     this.myRadioColor,
     this.onChanged,
     @required this.vsync,
-  }) : assert(selected != null),
-       assert(activeColor != null),
-       assert(inactiveColor != null),
-       assert(vsync != null),
-       super(key: key);
+  })  : assert(selected != null),
+        assert(activeColor != null),
+        assert(inactiveColor != null),
+        assert(vsync != null),
+        super(key: key);
 
   final bool selected;
   final Color inactiveColor;
@@ -111,12 +111,12 @@ class _RadioRenderObjectWidget extends LeafRenderObjectWidget {
 
   @override
   _RenderRadio createRenderObject(BuildContext context) => new _RenderRadio(
-    value: selected,
-    activeColor: activeColor,
-    inactiveColor: inactiveColor,
-    onChanged: onChanged,
-    vsync: vsync,
-  );
+        value: selected,
+        activeColor: activeColor,
+        inactiveColor: inactiveColor,
+        onChanged: onChanged,
+        vsync: vsync,
+      );
 
   @override
   void updateRenderObject(BuildContext context, _RenderRadio renderObject) {
@@ -137,21 +137,23 @@ class _RenderRadio extends RenderToggleable {
     ValueChanged<bool> onChanged,
     Color myRadioColor,
     @required TickerProvider vsync,
-  }): super(
-    value: value,
-    tristate: false,
-    activeColor: activeColor,
-    inactiveColor: inactiveColor,
-    onChanged: onChanged,
-    size: const Size(2 * kRadialReactionRadius, 2 * kRadialReactionRadius),
-    vsync: vsync,
-  );
+  }) : super(
+          value: value,
+          tristate: false,
+          activeColor: activeColor,
+          inactiveColor: inactiveColor,
+          onChanged: onChanged,
+          size:
+              const Size(2 * kRadialReactionRadius, 2 * kRadialReactionRadius),
+          vsync: vsync,
+        );
 
   @override
   void paint(PaintingContext context, Offset offset) {
     final Canvas canvas = context.canvas;
 
-    paintRadialReaction(canvas, offset, const Offset(kRadialReactionRadius, kRadialReactionRadius));
+    paintRadialReaction(canvas, offset,
+        const Offset(kRadialReactionRadius, kRadialReactionRadius));
 
     final Offset center = (offset & size).center;
     final Color radioColor = onChanged != null ? activeColor : inactiveColor;

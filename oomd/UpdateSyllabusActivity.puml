@@ -1,4 +1,4 @@
-//On refresh of the Courses
+//On refresh of the Courses // Send Notifications that updates sylabus and do the following
 Permission: All
 @startuml
 (*)  --> "check Portions dependency on this Course"

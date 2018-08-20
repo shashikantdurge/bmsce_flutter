@@ -31,128 +31,14 @@ class Course {
 
   static void updateSyllabus(String courseCode, double oldVersion) {}
 }
+class CourseContent{
+  final String courseCode;
+  final int version;
+  final String content;
+  final String lastModifiedBy;
 
+  CourseContent(this.courseCode, this.version, this.content, this.lastModifiedBy);
+  
+}
 enum CourseOfferedFor { Dept, Cluster, Institute }
 enum CourseType { Core, Elective, Lab, Mandatory }
-
-final courses = [
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-  Course(
-      courseName: 'Data Structures',
-      courseCode: '10CS3DCDST',
-      l: 3,
-      t: 0,
-      p: 1,
-     version: 1534291200,  s: 0),
-];

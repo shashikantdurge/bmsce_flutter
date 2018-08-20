@@ -1,48 +1,37 @@
+import 'dart:async';
+import 'package:bmsce/course/course.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:bmsce/course/course_content_provider_sqf.dart';
+import 'package:bmsce/course/course_provider_sqf.dart';
 
-class SyllabusView extends StatefulWidget {
-  SyllabusViewState createState() => SyllabusViewState();
+class CourseContentView extends StatefulWidget {
+  CourseContentView(
+      {Key key, @required this.course, this.isFetchFromOnline: true})
+      : super(key: key);
+
+  CourseContentViewState createState() => CourseContentViewState();
+  final Course course;
+  final bool isFetchFromOnline;
+  final firestore = Firestore.instance;
+  final CourseContentProvider contentProvider = CourseContentProvider();
 }
 
-class SyllabusViewState extends State<SyllabusView> {
-
-  static var syllabus = """UNIT-1
-SET THEORY AND RELATIONS 11 Hours 
-Introduction to sets and subsets, operations on sets, laws of set theory. Duality, Principle of duality for the equality of sets. Countable and uncountable sets. Addition Principle. Introduction to Relations. Definition, Types of functions, operations on relations, matrix representation of relations, composition of relations, properties of relations, equivalence relations, partial orders, Hasse diagram. Posets- extremal elements on posets. (8L+3T)
- Suggested Reading: Some particular functions- Floor and ceiling functions, Projection, Unary and Binary operations.
-
-UNIT-2
-ALGEBRAIC STRUCTURES-GROUPS 10 Hours
- Groups, properties of groups. Some particular groups- The Klein 4-group, additive group of integers modulo n, multiplicative group of integers mod p, permutation groups. Subgroups, Cyclic groups, Coset decomposition of a group, homomorphism, isomorphism. (7L+3T) 
-Suggested Reading: Lagrange's theorem and its consequences.
-
-UNIT-3
-COMBINATORICS 09 Hours 
-Principles of counting: The rules of sum and product, permutations. Combinations- Binomial and multinomial theorems. Catalan numbers, Ramsey numbers. The Pigeon hole principle, the principle of inclusion and exclusion. Derangements, Rook polynomials. (7L+2T) 
-Suggested Reading: Ordinary Generating Functions, Partitions of integers and their generating functions, exponential generating functions.
-
-UNIT-4
-GRAPH THEORY 09 Hours
-Basic concepts: Types of graphs, order and size of a graph, in-degree and out-degree, connected and disconnected graphs, Eulerian graph, Hamiltonian graphs, sub-graphs, dual graphs, isomorphic graphs. Matrix representation of graphs: adjacency matrix, incidence matrix. Trees: spanning tree, breadth first search. Minimal spanning tree: Kruskal's algorithm, Prim's algorithm, shortest path-Dijkstra's algorithm. (7L+2T) 
-Suggested Reading: Konigsberg bridge problem, Utilities problem, seating problem.
-
-UNIT-5
-NUMBER THEORY 09 Hours 
-Introduction: Integers, properties of integers. Primes. Congruences-: Introduction, Equivalence Relations, Linear Congruences, Linear Diophantine Equations and the Chinese Remainder Theorem, Modular Arithmetic: Fermat's Theorem, Wilson's Theorem and Fermat Numbers. Polynomial congruences, Pythagorean equations. (7L+2T)  
-Suggested Reading: Prime counting function, Test of primality by trial division, Sieve of Eratosthenes, Canonical factorization, Fundamental theorem of arithmetic, determining the Canonical factorization of a natural number.
- 
-Mathematics Lab
-• Hasse diagram
-• Rook Polynomials
-• Minimal spanning tree- Kruskal's algorithm, Prim's algorithm.
-• Shortest Path- Dijkstra'salgorithm.
-""";
+class CourseContentViewState extends State<CourseContentView> {
+  @override
+  void initState() {
+    super.initState();
+    widget.contentProvider.open();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Data Structures'),
+        title: Text(
+          widget.course.courseName,
+          overflow: TextOverflow.fade,
+        ),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.info_outline),
@@ -55,33 +44,112 @@ Mathematics Lab
         controller: ScrollController(),
         child: Padding(
           padding: EdgeInsets.all(12.0),
-          child: Text(
-            syllabus,
-            textAlign: TextAlign.justify,
-            textScaleFactor: 1.1,
+          child: FutureBuilder<CourseContent>(
+            future: fetchCourseContent(
+                courseCode: widget.course.courseCode,
+                version: widget.course.version,
+                isFetchFromOnline: widget.isFetchFromOnline),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData) {
+                return Text(
+                  snapshot.data.content,
+                  textAlign: TextAlign.justify,
+                  textScaleFactor: 1.1,
+                );
+              } else {
+                print(
+                    'PortionCreate ${snapshot.connectionState} hasData:${snapshot.hasData} hasError:${snapshot.hasError}');
+                return Text(
+                    'PortionCreate ${snapshot.connectionState} hasData:${snapshot.hasData} hasError:${snapshot.hasError}');
+              }
+            },
           ),
         ),
       ),
     );
   }
 
-  showLtpsTable() {
+  static Future<CourseContent> fetchCourseContent(
+      {@required String courseCode,
+      @required int version,
+      bool isFetchFromOnline: true}) async {
+    CourseContent courseContent;
+    Future<CourseContent> fetchFromFirestore() async {
+      CourseContent courseContent;
+      final courseSnapshot = await Firestore.instance
+          .collection('course_content')
+          .document(courseCode)
+          .get();
+      if (courseSnapshot.exists) {
+        courseContent = CourseContent(
+            courseSnapshot.documentID,
+            courseSnapshot.data['version'],
+            courseSnapshot.data['content'],
+            courseSnapshot.data['lastModifiedBy']);
+        if (!isFetchFromOnline) {
+          CourseContentProvider().insert(courseContent);
+        }
+      } else {
+        courseContent =
+            CourseContent(courseCode, version, 'Syllabus unavailable', 'None');
+      }
+      return courseContent;
+    }
+
+    if (isFetchFromOnline) {
+      courseContent = await fetchFromFirestore();
+    } else {
+      courseContent = (await CourseContentProvider()
+              .getCourseContent(courseCode, version)) ??
+          (await fetchFromFirestore());
+    }
+
+    return courseContent;
+  }
+
+  getCourseDetailsFrmOffline() async {
+    CourseProviderSqf courseProviderSqf = CourseProviderSqf();
+    return await courseProviderSqf.getCourse(
+        widget.course.courseCode, widget.course.version);
+  }
+
+  showLtpsTable() async {
+    Course course = widget.isFetchFromOnline
+        ? widget.course
+        : await getCourseDetailsFrmOffline();
     showModalBottomSheet(
         context: context,
         builder: (context) {
           return SizedBox(
             //height: 100.0,
-            child: BottomSheet(//TODO Animation Controller
+            child: BottomSheet(
+                //TODO: Animation Controller
                 onClosing: () {},
                 builder: (context) {
                   return Padding(
                     padding: EdgeInsets.all(12.0),
-                    child: Table(
-                      border: TableBorder.all(color: Colors.black38),
-                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                      children: [
-                        getTableRow(['L','T','P','S']),
-                        getTableRow(['2','3','2','1'])
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(course.courseName),
+                        Text(course.courseCode),
+                        Table(
+                          border: TableBorder.all(color: Colors.black38),
+                          defaultVerticalAlignment:
+                              TableCellVerticalAlignment.middle,
+                          children: [
+                            getTableRow(['L', 'T', 'P', 'S']),
+                            getTableRow([
+                              course.l.toString(),
+                              course.t.toString(),
+                              course.p.toString(),
+                              course.s.toString(),
+                            ])
+                          ],
+                        ),
+                        Text(
+                            'Last Modified ${DateTime.fromMillisecondsSinceEpoch(course.version*1000).toString().substring(0,10)}')
                       ],
                     ),
                   );
@@ -90,14 +158,16 @@ Mathematics Lab
         });
   }
 
-  TableRow getTableRow(List<String> data){
-    assert(data.length==4);
+  TableRow getTableRow(List<String> data) {
+    assert(data.length == 4);
     return TableRow(
-      children: List.generate(data.length, (index){
-        return TableCell(child: Text(data[index],textAlign: TextAlign.center,style: TextStyle(fontSize: 16.0),));
-      })
-    );
+        children: List.generate(data.length, (index) {
+      return TableCell(
+          child: Text(
+        data[index],
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 16.0),
+      ));
+    }));
   }
 }
-
-var reg = '[a-zA-Z].[a-zA-Z]';

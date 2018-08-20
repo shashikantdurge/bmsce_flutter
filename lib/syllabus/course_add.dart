@@ -9,9 +9,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class AddCourse extends StatefulWidget {
-  AddCourse({this.firestore});
+  AddCourse();
   final CourseProviderSqf courseProviderSqf = CourseProviderSqf();
-  final Firestore firestore;
+  final Firestore firestore = Firestore.instance;
 
   AddCourseState createState() => AddCourseState();
 }
@@ -28,20 +28,12 @@ class AddCourseState extends State<AddCourse> {
     });
   }
 
-  @override
-  dispose() {
-    super.dispose();
-  }
-
-  AddCourseState();
-
   String selectedBranch;
   String selectedSem;
   String semOrCycle;
-  List<dynamic> branches = depts.values.toList();
+  List<dynamic> branchValues = depts.values.toList();
   List<dynamic> branchKeys = depts.keys.toList();
-  List<dynamic> semValues = semesters.values.toList();
-  List<dynamic> semKeys = semesters.keys.toList();
+  List<dynamic> semesters = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "X"];
   int totalSems = 8;
   final branchSemListQ = ListQueue<String>();
   final branchSemCourseGrpMap = HashMap<String, List<CourseGroup>>();
@@ -49,117 +41,89 @@ class AddCourseState extends State<AddCourse> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'addCourse',
-      theme: new ThemeData(
-        /*primaryColor: Colors.red[400],
-        buttonColor: Colors.red[400],
-        accentColor: Colors.red[300],
-        canvasColor: Colors.grey[50],*/
-        //brightness: Brightness.light,
-        primarySwatch: const MaterialColor(
-          0xFFF44336,
-          const <int, Color>{
-            50: const Color(0xFFFFEBEE),
-            100: const Color(0xFFFFCDD2),
-            200: const Color(0xFFEF9A9A),
-            300: const Color(0xFFE57373),
-            400: const Color(0xFFEF5350),
-            500: const Color(0xFFF44336),
-            600: const Color(0xFFE53935),
-            700: const Color(0xFFD32F2F),
-            800: const Color(0xFFC62828),
-            900: const Color(0xFFB71C1C),
-          },
+    return Scaffold(
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            DropdownButton(
+              hint: Text('Branch'),
+              items: List.generate(depts.length, (index) {
+                return DropdownMenuItem<String>(
+                  child: Text(branchValues[index]),
+                  value: branchKeys[index],
+                );
+              }),
+              onChanged: (t) {
+                setState(() {
+                  selectedBranch = t;
+                  if (t == "AT") {
+                    totalSems = 10;
+                  } else {
+                    totalSems = 8;
+                  }
+                });
+                if (selectedSem != null)
+                  fetchCourseFunct = fetchCourse(selectedBranch, selectedSem);
+              },
+              value: selectedBranch,
+            ),
+            DropdownButton(
+              hint: Text('Sem'),
+              items: List.generate(totalSems, (index) {
+                return DropdownMenuItem<String>(
+                  child: Text(semesters[index]),
+                  value: semesters[index],
+                );
+              }),
+              onChanged: (t) {
+                setState(() {
+                  selectedSem = t;
+                });
+                if (selectedBranch != null)
+                  fetchCourseFunct = fetchCourse(selectedBranch, selectedSem);
+              },
+              value: selectedSem,
+            )
+          ],
         ),
-        primaryColor: Colors.red[500],
-
-        //primarySwatch: Colors.red[400],
       ),
-      home: Scaffold(
-        bottomNavigationBar: BottomAppBar(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              DropdownButton(
-                hint: Text('Branch'),
-                items: List.generate(depts.length, (index) {
-                  return DropdownMenuItem<String>(
-                    child: Text(branches[index]),
-                    value: branchKeys[index],
-                  );
-                }),
-                onChanged: (t) {
-                  setState(() {
-                    selectedBranch = t;
-                    if (t == "AT") {
-                      totalSems = 10;
-                    } else {
-                      totalSems = 8;
-                    }
-                  });
-                  if (selectedSem != null)
-                    fetchCourseFunct = fetchCourse(selectedBranch, selectedSem);
-                },
-                value: selectedBranch,
-              ),
-              DropdownButton(
-                hint: Text('Sem'),
-                items: List.generate(totalSems, (index) {
-                  return DropdownMenuItem<String>(
-                    child: Text(semValues[index]),
-                    value: semKeys[index],
-                  );
-                }),
-                onChanged: (t) {
-                  setState(() {
-                    selectedSem = t;
-                  });
-                  if (selectedBranch != null)
-                    fetchCourseFunct = fetchCourse(selectedBranch, selectedSem);
-                },
-                value: selectedSem,
-              )
-            ],
-          ),
-        ),
-        appBar: AppBar(
-          title: Text('Add Course'),
-        ),
-        body: FutureBuilder<List<CourseGroup>>(
-          key: futureKey,
-          future: fetchCourseFunct,
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return Center(child: Text('Please select Branch and Sem'));
-                break;
-              case ConnectionState.waiting:
-                return Center(child: CircularProgressIndicator());
-                break;
-              case ConnectionState.active:
-                break;
-              case ConnectionState.done:
-                break;
-            }
-            if (snapshot.hasData && snapshot.data.isNotEmpty) {
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: List.generate(snapshot.data.length, (index) {
-                    return getCourseCatCard(snapshot.data[index], context);
-                  }),
-                ),
-              );
-            } else if (snapshot.hasData && snapshot.data.isEmpty) {
-              return Center(child: Text('Not Available'));
-            } else if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
-            } else {
+      appBar: AppBar(
+        title: Text('Add Course'),
+      ),
+      body: FutureBuilder<List<CourseGroup>>(
+        key: futureKey,
+        future: fetchCourseFunct,
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Center(child: Text('Please select Branch and Sem'));
+              break;
+            case ConnectionState.waiting:
               return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
+              break;
+            case ConnectionState.active:
+              break;
+            case ConnectionState.done:
+              break;
+          }
+          if (snapshot.hasData && snapshot.data.isNotEmpty) {
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: List.generate(snapshot.data.length, (index) {
+                  return getCourseCatCard(snapshot.data[index], context);
+                }),
+              ),
+            );
+          } else if (snapshot.hasData && snapshot.data.isEmpty) {
+            return Center(child: Text('Not Available'));
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
@@ -173,7 +137,7 @@ class AddCourseState extends State<AddCourse> {
       return branchSemCourseGrpMap[dept + sem];
     var lessThanSem;
     try {
-      lessThanSem = semKeys[semKeys.indexOf(sem) + 1];
+      lessThanSem = semesters[semesters.indexOf(sem) + 1];
     } on RangeError {
       lessThanSem = "Z";
     }
@@ -198,15 +162,14 @@ class AddCourseState extends State<AddCourse> {
       }
 
       final course = Course(
-        courseName: courseDocument.data["courseName"],
-        courseCode: courseDocument.documentID,
-        l: courseDocument.data["l"],
-        t: courseDocument.data["t"],
-        p: courseDocument.data["p"],
-        s: courseDocument.data["s"],
-        version: courseDocument.data["version"],
-        isInMyCourses: localCourses.contains(courseDocument.documentID)
-      );
+          courseName: courseDocument.data["courseName"],
+          courseCode: courseDocument.documentID,
+          l: courseDocument.data["l"],
+          t: courseDocument.data["t"],
+          p: courseDocument.data["p"],
+          s: courseDocument.data["s"],
+          version: courseDocument.data["version"],
+          isInMyCourses: localCourses.contains(courseDocument.documentID));
       var courseGrp = courseGrpMap[courseCat] ??
           CourseGroup(courseGroup: courseCat, courses: []);
       courseGrp.courses.add(course);
@@ -241,7 +204,9 @@ class AddCourseState extends State<AddCourse> {
       ),
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return SyllabusView();
+          return CourseContentView(
+            course: course,
+          );
         }));
       },
       trailing: AnimatedCrossFade(
@@ -249,6 +214,10 @@ class AddCourseState extends State<AddCourse> {
             icon: Icon(Icons.add_circle_outline),
             onPressed: () {
               widget.courseProviderSqf.insertCourse(course);
+              CourseContentViewState.fetchCourseContent(
+                  courseCode: course.courseCode,
+                  version: course.version,
+                  isFetchFromOnline: false);
               setState(() {
                 course.isInMyCourses = true;
               });

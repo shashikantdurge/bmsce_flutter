@@ -195,7 +195,9 @@ class PortionEditEnvState extends State<PortionEditEnv>
                 );
               })),
         ),
-        Padding(
+        ButtonTheme(
+          minWidth: 88.0,
+          child: Padding(
           padding: EdgeInsets.only(bottom: 12.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -238,6 +240,7 @@ class PortionEditEnvState extends State<PortionEditEnv>
                 },
               ),
             ],
+          ),
           ),
         )
       ],

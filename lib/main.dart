@@ -1,30 +1,15 @@
+import 'package:bmsce/authentication/sign_in.dart';
+import 'package:bmsce/authentication/sign_in_anim.dart';
 import 'package:bmsce/home_tabs/syllabus_tabs.dart' as syllabus;
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'Chat/Dummy.dart' as chat;
 import 'Map/Dummy.dart' as map;
 import 'TimeTable/Dummy.dart' as tt;
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
-  final app = await FirebaseApp.configure(
-    name: 'test',
-    options: const FirebaseOptions(
-      googleAppID: '1:131447312475:android:c4c1a65536326ae6',
-      gcmSenderID: '131447312475',
-      apiKey: 'AIzaSyCmjqBV_OzUO8wQ01mSC8BSYLcP8v4jV4s',
-      projectID: 'bmsce-flutter',
-    ),
-  );
-  final Firestore firestore = Firestore(app: app);
-  runApp(MyApp(
-    firestore: firestore,
-  ));
-}
-
-class MyApp extends StatelessWidget {
-  static final mainTheme = ThemeData(
+  final mainTheme = ThemeData(
     primarySwatch: const MaterialColor(
       0xFFF44336,
       const <int, Color>{
@@ -40,26 +25,34 @@ class MyApp extends StatelessWidget {
         900: const Color(0xFFB71C1C),
       },
     ),
+    inputDecorationTheme:
+        InputDecorationTheme(contentPadding: EdgeInsets.all(12.0)),
+    buttonColor: const Color(0xFFE53935),
     primaryColor: Colors.red[500],
   );
-  final Firestore firestore;
-  MyApp({this.firestore}) : assert(firestore != null);
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
+
+   dynamic entryPage;
+   FirebaseUser user = await FirebaseAuth.instance.currentUser();
+   if (user != null)
+     {entryPage = HomePage(user);print('${user.uid}');}
+   else
+     entryPage = Login();
+
+
+  runApp(MaterialApp(
       title: 'BMSCE',
       theme: mainTheme,
-      home: MyBottomNavBar(),
-    );
-  }
+    home:entryPage,
+  ));
 }
 
-class MyBottomNavBar extends StatefulWidget {
-  MyBottomNavBar();
-  MyBottomNavBarState createState() => MyBottomNavBarState();
+class HomePage extends StatefulWidget {
+  final FirebaseUser user;
+  HomePage(this.user) : assert(user != null);
+  HomePageState createState() => HomePageState();
 }
 
-class MyBottomNavBarState extends State<MyBottomNavBar>
+class HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int currentIndex = 0;
   dynamic currentHomeTab;

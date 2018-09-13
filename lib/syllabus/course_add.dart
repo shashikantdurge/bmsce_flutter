@@ -42,6 +42,9 @@ class AddCourseState extends State<AddCourse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Courses'),
+      ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -88,9 +91,6 @@ class AddCourseState extends State<AddCourse> {
           ],
         ),
       ),
-      appBar: AppBar(
-        title: Text('Add Course'),
-      ),
       body: FutureBuilder<List<CourseGroup>>(
         key: futureKey,
         future: fetchCourseFunct,
@@ -130,6 +130,14 @@ class AddCourseState extends State<AddCourse> {
 
   final futureKey = ValueKey("futureBuilder");
 
+  // Future<bool> manageCourses({@required String branch,@required String sem,@required bool isAdd})async {
+  //   final dialog = Dialog
+
+  //   if(isAdd){
+
+  //   }
+  // }
+
   Future<List<CourseGroup>> fetchCourse(String dept, String sem) async {
     assert(dept != null);
     assert(sem != null);
@@ -157,7 +165,7 @@ class AddCourseState extends State<AddCourse> {
           break;
         default:
           courseCat = CourseGroup.getCourseGroup(
-              courseDocument.data["registeredDepts"][dept].toString());
+              courseDocument.data["registeredDepts"][dept].toString().replaceRange(0, 1, ""));
           break;
       }
 
@@ -168,7 +176,7 @@ class AddCourseState extends State<AddCourse> {
           t: courseDocument.data["t"],
           p: courseDocument.data["p"],
           s: courseDocument.data["s"],
-          version: courseDocument.data["version"],
+          version: courseDocument.data["lastModifiedOn"].millisecondsSinceEpoch,
           isInMyCourses: localCourses.contains(courseDocument.documentID));
       var courseGrp = courseGrpMap[courseCat] ??
           CourseGroup(courseGroup: courseCat, courses: []);

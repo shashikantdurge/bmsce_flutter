@@ -15,7 +15,8 @@
         {
             "name": "Flutter",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "showMemoryUsage": true
         }
     ]
 }

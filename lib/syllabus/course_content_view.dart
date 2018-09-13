@@ -149,7 +149,7 @@ class CourseContentViewState extends State<CourseContentView> {
                           ],
                         ),
                         Text(
-                            'Last Modified ${DateTime.fromMillisecondsSinceEpoch(course.version*1000).toString().substring(0,10)}')
+                            'Updated on ${DateTime.fromMillisecondsSinceEpoch(course.version).toString().substring(0,10)}')
                       ],
                     ),
                   );

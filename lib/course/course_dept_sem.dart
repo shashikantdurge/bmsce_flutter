@@ -1,6 +1,7 @@
 import 'dart:collection' as coll;
 
 import 'package:bmsce/course/course.dart';
+import 'package:tuple/tuple.dart';
 
 class CourseGroup {
   String coursesType, courseOfferedFor, courseGroup;
@@ -52,6 +53,11 @@ final depts = coll.SplayTreeMap.from(<String, String>{
   "IS": "Information Science",
   "AT": "Architecture"
 });
+final departments = [
+  Tuple2("AT", "Architecture"),
+  Tuple2("CS", "Computer Science"),
+  Tuple2("IS", "Information Science"),
+];
 
 final semesters = coll.SplayTreeMap.from(<String, String>{
   "1": "1",

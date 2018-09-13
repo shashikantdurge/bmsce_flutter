@@ -143,8 +143,8 @@ class _RenderRadio extends RenderToggleable {
           activeColor: activeColor,
           inactiveColor: inactiveColor,
           onChanged: onChanged,
-          size:
-              const Size(2 * kRadialReactionRadius, 2 * kRadialReactionRadius),
+          additionalConstraints: BoxConstraints.tight(const Size(
+              1.4 * kRadialReactionRadius, 1.4 * kRadialReactionRadius)),
           vsync: vsync,
         );
 

@@ -1,12 +1,13 @@
+//This is about adding/deleting a course from a DEPT_SEM course lists. It's planned to make in th web app with app script
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ManageCourse extends StatefulWidget {
   final bool isAdd;
   final String branch;
-  
 
-  const ManageCourse({Key key, @required this.isAdd}) : super(key: key);
+  const ManageCourse({Key key, @required this.isAdd, this.branch})
+      : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return ManageCourseState();
@@ -38,7 +39,7 @@ class ManageCourseState extends State<ManageCourse> {
             validator: (courseCode) {
               if (courseCode.trim().length == 10) {
                 getCourseName(courseCode);
-              }else{
+              } else {
                 wait = "Please wait...";
               }
               return courseCode.trim().length != 10

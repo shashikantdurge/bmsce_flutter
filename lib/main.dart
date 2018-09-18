@@ -1,4 +1,3 @@
-import 'package:bmsce/authentication/sign_in.dart';
 import 'package:bmsce/authentication/sign_in_anim.dart';
 import 'package:bmsce/home_tabs/syllabus_tabs.dart' as syllabus;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,18 +30,18 @@ void main() async {
     primaryColor: Colors.red[500],
   );
 
-   dynamic entryPage;
-   FirebaseUser user = await FirebaseAuth.instance.currentUser();
-   if (user != null)
-     {entryPage = HomePage(user);print('${user.uid}');}
-   else
-     entryPage = Login();
-
+  dynamic entryPage;
+  FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  if (user != null) {
+    entryPage = HomePage(user);
+    print('${user.uid}');
+  } else
+    entryPage = Login();
 
   runApp(MaterialApp(
-      title: 'BMSCE',
-      theme: mainTheme,
-    home:entryPage,
+    title: 'BMSCE',
+    theme: mainTheme,
+    home: entryPage,
   ));
 }
 
@@ -75,8 +74,8 @@ class HomePageState extends State<HomePage>
         ),
         Theme(
           data: Theme.of(context).copyWith(
-                canvasColor: Colors.red[400],
-              ),
+            canvasColor: Colors.red[400],
+          ),
           child: BottomNavigationBar(
               onTap: (botNavBarIndex) {
                 setState(() {

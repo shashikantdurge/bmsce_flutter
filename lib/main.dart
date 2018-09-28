@@ -1,10 +1,10 @@
-import 'package:bmsce/authentication/sign_in_anim.dart';
+import 'package:bmsce/authentication/sign_in.dart';
 import 'package:bmsce/home_tabs/syllabus_tabs.dart' as syllabus;
+import 'package:bmsce/map/college_map.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'Chat/Dummy.dart' as chat;
-import 'Map/Dummy.dart' as map;
 import 'TimeTable/Dummy.dart' as tt;
 
 void main() async {
@@ -53,13 +53,13 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  int currentIndex = 0;
+  int currentIndex = 2;
   dynamic currentHomeTab;
 
   @override
   void initState() {
     super.initState();
-    currentHomeTab = syllabus.SyllabusTabs();
+    currentHomeTab = CollegeMap();
   }
 
   @override
@@ -88,7 +88,7 @@ class HomePageState extends State<HomePage>
                       currentHomeTab = tt.DummyTabs();
                       break;
                     case 2:
-                      currentHomeTab = map.DummyTabs();
+                      currentHomeTab = CollegeMap();
                       break;
                     case 3:
                       currentHomeTab = chat.DummyTabs();

@@ -70,10 +70,10 @@ class SignUpState extends State<SignUp> {
                 child: DropdownButton(
                   hint: Text('Select Department'),
                   value: deptValue,
-                  items: List.generate(departments.length, (index) {
+                  items: List.generate(Departments.length, (index) {
                     return DropdownMenuItem(
-                      child: Text(departments[index].item2),
-                      value: departments[index].item2,
+                      child: Text(Departments[index].item2),
+                      value: Departments[index].item2,
                     );
                   }),
                   onChanged: (value) {

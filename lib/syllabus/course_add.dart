@@ -31,8 +31,6 @@ class AddCourseState extends State<AddCourse> {
   String selectedBranch;
   String selectedSem;
   String semOrCycle;
-  List<dynamic> branchValues = depts.values.toList();
-  List<dynamic> branchKeys = depts.keys.toList();
   List<dynamic> semesters = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "X"];
   int totalSems = 8;
   final branchSemListQ = ListQueue<String>();
@@ -46,15 +44,21 @@ class AddCourseState extends State<AddCourse> {
         title: Text('Courses'),
       ),
       bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        clipBehavior: Clip.hardEdge,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             DropdownButton(
               hint: Text('Branch'),
-              items: List.generate(depts.length, (index) {
+              items: List.generate(
+                  Departments.where((dept) {
+                    return dept.item3;
+                  }).length, (index) {
                 return DropdownMenuItem<String>(
-                  child: Text(branchValues[index]),
-                  value: branchKeys[index],
+                  child: Text(Departments[index].item2),
+                  value: Departments[index].item1,
                 );
               }),
               onChanged: (t) {
@@ -87,6 +91,10 @@ class AddCourseState extends State<AddCourse> {
                   fetchCourseFunct = fetchCourse(selectedBranch, selectedSem);
               },
               value: selectedSem,
+            ),
+            Container(
+              height: 5.0,
+              color: Theme.of(context).primaryColorLight,
             )
           ],
         ),
@@ -130,14 +138,6 @@ class AddCourseState extends State<AddCourse> {
 
   final futureKey = ValueKey("futureBuilder");
 
-  // Future<bool> manageCourses({@required String branch,@required String sem,@required bool isAdd})async {
-  //   final dialog = Dialog
-
-  //   if(isAdd){
-
-  //   }
-  // }
-
   Future<List<CourseGroup>> fetchCourse(String dept, String sem) async {
     assert(dept != null);
     assert(sem != null);
@@ -164,8 +164,10 @@ class AddCourseState extends State<AddCourse> {
               courseDocument.documentID.toString().substring(5, 7));
           break;
         default:
-          courseCat = CourseGroup.getCourseGroup(
-              courseDocument.data["registeredDepts"][dept].toString().replaceRange(0, 1, ""));
+          courseCat = CourseGroup.getCourseGroup(courseDocument
+              .data["registeredDepts"][dept]
+              .toString()
+              .replaceRange(0, 1, ""));
           break;
       }
 

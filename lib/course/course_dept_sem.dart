@@ -1,5 +1,3 @@
-import 'dart:collection' as coll;
-
 import 'package:bmsce/course/course.dart';
 import 'package:tuple/tuple.dart';
 
@@ -48,26 +46,24 @@ class CourseGroup {
   }
 }
 
-final depts = coll.SplayTreeMap.from(<String, String>{
-  "CS": "Computer Science",
-  "IS": "Information Science",
-  "AT": "Architecture"
-});
-final departments = [
-  Tuple2("AT", "Architecture"),
-  Tuple2("CS", "Computer Science"),
-  Tuple2("IS", "Information Science"),
+//IMPORTANT NOTE: true comes FIRST, false comes LAST. 3rd item indicates if it is a Branch
+const Departments = [
+  Tuple3("AT", "Architecture", true),
+  Tuple3("BT", "Bio-Technology", true),
+  Tuple3("CE", "Civil Engineering", true),
+  Tuple3("CH", "Chemical Engineering", true),
+  Tuple3("MCA", "Computer Applications", true),
+  Tuple3("CS", "Computer Science & Engg", true),
+  Tuple3("EC", "Electronics & Communication Engg", true),
+  Tuple3("EE", "Electrical & Electronics Engg", true),
+  Tuple3("IS", "Information Science & Engg", true),
+  Tuple3("IE", "Industrial Engineering and Management", true),
+  Tuple3("MA", "Mathematics", false),
+  Tuple3("MBA", "Management studies and Research Center", true),
+  Tuple3("ME", "Mechanical Engineering", true),
+  Tuple3("ML", "Medical Electronics", true),
+  Tuple3("TE", "Telecommunication Engineering", true),
+  Tuple3("PY", "Physics", false),
+  Tuple3("CY", "Chemistry", false),
+  Tuple3("ZZ", "Other", false),
 ];
-
-final semesters = coll.SplayTreeMap.from(<String, String>{
-  "1": "1",
-  "2": "2",
-  "3": "3",
-  "4": "4",
-  "5": "5",
-  "6": "6",
-  "7": "7",
-  "8": "8",
-  "9": "9",
-  "X": "X",
-});

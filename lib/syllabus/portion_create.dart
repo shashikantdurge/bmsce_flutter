@@ -198,49 +198,49 @@ class PortionEditEnvState extends State<PortionEditEnv>
         ButtonTheme(
           minWidth: 88.0,
           child: Padding(
-          padding: EdgeInsets.only(bottom: 12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              OutlineButton(
-                onPressed: isStackEmpty
-                    ? null
-                    : () {
-                        undo();
-                      },
-                child: Icon(Icons.undo),
-              ),
-              Listener(
-                onPointerDown: (down) async {
-                  print('down listener');
-                  if (highlightIndex == null) return;
-                  isLongPressed = true;
-                  while (isLongPressed &&
-                      highlightIndex < UnitContent.totalWordsCount) {
-                    await Future.delayed(
-                        Duration(milliseconds: 222), forwardSelection());
-                  }
-                },
-                onPointerUp: (up) {
-                  print('Up listener');
-                  isLongPressed = false;
-                },
-                child: OutlineButton(
-                  onPressed: highlightIndex == null ? null : () {},
-                  child: Icon(
-                    Icons.chevron_right,
+            padding: EdgeInsets.only(bottom: 12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                OutlineButton(
+                  onPressed: isStackEmpty
+                      ? null
+                      : () {
+                          undo();
+                        },
+                  child: Icon(Icons.undo),
+                ),
+                Listener(
+                  onPointerDown: (down) async {
+                    print('down listener');
+                    if (highlightIndex == null) return;
+                    isLongPressed = true;
+                    while (isLongPressed &&
+                        highlightIndex < UnitContent.totalWordsCount) {
+                      await Future.delayed(
+                          Duration(milliseconds: 222), forwardSelection());
+                    }
+                  },
+                  onPointerUp: (up) {
+                    print('Up listener');
+                    isLongPressed = false;
+                  },
+                  child: OutlineButton(
+                    onPressed: highlightIndex == null ? null : () {},
+                    child: Icon(
+                      Icons.chevron_right,
+                    ),
                   ),
                 ),
-              ),
-              FlatButton(
-                child: Text('RESET'),
-                onPressed: () {
-                  reset();
-                },
-              ),
-            ],
-          ),
+                FlatButton(
+                  child: Text('RESET'),
+                  onPressed: () {
+                    reset();
+                  },
+                ),
+              ],
+            ),
           ),
         )
       ],

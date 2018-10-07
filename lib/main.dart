@@ -1,11 +1,9 @@
 import 'package:bmsce/authentication/sign_in.dart';
 import 'package:bmsce/home_tabs/syllabus_tabs.dart' as syllabus;
 import 'package:bmsce/map/college_map.dart';
+import 'package:bmsce/user_profile/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'Chat/Dummy.dart' as chat;
-import 'TimeTable/Dummy.dart' as tt;
 
 void main() async {
   final mainTheme = ThemeData(
@@ -34,7 +32,7 @@ void main() async {
   FirebaseUser user = await FirebaseAuth.instance.currentUser();
   if (user != null) {
     entryPage = HomePage(user);
-    print('${user.uid}');
+    print('${user.email}');
   } else
     entryPage = Login();
 
@@ -53,8 +51,9 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  int currentIndex = 2;
+  int currentIndex = 1;
   dynamic currentHomeTab;
+  // final FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
 
   @override
   void initState() {
@@ -74,8 +73,8 @@ class HomePageState extends State<HomePage>
         ),
         Theme(
           data: Theme.of(context).copyWith(
-            canvasColor: Colors.red[400],
-          ),
+              //canvasColor: Colors.red[400],
+              ),
           child: BottomNavigationBar(
               onTap: (botNavBarIndex) {
                 setState(() {
@@ -85,13 +84,12 @@ class HomePageState extends State<HomePage>
                       currentHomeTab = syllabus.SyllabusTabs();
                       break;
                     case 1:
-                      currentHomeTab = tt.DummyTabs();
-                      break;
-                    case 2:
                       currentHomeTab = CollegeMap();
                       break;
-                    case 3:
-                      currentHomeTab = chat.DummyTabs();
+                    case 2:
+                      currentHomeTab = UserProfile(
+                        firebaseUser: widget.user,
+                      );
                       break;
                   }
                 });
@@ -101,11 +99,9 @@ class HomePageState extends State<HomePage>
                 BottomNavigationBarItem(
                     icon: Icon(Icons.book), title: Text('syllabus')),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.access_time), title: Text('time table')),
-                BottomNavigationBarItem(
                     icon: Icon(Icons.map), title: Text('map')),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.chat), title: Text('chat')),
+                    icon: Icon(Icons.account_circle), title: Text('user')),
               ]),
         )
       ],

@@ -32,6 +32,8 @@ const Map<Block, List<String>> BlockFloors = {
   Block.NB: ["7", "6", "5", "4", "3", "2", "1", "G", "UB", "LB"],
 };
 
+//CS_D_1_D_33X0402_D_25Y5597 (example)
+
 const Map<String, String> FloorNameMap = {
   "7": "7th Floor",
   "6": "6th Floor",

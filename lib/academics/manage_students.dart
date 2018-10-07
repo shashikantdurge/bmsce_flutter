@@ -124,7 +124,7 @@ class ManageStudentsState extends State<ManageStudents> {
                 icon: Icon(Icons.add),
                 onPressed: () {
                   setState(() {
-                    usnControllers.add(TextEditingController());
+                    usnControllers.add(TextEditingController(text: '1BM'));
                   });
                 },
               ),
@@ -177,6 +177,7 @@ class UsnTextFieldState extends State<UsnTextField> {
           controller: widget.controller,
           textCapitalization: TextCapitalization.characters,
           decoration: InputDecoration(
+            // prefixText: '1BM',
             labelText: 'USN',
             enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black12)),

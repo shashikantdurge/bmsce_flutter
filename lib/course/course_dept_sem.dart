@@ -57,13 +57,18 @@ const Departments = [
   Tuple3("EC", "Electronics & Communication Engg", true),
   Tuple3("EE", "Electrical & Electronics Engg", true),
   Tuple3("IS", "Information Science & Engg", true),
-  Tuple3("IE", "Industrial Engineering and Management", true),
-  Tuple3("MA", "Mathematics", false),
-  Tuple3("MBA", "Management studies and Research Center", true),
+  Tuple3("IE", "Industrial Engg & Management", true),
+  Tuple3("MBA", "Management studies & Research Center", true),
   Tuple3("ME", "Mechanical Engineering", true),
   Tuple3("ML", "Medical Electronics", true),
   Tuple3("TE", "Telecommunication Engineering", true),
   Tuple3("PY", "Physics", false),
   Tuple3("CY", "Chemistry", false),
+  Tuple3("MA", "Mathematics", false),
+  Tuple3("ADMIN", "Administration", false),
   Tuple3("ZZ", "Other", false),
 ];
+
+Tuple3 deptNameFromPrefix(String deptId) => Departments.firstWhere((tuple) {
+      return tuple.item1 == deptId;
+    });

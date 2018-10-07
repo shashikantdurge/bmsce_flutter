@@ -14,8 +14,17 @@
     <list default="true" id="041bd96c-1dc8-49a3-95fe-d939a024809d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/authentication/sign_in.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/authentication/sign_in.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/map/add_missing_place.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/map/add_missing_place.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/map/block_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/map/block_widget.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/map/building_constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/map/building_constants.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/map/college_map.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/map/college_map.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/map/location.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/map/location.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/map/place_cat.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/map/place_cat.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,7 +37,7 @@
     <session id="1786880715">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="26" />
+          <entry key="project.closed" value="27" />
           <entry key="project.open.time.103" value="1" />
           <entry key="project.open.time.115" value="1" />
           <entry key="project.open.time.14" value="1" />
@@ -48,16 +57,17 @@
           <entry key="project.open.time.48" value="1" />
           <entry key="project.open.time.49" value="2" />
           <entry key="project.open.time.51" value="1" />
+          <entry key="project.open.time.54" value="1" />
           <entry key="project.open.time.61" value="1" />
           <entry key="project.open.time.7" value="1" />
           <entry key="project.open.time.77" value="1" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="28" />
+          <entry key="project.opened" value="29" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="dart" value="193" />
+          <entry key="dart" value="195" />
           <entry key="firebaserc" value="1" />
           <entry key="gradle" value="8" />
           <entry key="iml" value="2" />
@@ -77,7 +87,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Dart" value="193" />
+          <entry key="Dart" value="195" />
           <entry key="Groovy" value="8" />
           <entry key="IDEA_MODULE" value="2" />
           <entry key="JAVA" value="3" />
@@ -93,7 +103,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="dart" value="20342" />
+          <entry key="dart" value="20375" />
           <entry key="gradle" value="5" />
           <entry key="js" value="5" />
           <entry key="json" value="4" />
@@ -106,7 +116,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Dart" value="20342" />
+          <entry key="Dart" value="20375" />
           <entry key="Groovy" value="5" />
           <entry key="JSON" value="4" />
           <entry key="JavaScript" value="5" />
@@ -124,9 +134,9 @@
         <entry file="file://$PROJECT_DIR$/pubspec.yaml">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="420">
-              <caret line="21" column="17" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
+              <caret line="25" column="17" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
               <folding>
-                <marker date="1534869012250" expanded="true" signature="102:146" ph="dependencies: &lt;3 keys&gt;" />
+                <marker date="1538397136213" expanded="true" signature="102:146" ph="dependencies: &lt;3 keys&gt;" />
               </folding>
             </state>
           </provider>
@@ -135,19 +145,42 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/main.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
+            <state relative-caret-position="640">
               <caret line="32" selection-start-line="32" selection-end-line="32" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/syllabus/portion_create.dart">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="183">
-              <caret line="188" column="37" lean-forward="true" selection-start-line="188" selection-start-column="37" selection-end-line="188" selection-end-column="37" />
+              <caret line="188" column="37" selection-start-line="188" selection-start-column="37" selection-end-line="188" selection-end-column="37" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/map/college_map_widget.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2040">
+              <folding>
+                <element signature="e#0#45#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lib/map/search_result.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="466">
+              <caret line="160" column="87" selection-start-line="160" selection-start-column="87" selection-end-line="160" selection-end-column="87" />
+              <folding>
+                <element signature="e#0#17#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -278,6 +311,7 @@
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/pubspec.yaml" />
         <option value="$PROJECT_DIR$/lib/syllabus/portion_create.dart" />
+        <option value="$PROJECT_DIR$/lib/map/search_result.dart" />
       </list>
     </option>
   </component>
@@ -342,16 +376,25 @@
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator currentView="AndroidView" proportions="" version="1">
+    <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane">
-        <subPane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
             <path>
-              <item name="bmsce" type="58d84e3e:PackageViewProjectNode" />
-              <item name="bmsce_android" type="616d4139:PackageViewModuleNode" />
+              <item name="bmsce" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="bmsce" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+            </path>
+            <path>
+              <item name="bmsce" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="bmsce_android" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+            </path>
+            <path>
+              <item name="bmsce" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="bmsce_android" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -373,7 +416,7 @@
               <item name="bmsce" type="b2602c69:ProjectViewProjectNode" />
               <item name="bmsce" type="462c0819:PsiDirectoryNode" />
               <item name="lib" type="462c0819:PsiDirectoryNode" />
-              <item name="syllabus" type="462c0819:PsiDirectoryNode" />
+              <item name="map" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -395,21 +438,12 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+      <pane id="PackagesPane">
+        <subPane>
           <expand>
             <path>
-              <item name="bmsce" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="bmsce" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-            </path>
-            <path>
-              <item name="bmsce" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="bmsce_android" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-            </path>
-            <path>
-              <item name="bmsce" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="bmsce_android" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="bmsce" type="58d84e3e:PackageViewProjectNode" />
+              <item name="bmsce_android" type="616d4139:PackageViewModuleNode" />
             </path>
           </expand>
           <select />
@@ -597,9 +631,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1590604" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1590604" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Captures" order="2" weight="0.25" />
       <window_info id="Build Variants" order="3" side_tool="true" />
@@ -624,7 +657,6 @@
       <window_info anchor="bottom" id="Dart Analysis" order="13" />
       <window_info anchor="bottom" id="Android Profiler" order="14" show_stripe_button="false" />
       <window_info anchor="bottom" id="Logcat" order="15" />
-      <window_info active="true" anchor="right" id="SQLite Explorer" visible="true" weight="0.3295302" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.24973147" />
@@ -642,6 +674,7 @@
       <window_info anchor="right" id="PlantUML" order="14" />
       <window_info anchor="right" id="Palette" order="15" />
       <window_info anchor="right" id="Maven Projects" order="16" />
+      <window_info active="true" anchor="right" id="SQLite Explorer" order="17" visible="true" weight="0.3295302" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -954,16 +987,16 @@
     <entry file="file://$PROJECT_DIR$/pubspec.yaml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
-          <caret line="21" column="17" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
+          <caret line="25" column="17" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
           <folding>
-            <marker date="1534869012250" expanded="true" signature="102:146" ph="dependencies: &lt;3 keys&gt;" />
+            <marker date="1538397136213" expanded="true" signature="102:146" ph="dependencies: &lt;3 keys&gt;" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/main.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
+        <state relative-caret-position="640">
           <caret line="32" selection-start-line="32" selection-end-line="32" />
         </state>
       </provider>
@@ -978,9 +1011,28 @@
     <entry file="file://$PROJECT_DIR$/lib/syllabus/portion_create.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="183">
-          <caret line="188" column="37" lean-forward="true" selection-start-line="188" selection-start-column="37" selection-end-line="188" selection-end-column="37" />
+          <caret line="188" column="37" selection-start-line="188" selection-start-column="37" selection-end-line="188" selection-end-column="37" />
           <folding>
             <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/map/college_map_widget.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2040">
+          <folding>
+            <element signature="e#0#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/map/search_result.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="466">
+          <caret line="160" column="87" selection-start-line="160" selection-start-column="87" selection-end-line="160" selection-end-column="87" />
+          <folding>
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>

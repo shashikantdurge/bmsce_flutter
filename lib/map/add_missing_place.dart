@@ -74,7 +74,9 @@ class AddPlaceState extends State<AddPlace> {
                     Navigator.of(context)
                         .push<Tuple3<Uint8List, String, Block>>(
                             MaterialPageRoute(builder: (context) {
-                      return LocationMarker();
+                      return LocationMarker(
+                        initLocationId: selectedLocationID,
+                      );
                     })).then((onValue) async {
                       print(onValue);
                       if (onValue != null) {
@@ -491,7 +493,7 @@ class AddPlaceState extends State<AddPlace> {
             addedBy: user?.email,
             dept: selectedDepartment == "Other" ? null : selectedDepartment,
             location: selectedLocationID,
-            searchName: nameController.text.trim());
+            name: nameController.text.trim());
         mapObj = place.toMap();
         break;
     }
@@ -504,23 +506,24 @@ class AddPlaceState extends State<AddPlace> {
             },
             barrierDismissible: false)
         .then((onValue) {
-      if (onValue == true)
-        setState(() {
-          blockName = null;
-          selectedDesignation = null;
-          selectedLocationID = null;
-          selectedLocationHR = null;
-
-          capacityController.clear();
-          nameController.clear();
-
-          detailsLinkController.clear();
-          emailIdController.clear();
-          labNameController.clear();
-          roomNumberController.clear();
-          profilePicLinkController.clear();
-        });
+      if (onValue == true) reset();
     }).catchError((onError) {});
+  }
+
+  reset() {
+    setState(() {
+      blockName = null;
+      selectedDesignation = null;
+
+      capacityController.clear();
+      nameController.clear();
+
+      detailsLinkController.clear();
+      emailIdController.clear();
+      labNameController.clear();
+      roomNumberController.clear();
+      profilePicLinkController.clear();
+    });
   }
 
   _buildMaterialSearchPage(BuildContext context) {
@@ -578,9 +581,13 @@ class DepartmentSelectorState extends State<DropDownSelector> {
     return DropdownButton(
       hint: Text(widget.hint),
       value: selectedDept,
+      isDense: true,
       items: List.generate(widget.values.length, (index) {
         return DropdownMenuItem<String>(
-          child: Text(widget.values[index]),
+          child: Text(
+            widget.values[index],
+            overflow: TextOverflow.ellipsis,
+          ),
           value: widget.values[index],
         );
       }),
@@ -647,8 +654,8 @@ class PublishDialogState extends State<PublishDialog> {
         .collection("college_map")
         .where("name", isEqualTo: widget.placeMapObj["name"])
         .getDocuments()
-        .then((onValue) {
-      if (onValue.documents.isEmpty) {
+        .then((placesSnap) {
+      if (placesSnap.documents.isEmpty) {
         addData();
       } else {
         setState(() {
@@ -656,11 +663,15 @@ class PublishDialogState extends State<PublishDialog> {
           errorText = "";
           isUploading = false;
           title = "Were you trying to add any of these?";
-          similarPlaces = List.generate(onValue.documents.length, (index) {
+          similarPlaces = List.generate(placesSnap.documents.length, (index) {
+            final locHR = LocationMarker.getBlockFloorFrmLocationId(
+                placesSnap.documents[index]['location']);
             return ListTile(
-              title: Text(onValue.documents[index]["searchName"]),
+              title: Text(placesSnap.documents[index]["searchName"]),
+              subtitle: Text(
+                  '${BlockNameMap[locHR.item1]}, ${FloorNameMap[locHR.item2]}'),
               onTap: () {
-                onValue.documents[index].reference
+                placesSnap.documents[index].reference
                     .setData(widget.placeMapObj)
                     .then((onValue) {
                   setState(() {

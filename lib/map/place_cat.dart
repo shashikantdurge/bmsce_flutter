@@ -2,27 +2,32 @@ import 'package:meta/meta.dart';
 
 abstract class Place {
   final String searchName;
+  final String name;
   final String placeCat;
   final String location;
   final String addedBy;
+  final String dept;
+
   Place(
-      {@required this.searchName,
+      {@required this.name,
+      @required this.searchName,
       this.placeCat,
       @required this.location,
-      @required this.addedBy});
+      @required this.addedBy,
+      @required this.dept});
 
   factory Place.fromMap(Map<String, dynamic> mapObj) {
     switch (mapObj["placeCat"]) {
       case "Lab":
         return Lab(
-            name: mapObj["name"],
+            name: mapObj["name"] ?? mapObj['searchName'],
             dept: mapObj["dept"],
             location: mapObj["location"],
             addedBy: mapObj["addedBy"],
             capacity: mapObj["capacity"]);
       case "Faculty Cabin":
         return FacultyCabin(
-            name: mapObj["name"],
+            name: mapObj["name"] ?? mapObj['searchName'],
             designation: mapObj["designation"],
             dept: mapObj["dept"],
             email: mapObj["email"],
@@ -32,7 +37,7 @@ abstract class Place {
             profilePictureLink: mapObj["profilePictureLink"]);
       case "Class Room":
         return ClassRoom(
-          name: mapObj["name"],
+          name: mapObj["name"] ?? mapObj['searchName'],
           blockName: mapObj["blockName"],
           dept: mapObj["dept"],
           capacity: mapObj["capacity"],
@@ -43,29 +48,29 @@ abstract class Place {
       default:
         return Other(
             addedBy: mapObj["addedBy"],
-            searchName: mapObj["searchName"],
+            name: mapObj["name"] ?? mapObj['searchName'] ?? 'Not Found',
             location: mapObj["location"]);
     }
   }
 }
 
 class FacultyCabin extends Place {
-  final String name;
   final String designation;
-  final String dept; //opt
   final String email; //opt
   final String detailsLink; //opt
   final String profilePictureLink; //opt
   FacultyCabin(
-      {@required this.name,
+      {String name,
       this.designation,
-      this.dept,
+      String dept,
       this.email,
       this.detailsLink,
       this.profilePictureLink,
       @required String location,
       @required String addedBy})
       : super(
+            name: name,
+            dept: dept,
             searchName:
                 "$name${designation == null ? "" : ", " + designation}${dept == null ? "" : ", " + dept + " Dept"}",
             placeCat: "Faculty Cabin",
@@ -89,19 +94,19 @@ class FacultyCabin extends Place {
 }
 
 class ClassRoom extends Place {
-  final String name;
-  final String dept; //opt
   final String blockName;
   final int capacity; //opt
 
   ClassRoom(
-      {@required this.name,
+      {String name,
       @required this.blockName,
-      this.dept,
+      String dept,
       this.capacity,
       @required String location,
       @required String addedBy})
       : super(
+            dept: dept,
+            name: name,
             searchName: "$name, $blockName",
             placeCat: "Class Room",
             addedBy: addedBy,
@@ -122,16 +127,16 @@ class ClassRoom extends Place {
 }
 
 class Lab extends Place {
-  final String name;
-  final String dept;
   final int capacity;
   Lab(
-      {@required this.name,
-      @required this.dept,
+      {String name,
+      @required String dept,
       this.capacity,
       @required String location,
       @required String addedBy})
       : super(
+            name: name,
+            dept: dept,
             searchName: "$name, $dept Dept",
             placeCat: "Lab",
             addedBy: addedBy,
@@ -151,15 +156,15 @@ class Lab extends Place {
 }
 
 class Other extends Place {
-  final String dept;
   Other(
-      {@required String searchName,
-      this.dept,
+      {String name,
+      String dept,
       @required String location,
       @required String addedBy})
       : super(
-            searchName:
-                "$searchName${dept == null ? "" : ", " + dept + " Dept"}",
+            name: name,
+            dept: dept,
+            searchName: "$name${dept == null ? "" : ", " + dept + " Dept"}",
             placeCat: "Other",
             addedBy: addedBy,
             location: location);
@@ -167,6 +172,7 @@ class Other extends Place {
   Map<String, dynamic> toMap() {
     return {
       "searchName": this.searchName,
+      "name": this.name,
       "placeCat": this.placeCat,
       "location": this.location,
       "addedBy": this.addedBy

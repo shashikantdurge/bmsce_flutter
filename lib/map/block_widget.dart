@@ -8,6 +8,7 @@ class BlockWidget extends StatefulWidget {
   final Block block;
   final String prefixInId;
   final ValueNotifier<List<String>> notifier;
+  final VoidCallback onMarked;
 
   const BlockWidget(
       {Key key,
@@ -15,16 +16,12 @@ class BlockWidget extends StatefulWidget {
       this.angle,
       this.block,
       this.prefixInId,
-      this.notifier})
+      this.notifier,
+      this.onMarked})
       : super(key: key);
 
-  factory BlockWidget.draw({
-    key,
-    block,
-    zoom = 1.0,
-    notifier,
-    angle = 0.0,
-  }) {
+  factory BlockWidget.draw(
+      {key, block, zoom = 1.0, notifier, angle = 0.0, VoidCallback onMarked}) {
     return BlockWidget(
       angle: angle,
       block: block,
@@ -32,36 +29,39 @@ class BlockWidget extends StatefulWidget {
       notifier: notifier,
       prefixInId: BlockIdPrefixMap[block],
       zoom: zoom,
+      onMarked: onMarked,
     );
   }
   BlockState createState() => BlockState();
 }
 
 class BlockState extends State<BlockWidget> {
-  BlockState();
-
+  List<String> markers = [];
   bool isSomethingMarked = false;
+
   @override
   void initState() {
     super.initState();
     if (widget.notifier != null) {
       widget.notifier.addListener(() {
-        List<String> pgMarkers = [];
+        List<String> newMarkers = [];
         markers.clear();
+
         widget.notifier.value.forEach((point) {
-          if (point.startsWith(widget.prefixInId)) {
-            pgMarkers.add(point);
+          if (point is String) if (point.startsWith(widget.prefixInId)) {
+            newMarkers.add(point);
           }
         });
-        if (pgMarkers.isNotEmpty) {
+        if (newMarkers.isNotEmpty) {
           setState(() {
-            markers = pgMarkers;
+            markers = newMarkers;
           });
           isSomethingMarked = true;
+          if (widget.onMarked != null) widget.onMarked();
         }
-        if (pgMarkers.isEmpty && isSomethingMarked) {
+        if (newMarkers.isEmpty && isSomethingMarked) {
           setState(() {
-            markers = pgMarkers;
+            markers = newMarkers;
           });
           isSomethingMarked = false;
         }
@@ -69,11 +69,6 @@ class BlockState extends State<BlockWidget> {
     }
   }
 
-  List<String> markers = [];
-
-  final ScrollController controller = ScrollController();
-
-  final stateKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     double zoom = widget.zoom;
@@ -85,49 +80,72 @@ class BlockState extends State<BlockWidget> {
         width: BlockAspectRatioMap[widget.block] *
             BlockHeightMap[widget.block] *
             zoom,
-        child:
-            Stack(overflow: Overflow.visible, fit: StackFit.expand, children: [
-          Positioned(
-            left: 0.0,
-            top: 0.0,
-            right: 0.0,
-            bottom: 0.0,
-            child: CustomPaint(
-              painter: BlockPainter(widget.block, zoom),
+        child: Stack(
+          overflow: Overflow.visible,
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              left: 0.0,
+              top: 0.0,
+              right: 0.0,
+              bottom: 0.0,
+              child: CustomPaint(
+                painter: BlockPainter(widget.block, zoom),
+              ),
             ),
-          ),
-          Positioned(
-            left: 0.0,
-            top: 0.0,
-            right: 0.0,
-            bottom: 0.0,
-            child: CustomMultiChildLayout(
-                delegate: BlockDelegate(zoom, markers),
-                children: List.generate(markers.length, (index) {
-                  return LayoutId(
-                    id: markers[index],
-                    child: SizedBox(
-                      height: zoom,
-                      width: zoom,
-                      child: IconButton(
-                        padding: EdgeInsets.all(0.0),
-                        iconSize: 5 * zoom,
-                        onPressed: () {
-                          // showModalBottomSheet(
-                          //     context: context,
-                          //     builder: (context) {
-                          //       Text('markers');
-                          //     });
-                        },
-                        icon: Icon(
-                          Icons.adjust,
+            Positioned(
+              left: 0.0,
+              top: 0.0,
+              right: 0.0,
+              bottom: 0.0,
+              child: CustomMultiChildLayout(
+                  delegate: BlockDelegate(zoom, markers),
+                  children: List.generate(markers.length, (index) {
+                    return LayoutId(
+                      id: markers[index],
+                      child: Transform.rotate(
+                        angle: -angle,
+                        child: SizedBox(
+                          height: zoom,
+                          width: zoom,
+                          child: IconButton(
+                            padding: EdgeInsets.all(0.0),
+                            iconSize: 5 * zoom,
+                            onPressed: () {
+                              // showModalBottomSheet(
+                              //     context: context,
+                              //     builder: (context) {
+                              //       Text('markers');
+                              //     });
+                            },
+                            icon: Icon(
+                              Icons.location_on,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                })),
-          ),
-        ]),
+                    );
+                  })
+                    ..add(LayoutId(
+                      child: Transform.rotate(
+                        angle: -angle,
+                        child: Center(
+                          widthFactor: 2.0,
+                          heightFactor: 2.0,
+                          child: Text(
+                            BlockNameMap[widget.block],
+                            softWrap: false,
+                            overflow: TextOverflow.ellipsis,
+                            style:
+                                TextStyle(fontSize: 13.0, color: Colors.grey),
+                          ),
+                        ),
+                      ),
+                      id: 'blockName',
+                    ))),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -150,11 +168,17 @@ class BlockDelegate extends MultiChildLayoutDelegate {
       double x = double.parse(point.split("_D_")[2].replaceFirst("X", "."));
       double y = double.parse(point.split("_D_")[3].replaceFirst("Y", "."));
       layoutChild(point, new BoxConstraints.tight(Size.zero));
-      final offset =
-          new Offset(x * zoom - (2.5 * zoom), y * zoom - (2.5 * zoom));
+      final offset = new Offset(x * zoom - (2.5 * zoom), y * zoom - (5 * zoom));
       positionChild(point, offset);
       print("ZOOM $zoom , $offset");
     });
+    if (hasChild('blockName')) {
+      layoutChild(
+          'blockName',
+          new BoxConstraints.tightForFinite(
+              width: size.width + zoom * 5, height: size.height));
+      positionChild('blockName', Offset(0.0, 0.0));
+    }
   }
 
   @override

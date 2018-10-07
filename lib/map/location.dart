@@ -8,10 +8,42 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 import 'package:tuple/tuple.dart';
 
+//TODO: Some issue in floor selection
 class LocationMarker extends StatefulWidget {
+  final String initLocationId;
+
+  const LocationMarker({Key key, this.initLocationId}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
-    return LocationMarkerState();
+    Block selectedBlock;
+    String selectedFloor;
+    String rawLocationId;
+
+    if (initLocationId != null) {
+      final blockFloor = getBlockFloorFrmLocationId(initLocationId);
+      selectedBlock = blockFloor.item1;
+      selectedFloor = blockFloor.item2;
+      rawLocationId = initLocationId.replaceFirst(
+          '_D_${selectedFloor}_D_', '_D_somefloor_D_');
+    } else {
+      selectedBlock = Block.CS;
+      selectedFloor = "G";
+    }
+
+    return LocationMarkerState(selectedBlock, selectedFloor, rawLocationId);
+  }
+
+  static Tuple2<Block, String> getBlockFloorFrmLocationId(String locationId) {
+    Block block;
+    String floor;
+    try {
+      final blockPrefix = locationId.split('_D_').first;
+      floor = locationId.split('_D_')[1];
+      block = BlockIdPrefixMap.entries.firstWhere((entry) {
+        return entry.value == blockPrefix;
+      }).key;
+    } catch (err) {}
+    return Tuple2(block, floor);
   }
 }
 
@@ -20,17 +52,19 @@ class LocationMarkerState extends State<LocationMarker> {
   final blocks = BlockNameMap.keys.toList();
   Block selectedBlock;
   String selectedFloor;
-  String placeMarkerId;
+  String rawSelLocationId;
+
   ValueNotifier<double> zoomNotifier;
   final stateKey = GlobalKey<ScaffoldState>();
-
   double zoom;
+  LocationMarkerState(
+      this.selectedBlock, this.selectedFloor, this.rawSelLocationId);
 
   @override
   void initState() {
     super.initState();
-    selectedBlock = meghanablock != null ? meghanablock : Block.CS;
-    zoom = meghanaZoom != null ? meghanaZoom : 5.0;
+
+    zoom = 5.0;
     zoomNotifier = ValueNotifier(zoom);
   }
 
@@ -44,15 +78,14 @@ class LocationMarkerState extends State<LocationMarker> {
           IconButton(
             icon: Icon(Icons.check),
             onPressed: () async {
-              if (placeMarkerId == null) {
+              if (rawSelLocationId == null) {
                 stateKey.currentState.showSnackBar(SnackBar(
                   content: Text('Please Mark the Location'),
                 ));
                 return;
               }
-              meghanablock = selectedBlock;
-              meghanaFloor = selectedFloor;
-              meghanaZoom = zoom;
+              String selectedLocationId =
+                  rawSelLocationId.replaceFirst('somefloor', selectedFloor);
               final boundary = previewContainer.currentContext
                   .findRenderObject() as RenderRepaintBoundary;
               ui.Image image = await boundary.toImage();
@@ -60,7 +93,7 @@ class LocationMarkerState extends State<LocationMarker> {
                   await image.toByteData(format: ui.ImageByteFormat.png);
               Uint8List pngBytes = byteData.buffer.asUint8List();
               Navigator.pop(
-                  context, Tuple3(pngBytes, placeMarkerId, selectedBlock));
+                  context, Tuple3(pngBytes, selectedLocationId, selectedBlock));
             },
           )
         ],
@@ -82,9 +115,9 @@ class LocationMarkerState extends State<LocationMarker> {
                       child: BlockMarker(
                         block: selectedBlock,
                         zoomNotifier: zoomNotifier,
+                        initMarkedValues: [rawSelLocationId],
                         onMarkerChanged: (markerStr) {
-                          placeMarkerId = markerStr.replaceFirst(
-                              "somefloor", selectedFloor);
+                          rawSelLocationId = markerStr;
                         },
                       ),
                     ),
@@ -118,7 +151,7 @@ class LocationMarkerState extends State<LocationMarker> {
                     onPressed: () {
                       if (zoomNotifier.value == 1) return;
                       zoomNotifier.value = zoomNotifier.value - 1;
-                      zoomNotifier.notifyListeners();
+                      // zoomNotifier.notifyListeners();
                     },
                   ),
                   IconButton(
@@ -130,7 +163,7 @@ class LocationMarkerState extends State<LocationMarker> {
                     onPressed: () {
                       if (zoomNotifier.value == 10) return;
                       zoomNotifier.value = zoomNotifier.value + 1;
-                      zoomNotifier.notifyListeners();
+                      // zoomNotifier.notifyListeners();
                     },
                   ),
                 ],
@@ -152,7 +185,7 @@ class LocationMarkerState extends State<LocationMarker> {
                 setState(() {
                   selectedBlock = value;
                 });
-                placeMarkerId = null;
+                rawSelLocationId = null;
               },
             ),
           ),
@@ -161,6 +194,7 @@ class LocationMarkerState extends State<LocationMarker> {
             left: 5.0,
             child: FloorsRadio(
               floorsList: BlockFloors[selectedBlock],
+              initFloor: selectedFloor,
               onFloorChange: (floor) {
                 selectedFloor = floor;
               },
@@ -174,10 +208,14 @@ class LocationMarkerState extends State<LocationMarker> {
 
 class FloorsRadio extends StatefulWidget {
   final List<String> floorsList;
+  final String initFloor;
   final ValueChanged<String> onFloorChange;
 
   const FloorsRadio(
-      {Key key, this.floorsList = const ["G"], @required this.onFloorChange})
+      {Key key,
+      this.floorsList = const ["G"],
+      this.initFloor = "G",
+      @required this.onFloorChange})
       : super(key: key);
 
   @override
@@ -192,7 +230,7 @@ class FloorsRadioState extends State<FloorsRadio> {
   @override
   void initState() {
     super.initState();
-    groupValue = meghanaFloor != null ? meghanaFloor : widget.floorsList[0];
+    groupValue = widget.initFloor;
     widget.onFloorChange(groupValue);
   }
 
@@ -222,13 +260,15 @@ class FloorsRadioState extends State<FloorsRadio> {
 class BlockMarker extends StatefulWidget {
   final ValueNotifier<double> zoomNotifier;
   final Block block;
+  final List<String> initMarkedValues;
   final ValueChanged<String> onMarkerChanged;
 
   const BlockMarker(
       {Key key,
       @required this.block,
       @required this.zoomNotifier,
-      @required this.onMarkerChanged})
+      @required this.onMarkerChanged,
+      this.initMarkedValues = const []})
       : super(key: key);
   @override
   State<StatefulWidget> createState() {
@@ -247,6 +287,9 @@ class BlockMarkerState extends State<BlockMarker> {
     widget.zoomNotifier.addListener(() {
       setState(() {});
     });
+    WidgetsBinding.instance.scheduleFrameCallback((c) {
+      markerNotifier.value = widget.initMarkedValues;
+    });
     currentBlock = widget.block;
   }
 
@@ -254,8 +297,8 @@ class BlockMarkerState extends State<BlockMarker> {
   Widget build(BuildContext context) {
     double zoom = widget.zoomNotifier.value;
     if (currentBlock != widget.block) {
-      markerNotifier.value = [];
-      markerNotifier.notifyListeners();
+      markerNotifier.value = widget.initMarkedValues;
+      // markerNotifier.notifyListeners();
       currentBlock = widget.block;
     }
     return GestureDetector(
@@ -269,7 +312,7 @@ class BlockMarkerState extends State<BlockMarker> {
             "${BlockIdPrefixMap[widget.block]}_D_somefloor_D_${x.toStringAsFixed(4).replaceAll(".", "X")}_D_${y.toStringAsFixed(4).replaceAll(".", "Y")}";
         markerNotifier.value = [xystr];
 
-        markerNotifier.notifyListeners();
+        // markerNotifier.notifyListeners();
         widget.onMarkerChanged(xystr);
         //print('pointing at $x , $y');
       },

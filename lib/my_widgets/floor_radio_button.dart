@@ -7,7 +7,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 const double _kOuterRadius = 20.0;
-const double _kInnerRadius = 4.5;
 
 class FloorRadioButton<T> extends StatefulWidget {
   const FloorRadioButton({

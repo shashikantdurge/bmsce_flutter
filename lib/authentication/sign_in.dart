@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:bmsce/authentication/entry_exit.dart';
 import 'package:bmsce/course/course_dept_sem.dart';
 import 'package:bmsce/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   final firestore = Firestore.instance;
@@ -19,8 +21,6 @@ class Login extends StatefulWidget {
   );
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
-
     return LoginState();
   }
 }
@@ -39,11 +39,10 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
 
   Widget btChild = Text('SIGN IN WITH BMSCE ACCOUNT');
   Widget proceedBtChild = Text('CREATE ACCOUNT');
-  var stackIndex = 0;
+  int stackIndex = 0;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     butHtController = AnimationController(
       duration: Duration(milliseconds: 300),
@@ -112,7 +111,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
                     sizeFactor: butHtanimation,
                   ),
                   SizeTransition(
-                      sizeFactor: contAnimation, child: getUserContainer())
+                      sizeFactor: contAnimation, child: widgetUserSignUp())
                 ],
               ),
               FadeTransition(
@@ -128,10 +127,10 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
                       final accountDetails = Map<String, String>();
                       accountDetails['email'] = googleSignInAccount.email;
                       accountDetails['name'] = googleSignInAccount.displayName;
-                      usnController.text.isNotEmpty
-                          ? accountDetails['usn'] = usnController.text
-                          : null;
-                      accountDetails['dept'] = deptValue;
+                      if (usnController.text.isNotEmpty)
+                        accountDetails['usn'] =
+                            usnController.text.toUpperCase();
+                      accountDetails['dept'] = deptValue ?? "ZZ";
                       setState(() {
                         proceedBtChild = CircularProgressIndicator();
                       });
@@ -156,7 +155,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
     );
   }
 
-  Widget getUserContainer() {
+  Widget widgetUserSignUp() {
     return Container(
       decoration: BoxDecoration(border: Border.all(color: Colors.red)),
       //height: 300.0,
@@ -176,19 +175,18 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
             ),
             child: Text(googleSignInAccount?.email ?? "Email"),
           ),
-          Padding(
-            padding: EdgeInsets.only(
-              bottom: 12.0,
-            ),
+          SizedBox(
+            width: 250.0,
             child: TextFormField(
               autovalidate: true,
               controller: usnController,
               decoration: InputDecoration(
                 labelText: 'USN',
-                border: OutlineInputBorder(),
+                //border: OutlineInputBorder(),
               ),
               validator: (usn) {
-                if (!usn.contains(RegExp(r'1[bB][mM]\d{2}[a-zA-Z]{2}\d{3}')) &&
+                if (!usn.contains(
+                        RegExp(r'^1[bB][mM]\d{2}[a-zA-Z]{2}\d{3}$')) &&
                     usn.isNotEmpty) return 'Invalid USN';
               },
             ),
@@ -232,8 +230,9 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
       //_googleSignIn.signOut();
 
       //check if user is signing for the first time
-      final firstTimeUser = await isFirstTimeSignIn(googleSignInAccount.email);
-      if (firstTimeUser) {
+      final userSnap = await getUserData(googleSignInAccount.email);
+      if (!userSnap.exists) {
+        //FIRST TIME USER
         setState(() {
           photoUrl = googleSignInAccount.photoUrl;
         });
@@ -247,6 +246,8 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
           });
         });
       } else {
+        //USER ACCOUNT EXISTS
+
         GoogleSignInAuthentication googleAuthentication =
             await googleSignInAccount.authentication;
         final user = await widget.auth.signInWithGoogle(
@@ -255,7 +256,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
         Navigator.of(context)
             .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
           return HomePage(user);
-        }));
+        })).then(setEntryUserData(userSnap.data, googleSignInAccount.email));
       }
     } catch (error) {
       print(error);
@@ -265,15 +266,10 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
     }
   }
 
-  Future<bool> isFirstTimeSignIn(String email) async {
-    QuerySnapshot snapshot = await Firestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .getDocuments();
-    if (snapshot.documents.length == 0)
-      return true;
-    else
-      return false;
+  Future<DocumentSnapshot> getUserData(String email) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(email).get();
+    return snapshot;
   }
 
   Future<FirebaseUser> _createAccount(
@@ -289,6 +285,8 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
         .collection('users')
         .document(user.email)
         .setData(accountDetails);
+    setEntryUserData(accountDetails, user.email);
+
     return user;
   }
 }

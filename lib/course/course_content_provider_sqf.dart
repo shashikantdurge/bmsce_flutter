@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 
 class CourseContentProvider {
   final table = 'courseContentTable';
-  final version = 'version';
+  final lastModifiedOn = 'lastModifiedOn';
   Database db;
   final String courseCode = 'courseCode';
   final String content = 'content';
@@ -17,7 +17,7 @@ class CourseContentProvider {
     final path = databasePath + table + "Path";
     db = await openDatabase(path, version: 1, onCreate: (db, version) async {
       await db.execute(
-          'CREATE TABLE $table ($courseCode text, ${this.version} integer, $content text, $lastModifiedBy text);');
+          'CREATE TABLE $table ($courseCode text, ${this.lastModifiedOn} integer, $content text, $lastModifiedBy text);');
     });
     assert(db != null);
     print('${DateTime.now()} open(END)');
@@ -30,13 +30,14 @@ class CourseContentProvider {
   Map<String, dynamic> courseContentToMap(CourseContent courseContent) {
     return {
       courseCode: courseContent.courseCode,
-      version: courseContent.version,
+      lastModifiedOn: courseContent.lastModifiedOn,
       content: courseContent.content,
       lastModifiedBy: courseContent.lastModifiedBy
     };
   }
 
-  Future<CourseContent> getCourseContent(String courseCode, int version) async {
+  Future<CourseContent> getCourseContent(
+      String courseCode, int courseLastModifiedOn) async {
     if (this.db == null) {
       await open();
     }
@@ -44,11 +45,11 @@ class CourseContentProvider {
     final contentRes = await db.query(table,
         columns: [content, lastModifiedBy],
         where:
-            " ${this.courseCode}='$courseCode' and ${this.version}=$version");
+            " ${this.courseCode}='$courseCode' and ${this.lastModifiedOn}=$courseLastModifiedOn");
     print('${DateTime.now()} getCourseContent(END)');
     return contentRes.isNotEmpty
-        ? CourseContent(courseCode, version, contentRes.first['content'],
-            contentRes.first['lastModifiedBy'])
+        ? CourseContent(courseCode, courseLastModifiedOn,
+            contentRes.first['content'], contentRes.first['lastModifiedBy'])
         : null;
   }
 

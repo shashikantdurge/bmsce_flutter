@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 
 class Portion {
   final String courseCode;
-  final int courseVersion;
+  final int courseLastModifiedOn;
 
   final int createdOn;
   final String createdBy;
@@ -20,7 +20,7 @@ class Portion {
 
   Portion(
       {this.courseCode,
-      this.courseVersion,
+      this.courseLastModifiedOn,
       this.createdOn,
       this.createdBy,
       this.courseName,
@@ -39,7 +39,7 @@ class PortionProvider {
   final String description = 'description';
   final String toggleColorIndexes = 'toggleColorIndexes';
   final String toggleBordColorIndexes = 'toggleBordColorIndexes';
-  final String courseVersion = 'courseVersion';
+  final String courseLastModifiedOn = 'courseLastModifiedOn';
   final String createdOn = 'createdOn';
   final String isOutdated = 'isOutdated';
   final String isTeacherSignature = 'teacherSignature';
@@ -51,7 +51,7 @@ class PortionProvider {
     db = await openDatabase(path, version: 1, onCreate: (db, version) async {
       await db.execute(
           '''CREATE TABLE $table ($courseCode text, $createdBy text, $courseName text, $description text, $toggleColorIndexes text, $toggleBordColorIndexes text
-          , $courseVersion integer, $createdOn integer, $isOutdated integer, $isTeacherSignature integer);''');
+          , $courseLastModifiedOn integer, $createdOn integer, $isOutdated integer, $isTeacherSignature integer);''');
     });
     assert(db != null);
   }
@@ -68,7 +68,7 @@ class PortionProvider {
       description: map[description],
       toggleColorIndexes: map[toggleColorIndexes],
       toggleBordColorIndexes: map[toggleBordColorIndexes],
-      courseVersion: map[courseVersion],
+      courseLastModifiedOn: map[courseLastModifiedOn],
       createdOn: map[createdOn],
       isOutdated: map[isOutdated],
       isTeacherSignature: map[isTeacherSignature],
@@ -83,7 +83,7 @@ class PortionProvider {
       description: portion.description,
       toggleColorIndexes: portion.toggleColorIndexes,
       toggleBordColorIndexes: portion.toggleBordColorIndexes,
-      courseVersion: portion.courseVersion,
+      courseLastModifiedOn: portion.courseLastModifiedOn,
       createdOn: portion.createdOn,
       isOutdated: portion.isOutdated,
       isTeacherSignature: portion.isTeacherSignature,
@@ -103,7 +103,7 @@ class PortionProvider {
           this.description,
           this.toggleColorIndexes,
           this.toggleBordColorIndexes,
-          this.courseVersion,
+          this.courseLastModifiedOn,
           this.createdOn,
           this.isOutdated,
           this.isTeacherSignature,
@@ -124,7 +124,9 @@ class PortionProvider {
           this.courseName,
           this.description,
           this.isOutdated,
-          this.isTeacherSignature
+          this.isTeacherSignature,
+          this.courseCode,
+          this.courseLastModifiedOn
         ],
         orderBy: createdOn);
     List<Portion> portions = [];
@@ -139,5 +141,15 @@ class PortionProvider {
       await open();
     }
     await db.insert(table, portionToMap(portion));
+  }
+
+  Future remove(
+      String courseCode, int courseLastModifiedOn, int createdOn) async {
+    if (this.db == null) {
+      await open();
+    }
+    await db.delete(table,
+        where:
+            "${this.courseCode}='$courseCode' AND ${this.courseLastModifiedOn}=$courseLastModifiedOn AND ${this.createdOn}=$createdOn");
   }
 }

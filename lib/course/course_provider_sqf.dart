@@ -12,7 +12,7 @@ class CourseProviderSqf {
   final p = "p";
   final s = "s";
   final totalCredits = "totalCredits";
-  final version = "version";
+  final lastModifiedOn = "lastModifiedOn";
   Database db;
 
   Future open() async {
@@ -20,7 +20,7 @@ class CourseProviderSqf {
     final path = databasePath + table + "Path";
     db = await openDatabase(path, version: 1, onCreate: (db, version) async {
       await db.execute(
-          'CREATE TABLE $table ($courseName text, $courseCode text, $l integer, $t integer, $p integer, $s integer, ${this.version} integer, $totalCredits integer);');
+          'CREATE TABLE $table ($courseName text, $courseCode text, $l integer, $t integer, $p integer, $s integer, ${this.lastModifiedOn} integer, $totalCredits integer);');
     });
     assert(db != null);
   }
@@ -37,7 +37,7 @@ class CourseProviderSqf {
       t: courseMap[t],
       p: courseMap[p],
       s: courseMap[s],
-      version: courseMap[version],
+      lastModifiedOn: courseMap[lastModifiedOn],
       totalCredits: courseMap[totalCredits],
     );
   }
@@ -51,7 +51,7 @@ class CourseProviderSqf {
       p: course.p,
       s: course.s,
       totalCredits: course.totalCredits,
-      version: course.version
+      lastModifiedOn: course.lastModifiedOn
     };
   }
 
@@ -60,7 +60,7 @@ class CourseProviderSqf {
       bool t: false,
       bool p: false,
       bool s: false,
-      bool version: false}) async {
+      bool courseLastModifiedOn: false}) async {
     if (this.db == null) {
       await open();
     }
@@ -69,7 +69,7 @@ class CourseProviderSqf {
     t ? cols.add(this.t) : null;
     p ? cols.add(this.p) : null;
     s ? cols.add(this.s) : null;
-    version ? cols.add(this.version) : null;
+    courseLastModifiedOn ? cols.add(this.lastModifiedOn) : null;
     List<Map> coursesMap =
         await db.query(table, columns: cols, orderBy: courseName);
     List<Course> courses = [];
@@ -79,14 +79,14 @@ class CourseProviderSqf {
     return courses;
   }
 
-  Future<Course> getCourse(String courseCode, int version) async {
+  Future<Course> getCourse(String courseCode, int courseLastModifiedOn) async {
     if (this.db == null) {
       await open();
     }
     final courseRes = await db.query(table,
         columns: [],
         where:
-            " ${this.courseCode}='$courseCode' and ${this.version}=$version");
+            " ${this.courseCode}='$courseCode' and ${this.lastModifiedOn}=$courseLastModifiedOn");
     return courseFrmMap(courseRes.first);
   }
 
@@ -95,5 +95,12 @@ class CourseProviderSqf {
       await open();
     }
     await db.insert(table, courseToMap(course));
+  }
+
+  Future removeCourse(String courseCode) async {
+    if (this.db == null) {
+      await open();
+    }
+    await db.delete(table, where: "${this.courseCode}='$courseCode'");
   }
 }

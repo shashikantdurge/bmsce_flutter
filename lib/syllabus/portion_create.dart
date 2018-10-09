@@ -48,7 +48,7 @@ class PortionCreate extends StatelessWidget {
         ],
       ),
       body: FutureBuilder<List<CourseContentPart>>(
-        future: processSyllabus(course.courseCode, course.version),
+        future: processSyllabus(course.courseCode, course.lastModifiedOn),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           print(
               'PortionCreate ${snapshot.connectionState} hasData:${snapshot.hasData} hasError:${snapshot.hasError}');
@@ -65,9 +65,11 @@ class PortionCreate extends StatelessWidget {
   }
 
   Future<List<CourseContentPart>> processSyllabus(
-      String courseCode, int version) async {
+      String courseCode, int courseLastModifiedOn) async {
     String courseContent = (await CourseContentViewState.fetchCourseContent(
-            courseCode: courseCode, version: version, isFetchFromOnline: false))
+            courseCode: courseCode,
+            courseLastModifiedOn: courseLastModifiedOn,
+            isFetchFromOnline: false))
         .content;
     final List<CourseContentPart> courseContentParts = [];
 
@@ -118,7 +120,7 @@ class PortionCreate extends StatelessWidget {
     await PortionProvider().insert(Portion(
         courseCode: course.courseCode,
         courseName: course.courseName,
-        courseVersion: course.version,
+        courseLastModifiedOn: course.lastModifiedOn,
         createdBy: "admin",
         createdOn: DateTime.now().millisecondsSinceEpoch,
         description: description,

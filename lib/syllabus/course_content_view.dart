@@ -47,7 +47,7 @@ class CourseContentViewState extends State<CourseContentView> {
           child: FutureBuilder<CourseContent>(
             future: fetchCourseContent(
                 courseCode: widget.course.courseCode,
-                version: widget.course.version,
+                courseLastModifiedOn: widget.course.lastModifiedOn,
                 isFetchFromOnline: widget.isFetchFromOnline),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
@@ -72,7 +72,7 @@ class CourseContentViewState extends State<CourseContentView> {
 
   static Future<CourseContent> fetchCourseContent(
       {@required String courseCode,
-      @required int version,
+      @required int courseLastModifiedOn,
       bool isFetchFromOnline: true}) async {
     CourseContent courseContent;
     Future<CourseContent> fetchFromFirestore() async {
@@ -84,15 +84,15 @@ class CourseContentViewState extends State<CourseContentView> {
       if (courseSnapshot.exists) {
         courseContent = CourseContent(
             courseSnapshot.documentID,
-            courseSnapshot.data['version'],
+            courseSnapshot.data['courseLastModifiedOn'],
             courseSnapshot.data['content'],
             courseSnapshot.data['lastModifiedBy']);
         if (!isFetchFromOnline) {
           CourseContentProvider().insert(courseContent);
         }
       } else {
-        courseContent =
-            CourseContent(courseCode, version, 'Syllabus unavailable', 'None');
+        courseContent = CourseContent(
+            courseCode, courseLastModifiedOn, 'Syllabus unavailable', 'None');
       }
       return courseContent;
     }
@@ -101,7 +101,7 @@ class CourseContentViewState extends State<CourseContentView> {
       courseContent = await fetchFromFirestore();
     } else {
       courseContent = (await CourseContentProvider()
-              .getCourseContent(courseCode, version)) ??
+              .getCourseContent(courseCode, courseLastModifiedOn)) ??
           (await fetchFromFirestore());
     }
 
@@ -111,7 +111,7 @@ class CourseContentViewState extends State<CourseContentView> {
   getCourseDetailsFrmOffline() async {
     CourseProviderSqf courseProviderSqf = CourseProviderSqf();
     return await courseProviderSqf.getCourse(
-        widget.course.courseCode, widget.course.version);
+        widget.course.courseCode, widget.course.lastModifiedOn);
   }
 
   showLtpsTable() async {
@@ -149,7 +149,7 @@ class CourseContentViewState extends State<CourseContentView> {
                           ],
                         ),
                         Text(
-                            'Updated on ${DateTime.fromMillisecondsSinceEpoch(course.version).toString().substring(0,10)}')
+                            'Updated on ${DateTime.fromMillisecondsSinceEpoch(course.lastModifiedOn).toString().substring(0, 10)}')
                       ],
                     ),
                   );

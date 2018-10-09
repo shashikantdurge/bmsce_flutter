@@ -178,7 +178,8 @@ class AddCourseState extends State<AddCourse> {
           t: courseDocument.data["t"],
           p: courseDocument.data["p"],
           s: courseDocument.data["s"],
-          version: courseDocument.data["lastModifiedOn"].millisecondsSinceEpoch,
+          lastModifiedOn:
+              courseDocument.data["lastModifiedOn"].millisecondsSinceEpoch,
           isInMyCourses: localCourses.contains(courseDocument.documentID));
       var courseGrp = courseGrpMap[courseCat] ??
           CourseGroup(courseGroup: courseCat, courses: []);
@@ -226,7 +227,7 @@ class AddCourseState extends State<AddCourse> {
               widget.courseProviderSqf.insertCourse(course);
               CourseContentViewState.fetchCourseContent(
                   courseCode: course.courseCode,
-                  version: course.version,
+                  courseLastModifiedOn: course.lastModifiedOn,
                   isFetchFromOnline: false);
               setState(() {
                 course.isInMyCourses = true;

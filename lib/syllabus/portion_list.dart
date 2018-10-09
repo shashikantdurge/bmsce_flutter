@@ -32,7 +32,7 @@ class PortionState extends State<PortionList> {
                   return getPortionListView(snapshot.data);
                 } else if (snapshot.data.isEmpty) {
                   return Center(
-                    child: Text('Chill!!!'),
+                    child: Text('Empty'),
                   );
                 }
               } else {
@@ -59,17 +59,25 @@ class PortionState extends State<PortionList> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          trailing: portion.isOutdated == 1
-              ? (Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                ))
-              : (portion.isTeacherSignature == 1
-                  ? Icon(
-                      Icons.verified_user,
-                      color: Colors.green,
-                    )
-                  : Icon(Icons.info_outline)),
+          trailing: PopupMenuButton(
+            onSelected: (item) {
+              if (item == "remove")
+                PortionProvider()
+                    .remove(portion.courseCode, portion.courseLastModifiedOn,
+                        portion.createdOn)
+                    .then((onValue) {
+                  setState(() {});
+                });
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  child: Text('Remove'),
+                  value: 'remove',
+                )
+              ];
+            },
+          ),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return PortionView(

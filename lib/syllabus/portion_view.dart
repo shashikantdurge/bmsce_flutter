@@ -108,7 +108,7 @@ class PortionView extends StatelessWidget {
       String createdBy, int createdOn) async {
     final portion = await PortionProvider().getPortion(createdBy, createdOn);
     final courseContentParts =
-        await processSyllabus(portion.courseCode, portion.courseVersion);
+        await processSyllabus(portion.courseCode, portion.courseLastModifiedOn);
     List<int> toggleBordColorIndexes = [];
     portion.toggleBordColorIndexes.split(",").forEach((i) {
       toggleBordColorIndexes.add(int.parse(i));
@@ -130,9 +130,11 @@ class PortionView extends StatelessWidget {
   }
 
   Future<List<CourseContentPart>> processSyllabus(
-      String courseCode, int version) async {
+      String courseCode, int courseLastModifiedOn) async {
     String courseContent = (await CourseContentViewState.fetchCourseContent(
-            courseCode: courseCode, version: version, isFetchFromOnline: false))
+            courseCode: courseCode,
+            courseLastModifiedOn: courseLastModifiedOn,
+            isFetchFromOnline: false))
         .content;
     final List<CourseContentPart> courseContentParts = [];
 

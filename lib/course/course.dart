@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 class Course {
   String courseName, courseCode, branch;
-  int version;
+  int lastModifiedOn;
   int sem, l, t, p, s, totalCredits;
   bool isInMyCourses;
 
@@ -15,10 +15,10 @@ class Course {
       @required this.t,
       @required this.p,
       @required this.s,
-      @required this.version,
+      @required this.lastModifiedOn,
       this.isInMyCourses: false,
       this.totalCredits}) {
-    if(totalCredits == null){
+    if (totalCredits == null) {
       this.totalCredits = l + t + p + s;
     }
   }
@@ -29,16 +29,19 @@ class Course {
 
   void removeCourse() {}
 
-  static void updateSyllabus(String courseCode, double oldVersion) {}
+  static void updateSyllabus(
+      String courseCode, double oldCourseLastModifiedOn) {}
 }
-class CourseContent{
+
+class CourseContent {
   final String courseCode;
-  final int version;
+  final int lastModifiedOn;
   final String content;
   final String lastModifiedBy;
 
-  CourseContent(this.courseCode, this.version, this.content, this.lastModifiedBy);
-  
+  CourseContent(
+      this.courseCode, this.lastModifiedOn, this.content, this.lastModifiedBy);
 }
+
 enum CourseOfferedFor { Dept, Cluster, Institute }
 enum CourseType { Core, Elective, Lab, Mandatory }

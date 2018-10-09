@@ -22,7 +22,7 @@ class SyllabusTabsState extends State<SyllabusTabs>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    tabController = TabController(length: 3, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -30,9 +30,6 @@ class SyllabusTabsState extends State<SyllabusTabs>
     return Scaffold(
       appBar: AppBar(
         title: TabBar(controller: tabController, tabs: [
-          Tab(
-            text: 'Notes',
-          ),
           Tab(
             text: 'My Course',
           ),
@@ -42,7 +39,6 @@ class SyllabusTabsState extends State<SyllabusTabs>
         ]),
       ),
       body: TabBarView(controller: tabController, children: [
-        Notes(),
         MyCourseList(),
         PortionList(),
       ]),
@@ -50,13 +46,11 @@ class SyllabusTabsState extends State<SyllabusTabs>
         onPressed: () async {
           switch (tabController.index) {
             case 0:
-              break;
-            case 1:
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                 return AddCourse();
               }));
               break;
-            case 2:
+            case 1:
               Course course = await showModalBottomSheet<Course>(
                 context: context,
                 builder: (BuildContext context) {

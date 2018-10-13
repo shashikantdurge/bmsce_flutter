@@ -1,22 +1,16 @@
 import 'package:meta/meta.dart';
 
 abstract class User {
+  static User instance;
   final String displayName, photoUrl, email, dept;
   final bool isAdmin;
   final Role whoAmI;
+  final String usn;
   final List<Activity> permittedActivities;
   final List<Role> subRoles;
 
-  User(
-    this.displayName,
-    this.photoUrl,
-    this.email,
-    this.dept,
-    this.isAdmin,
-    this.permittedActivities,
-    this.subRoles,
-    this.whoAmI,
-  );
+  User(this.displayName, this.photoUrl, this.email, this.dept, this.isAdmin,
+      this.permittedActivities, this.subRoles, this.whoAmI, this.usn);
   // get isAdmin() => isAdmin;
   bool isPermittedFor(Activity activity) {
     return this.permittedActivities.contains(activity);
@@ -60,7 +54,8 @@ class Student extends User {
             false,
             myActivities ?? Student.myActivities,
             mySubRoles ?? Student.mySubRoles,
-            role ?? Role.STUDENT);
+            role ?? Role.STUDENT,
+            usn);
 }
 
 class Teacher extends User {
@@ -84,7 +79,8 @@ class Teacher extends User {
             isAdmin ?? false,
             myActivities ?? Teacher.myActivities,
             mySubRoles ?? Teacher.mySubRoles,
-            role ?? Role.TEACHER);
+            role ?? Role.TEACHER,
+            null);
 }
 
 class HodOrAdmin extends Teacher {
@@ -121,7 +117,7 @@ class DefaultUser extends User {
   static final List<Role> mySubRoles = [];
   DefaultUser(String displayName, String photoUrl, String email, String dept)
       : super(displayName, photoUrl, email, dept, false, myActivities,
-            mySubRoles, Role.SUPER_STUDENT);
+            mySubRoles, Role.SUPER_STUDENT, null);
 }
 
 enum Role { STUDENT, SUPER_STUDENT, TEACHER, HOD_ADMIN, DEFAULT }

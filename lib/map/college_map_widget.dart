@@ -107,6 +107,45 @@ class CollegeMapWidget extends StatelessWidget {
                       },
                     ),
                     id: Block.AS,
+                  ),
+                  LayoutId(
+                    child: BlockWidget.draw(
+                      block: Block.SCIENCE,
+                      angle: 0.11,
+                      notifier: notifier,
+                      zoom: zoom,
+                      onMarked: () {
+                        animateHorScroll(86.0, Block.SCIENCE); //
+                        animateVerScroll(214.0, Block.SCIENCE); //
+                      },
+                    ),
+                    id: Block.SCIENCE,
+                  ),
+                  LayoutId(
+                    child: BlockWidget.draw(
+                      block: Block.LIB,
+                      angle: 0.11,
+                      notifier: notifier,
+                      zoom: zoom,
+                      onMarked: () {
+                        animateHorScroll(255.0, Block.LIB); //
+                        animateVerScroll(40.0, Block.LIB); //
+                      },
+                    ),
+                    id: Block.LIB,
+                  ),
+                  LayoutId(
+                    child: BlockWidget.draw(
+                      block: Block.INDOOR,
+                      angle: 0.11,
+                      notifier: notifier,
+                      zoom: zoom,
+                      onMarked: () {
+                        animateHorScroll(186.0, Block.INDOOR);
+                        animateVerScroll(212.0, Block.INDOOR);
+                      },
+                    ),
+                    id: Block.INDOOR,
                   )
                 ],
               )),
@@ -160,6 +199,18 @@ class CollegeMapDelegate extends MultiChildLayoutDelegate {
     if (hasChild(Block.NB)) {
       layoutChild(Block.NB, new BoxConstraints.loose(size));
       positionChild(Block.NB, new Offset(118.0 * zoom, 172.0 * zoom));
+    }
+    if (hasChild(Block.SCIENCE)) {
+      layoutChild(Block.SCIENCE, new BoxConstraints.loose(size));
+      positionChild(Block.SCIENCE, new Offset(86.0 * zoom, 214.0 * zoom));
+    }
+    if (hasChild(Block.LIB)) {
+      layoutChild(Block.LIB, new BoxConstraints.loose(size));
+      positionChild(Block.LIB, new Offset(255.0 * zoom, 40.0 * zoom));
+    }
+    if (hasChild(Block.INDOOR)) {
+      layoutChild(Block.INDOOR, new BoxConstraints.loose(size));
+      positionChild(Block.INDOOR, new Offset(186.0 * zoom, 212.0 * zoom));
     }
     if (hasChild("text")) {
       layoutChild("text", new BoxConstraints.loose(size));

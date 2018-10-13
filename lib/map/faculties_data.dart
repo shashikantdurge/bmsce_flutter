@@ -2,7 +2,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "A. Srinivas": {
     "detailsLink": "http://www.bmsce.ac.in/node/2831",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/a._srinivas.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/a._srinivas.jpg"
   },
   "Abhishek M Appaji": {
     "detailsLink": "http://www.bmsce.ac.in/node/4238",
@@ -37,7 +37,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Archana H R": {
     "detailsLink": "http://www.bmsce.ac.in/node/2991",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/archana.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/archana.jpg"
   },
   "Archana.K.": {
     "detailsLink": "http://www.bmsce.ac.in/node/2917",
@@ -92,7 +92,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Bhagyalakshmi. L": {
     "detailsLink": "http://www.bmsce.ac.in/node/2836",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/bhagyalaxmi_l.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/bhagyalaxmi_l.jpg"
   },
   "Bhagyalaxmi M": {
     "detailsLink": "http://www.bmsce.ac.in/node/3112",
@@ -231,7 +231,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr G N Rameshaiah ": {
     "detailsLink": "http://www.bmsce.ac.in/node/3143",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/dr_gnr_hod.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/dr_gnr_hod.jpg"
   },
   "Dr Ganesh K": {
     "detailsLink": "http://www.bmsce.ac.in/node/3174",
@@ -311,7 +311,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr K R Sudhindra": {
     "detailsLink": "http://www.bmsce.ac.in/node/2933",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/sudhindra.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/sudhindra.jpg"
   },
   "Dr K Vijayakumar": {
     "detailsLink": "http://www.bmsce.ac.in/node/2890",
@@ -640,7 +640,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr Veena N Hegde": {
     "detailsLink": "http://www.bmsce.ac.in/node/3035",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/vh_photo.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/vh_photo.jpg"
   },
   "Dr Venkatesh T Lamani": {
     "detailsLink": "http://www.bmsce.ac.in/node/4224",
@@ -690,7 +690,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr. G Poornima": {
     "detailsLink": "http://www.bmsce.ac.in/node/2941",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/poornima_g_p.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/poornima_g_p.jpg"
   },
   "Dr. G R Prasad": {
     "detailsLink": "http://www.bmsce.ac.in/node/2853",
@@ -719,7 +719,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr. H.R.Bhagyalakshmi": {
     "detailsLink": "http://www.bmsce.ac.in/node/2982",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/hrb.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/hrb.jpg"
   },
   "Dr. Janhavi Raut": {
     "detailsLink": "http://www.bmsce.ac.in/node/2843",
@@ -729,7 +729,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr. Jayanthi K Murthy": {
     "detailsLink": "http://www.bmsce.ac.in/node/2973",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/jayanthi_k_murthy.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/jayanthi_k_murthy.jpg"
   },
   "Dr. John Manohar ": {
     "detailsLink": "http://www.bmsce.ac.in/node/2952",
@@ -819,7 +819,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr. R. JAYAGOWRI": {
     "detailsLink": "http://www.bmsce.ac.in/node/2838",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/jayagowri.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/jayagowri.jpg"
   },
   "Dr. Ramji B R": {
     "detailsLink": "http://www.bmsce.ac.in/node/2895",
@@ -889,12 +889,12 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr. Vasundara Patel K S": {
     "detailsLink": "http://www.bmsce.ac.in/node/2907",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/ksvp.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/ksvp.jpg"
   },
   "Dr. Veena M B": {
     "detailsLink": "http://www.bmsce.ac.in/node/2837",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/veena_m.b.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/veena_m.b.jpg"
   },
   "Dr. Vijayalakshmi K": {
     "detailsLink": "http://www.bmsce.ac.in/node/4230",
@@ -903,7 +903,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr. Vijayendra S. Shetti": {
     "detailsLink": "http://www.bmsce.ac.in/node/3031",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/vijayendra.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/vijayendra.jpg"
   },
   "Dr.A.Usha": {
     "detailsLink": "http://www.bmsce.ac.in/node/3000",
@@ -928,7 +928,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr.K Padmavathi": {
     "detailsLink": "http://www.bmsce.ac.in/node/3011",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/padmavathi_eee.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/padmavathi_eee.jpg"
   },
   "Dr.L.Venkatesha": {
     "detailsLink": "http://www.bmsce.ac.in/node/2997",
@@ -943,16 +943,16 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr.Nagashree A N": {
     "detailsLink": "http://www.bmsce.ac.in/node/3013",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/ann.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/ann.jpg"
   },
   "Dr.P.Meena": {
     "detailsLink": "http://www.bmsce.ac.in/node/3014",
-    "profilePictureLink": "gs://bmsce-flutter.appspot.com/faculty_images/pm.png"
+    "profilePictureLink": "gs://bmsce-flutter.appspot.com/faculty_images/pm.jpg"
   },
   "Dr.Pradeepa S": {
     "detailsLink": "http://www.bmsce.ac.in/node/3010",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/pradeepa_eee.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/pradeepa_eee.jpg"
   },
   "Dr.Prakash D B": {
     "detailsLink": "http://www.bmsce.ac.in/node/4241",
@@ -967,7 +967,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Dr.R.S.Geetha": {
     "detailsLink": "http://www.bmsce.ac.in/node/3016",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/rsgeetha.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/rsgeetha.jpg"
   },
   "Dr.Rajeshwari M Hegde": {
     "detailsLink": "http://www.bmsce.ac.in/node/3075",
@@ -1006,7 +1006,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "G. Devaraja": {
     "detailsLink": "http://www.bmsce.ac.in/node/2822",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/g._devaraja.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/g._devaraja.jpg"
   },
   "G.Karthick": {
     "detailsLink": "http://www.bmsce.ac.in/node/3131",
@@ -1040,7 +1040,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "H.C. Yagnesh": {
     "detailsLink": "http://www.bmsce.ac.in/node/2827",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/h.c._yagnesh.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/h.c._yagnesh.jpg"
   },
   "Hadagali Ashoka": {
     "detailsLink": "http://www.bmsce.ac.in/node/3157",
@@ -1074,7 +1074,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Jaya Shree kumari": {
     "detailsLink": "http://www.bmsce.ac.in/node/2884",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/jay_shree.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/jay_shree.jpg"
   },
   "Jeeru Dinesh Reddy": {
     "detailsLink": "http://www.bmsce.ac.in/node/2971",
@@ -1154,7 +1154,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "M J Shivanna": {
     "detailsLink": "http://www.bmsce.ac.in/node/2883",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/shivanna.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/shivanna.jpg"
   },
   "M.Vasantha Lakshmi": {
     "detailsLink": "http://www.bmsce.ac.in/node/3072",
@@ -1189,7 +1189,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Mr. Kumara C": {
     "detailsLink": "http://www.bmsce.ac.in/node/2876",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/kumara.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/kumara.jpg"
   },
   "Mr. Raghuram Shivram": {
     "detailsLink": "http://www.bmsce.ac.in/node/4254",
@@ -1214,12 +1214,12 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Ms. V.G Reshma": {
     "detailsLink": "http://www.bmsce.ac.in/node/2877",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/reshma.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/reshma.jpg"
   },
   "Muralidhara. M .R.": {
     "detailsLink": "http://www.bmsce.ac.in/node/2834",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/muralidhara._m_.r.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/muralidhara._m_.r.jpg"
   },
   "N Nagarathna": {
     "detailsLink": "http://www.bmsce.ac.in/node/3096",
@@ -1289,7 +1289,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Nethravathi S": {
     "detailsLink": "http://www.bmsce.ac.in/node/3012",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/nethravathi_eee.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/nethravathi_eee.jpg"
   },
   "Niranjan K R": {
     "detailsLink": "http://www.bmsce.ac.in/node/3081",
@@ -1338,7 +1338,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Prakash .R.": {
     "detailsLink": "http://www.bmsce.ac.in/node/2833",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/prakash_.r.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/prakash_.r.jpg"
   },
   "Prakash H R": {
     "detailsLink": "http://www.bmsce.ac.in/node/3121",
@@ -1388,12 +1388,12 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Preethu Devaiah.": {
     "detailsLink": "http://www.bmsce.ac.in/node/2828",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/preethu_devaiah.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/preethu_devaiah.jpg"
   },
   "Prerana Gupta Poddar ": {
     "detailsLink": "http://www.bmsce.ac.in/node/2958",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/prerana.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/prerana.jpg"
   },
   "Prof. Jaisimh K.Rao ": {
     "detailsLink": "http://www.bmsce.ac.in/node/2953",
@@ -1452,12 +1452,12 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "R. Srinivas": {
     "detailsLink": "http://www.bmsce.ac.in/node/2823",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/r._srinivas.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/r._srinivas.jpg"
   },
   "R.Puttaswamy": {
     "detailsLink": "http://www.bmsce.ac.in/node/2826",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/r.puttaswamy.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/r.puttaswamy.jpg"
   },
   "Radha D ": {
     "detailsLink": "http://www.bmsce.ac.in/node/2985",
@@ -1546,7 +1546,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Ravindra kumar B. L": {
     "detailsLink": "http://www.bmsce.ac.in/node/2825",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/ravindra_kumar_b._l.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/ravindra_kumar_b._l.jpg"
   },
   "Ravishankar K": {
     "detailsLink": "http://www.bmsce.ac.in/node/3069",
@@ -1561,12 +1561,12 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Rekha G S": {
     "detailsLink": "http://www.bmsce.ac.in/node/2857",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/rekha.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/rekha.jpg"
   },
   "Renuka Rampur.": {
     "detailsLink": "http://www.bmsce.ac.in/node/2829",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/renuka_rampur.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/renuka_rampur.jpg"
   },
   "Renuka T": {
     "detailsLink": "http://www.bmsce.ac.in/node/3177",
@@ -1700,7 +1700,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Shubha Rao V": {
     "detailsLink": "http://www.bmsce.ac.in/node/2928",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/shubha.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/shubha.jpg"
   },
   "Shyamala G": {
     "detailsLink": "http://www.bmsce.ac.in/node/3087",
@@ -1730,7 +1730,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Sirisha N": {
     "detailsLink": "http://www.bmsce.ac.in/node/2844",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/eid2362528.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/eid2362528.jpg"
   },
   "Sivaramakrishna M": {
     "detailsLink": "http://www.bmsce.ac.in/node/3059",
@@ -1749,7 +1749,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Soumen Panda": {
     "detailsLink": "http://www.bmsce.ac.in/node/2938",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/sp_2emp.6002pg.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/sp_2emp.6002pg.jpg"
   },
   "Soumya K S ": {
     "detailsLink": "http://www.bmsce.ac.in/node/2961",
@@ -1784,7 +1784,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Sri Lakshmi": {
     "detailsLink": "http://www.bmsce.ac.in/node/2885",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/sri_lakshmi.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/sri_lakshmi.jpg"
   },
   "Sridhar H R": {
     "detailsLink": "http://www.bmsce.ac.in/node/2901",
@@ -1799,7 +1799,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Sudheer Shenoy": {
     "detailsLink": "http://www.bmsce.ac.in/node/2832",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/sudheer_shenoy.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/sudheer_shenoy.jpg"
   },
   "Suhas B G": {
     "detailsLink": "http://www.bmsce.ac.in/node/4235",
@@ -1859,7 +1859,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Thimmaiah. M .B.": {
     "detailsLink": "http://www.bmsce.ac.in/node/2824",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/thimmaiah._m_.b.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/thimmaiah._m_.b.jpg"
   },
   "Tripti Pachori": {
     "detailsLink": "http://www.bmsce.ac.in/node/2866",
@@ -1884,7 +1884,7 @@ const Map<String, Map<String, String>> INITIAL_FACULTY_DATA = {
   "Umesh. R.": {
     "detailsLink": "http://www.bmsce.ac.in/node/2830",
     "profilePictureLink":
-        "gs://bmsce-flutter.appspot.com/faculty_images/umesh._r.png"
+        "gs://bmsce-flutter.appspot.com/faculty_images/umesh._r.jpg"
   },
   "VANISHREE B .N ": {
     "detailsLink": "http://www.bmsce.ac.in/node/2931",

@@ -28,6 +28,15 @@ class BlockPainter extends CustomPainter {
       case Block.PG:
         drawPgBlock(canvas, buildingPaint);
         break;
+      case Block.SCIENCE:
+        drawScienceBlock(canvas, buildingPaint);
+        break;
+      case Block.INDOOR:
+        drawIndoorBlock(canvas, buildingPaint);
+        break;
+      case Block.LIB:
+        drawLibraryBlock(canvas, buildingPaint);
+        break;
     }
   }
 
@@ -92,6 +101,21 @@ class BlockPainter extends CustomPainter {
       ..lineTo(22 * zoom, 44.5 * zoom);
     canvas.drawPath(path1, buildingPaint);
     canvas.drawPath(path2, buildingPaint);
+  }
+
+  drawScienceBlock(Canvas canvas, Paint buildingPaint) {
+    canvas.drawRect(
+        Rect.fromLTRB(0 * zoom, 0 * zoom, 20 * zoom, 38 * zoom), buildingPaint);
+  }
+
+  drawIndoorBlock(Canvas canvas, Paint buildingPaint) {
+    canvas.drawRect(
+        Rect.fromLTRB(0 * zoom, 0 * zoom, 42 * zoom, 42 * zoom), buildingPaint);
+  }
+
+  drawLibraryBlock(Canvas canvas, Paint buildingPaint) {
+    canvas.drawRect(
+        Rect.fromLTRB(0 * zoom, 0 * zoom, 26 * zoom, 42 * zoom), buildingPaint);
   }
 
   drawCsBlock(Canvas canvas, Paint buildingPaint) {

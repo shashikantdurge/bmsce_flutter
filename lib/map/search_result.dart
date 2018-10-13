@@ -1,9 +1,13 @@
 import 'dart:typed_data';
 
+import 'package:bmsce/course/course_dept_sem.dart';
 import 'package:bmsce/map/building_constants.dart';
 import 'package:bmsce/map/college_map.dart';
 import 'package:bmsce/map/college_map_widget.dart';
-import 'package:bmsce/map/place_cat.dart';
+import 'package:bmsce/map/edit_place.dart';
+import 'package:bmsce/map/place.dart';
+import 'package:bmsce/map/suggest_an_edit.dart';
+import 'package:bmsce/user_profile/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -109,7 +113,6 @@ class PlaceBottomSheetState extends State<PlaceBottomSheet>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     animController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 800));
@@ -123,24 +126,10 @@ class PlaceBottomSheetState extends State<PlaceBottomSheet>
     return BottomSheet(
       builder: (BuildContext context) {
         if (widget.data is Place) {
-          // WidgetsBinding.instance.scheduleFrameCallback((callback) {
-          //   notifier.value = data is Place
-          //       ? [data.location]
-          //       : data is List<Place>
-          //           ? List.generate(data.length, (i) {
-          //               return data[i].location;
-          //             })
-          //           : [];
-          //   //if (notifier.value.isNotEmpty) notifier.notifyListeners();
-          // });
           selectedPlace = widget.data;
           return getPlaceCard(widget.data);
         } else {
           if (selectedPlace == null) selectedPlace = widget.data[0];
-          // WidgetsBinding.instance.scheduleFrameCallback((callback) {
-          //   widget.onPlaceChanged(selectedPlace);
-          // });
-
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -170,22 +159,10 @@ class PlaceBottomSheetState extends State<PlaceBottomSheet>
       locationHR =
           '${BlockNameMap[block]}, ${FloorNameMap[place.location.split('_D_')[1]]}';
     } catch (err) {}
-    switch (place.runtimeType) {
-      case FacultyCabin:
-        print('FacultyCabin');
-        return FacultyDetailsWidget(
-          faculty: place,
-          location: locationHR,
-        );
-      case ClassRoom:
-      case Lab:
-      case Other:
-        return OtherDetailsWidget(
-          location: locationHR,
-          place: place,
-        );
-    }
-    return Text('${place.runtimeType}');
+    return PlaceDetailsWidget(
+      place: place,
+      location: locationHR,
+    );
   }
 
   showPlacesList() {
@@ -230,46 +207,12 @@ class PlaceBottomSheetState extends State<PlaceBottomSheet>
   }
 }
 
-class OtherDetailsWidget extends StatelessWidget {
+class PlaceDetailsWidget extends StatelessWidget {
+  final String location;
   final Place place;
-  final String location;
 
-  const OtherDetailsWidget(
-      {Key key, @required this.place, @required this.location})
-      : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(12.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Divider(),
-          Text(place.name, style: Theme.of(context).textTheme.title),
-          // Text('${place.dept != null ? place.dept : ''}'),
-
-          Padding(
-              padding: EdgeInsets.all(3.0),
-              child: place.dept != null ? Text(place.dept) : null),
-          Row(
-            children: <Widget>[
-              Icon(Icons.location_city),
-              Text(location, style: Theme.of(context).textTheme.subhead),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class FacultyDetailsWidget extends StatelessWidget {
-  final String location;
-  final FacultyCabin faculty;
-
-  const FacultyDetailsWidget(
-      {Key key, @required this.location, @required this.faculty})
+  const PlaceDetailsWidget(
+      {Key key, @required this.location, @required this.place})
       : super(key: key);
 
   @override
@@ -281,17 +224,37 @@ class FacultyDetailsWidget extends StatelessWidget {
         Divider(),
         Row(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            ImageLoader(gsPath: faculty.profilePictureLink),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(faculty.name, style: Theme.of(context).textTheme.title),
-                Text(
-                    '${faculty.designation != null ? faculty.designation + ',' : ''} ${faculty.dept != null ? faculty.dept : ''}'),
-              ],
-            )
+            ImageLoader(gsPath: place.photoUrl),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: PopupMenuButton(
+                      onSelected: (value) async {
+                        processSuggestion(context);
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          PopupMenuItem(
+                            child: Text('Suggest an edit'),
+                            value: 'suggest_an_edit',
+                          )
+                        ];
+                      },
+                    ),
+                  ),
+                  Text(place.name, style: Theme.of(context).textTheme.title),
+                  Text(
+                      '${place.designation != null ? place.designation + ',' : ''} ${place.dept != null ? deptNameFromPrefix(place.dept).item2 : ''}'),
+                ],
+              ),
+            ),
           ],
         ),
         Divider(),
@@ -304,9 +267,18 @@ class FacultyDetailsWidget extends StatelessWidget {
             ],
           ),
         ),
-        Align(
-            alignment: Alignment.centerRight,
-            child: FlatButton(
+        ButtonBar(
+          alignment: MainAxisAlignment.end,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.phone),
+              onPressed: place.phoneNumber != null ? () {} : null,
+            ),
+            IconButton(
+              icon: Icon(Icons.email),
+              onPressed: place.email != null ? () {} : null,
+            ),
+            FlatButton(
               child: Row(
                 children: <Widget>[
                   Text('MORE DETAILS'),
@@ -314,14 +286,39 @@ class FacultyDetailsWidget extends StatelessWidget {
                 ],
                 mainAxisSize: MainAxisSize.min,
               ),
-              onPressed: () async {
-                if (await canLaunch(faculty.detailsLink)) {
-                  launch(faculty.detailsLink);
-                }
-              },
-            )),
+              onPressed: place.website != null
+                  ? () async {
+                      if (await canLaunch(place.website)) {
+                        launch(place.website);
+                      }
+                    }
+                  : null,
+            )
+          ],
+        ),
       ],
     );
+  }
+
+  processSuggestion(BuildContext context) async {
+    final suggestionType = await showDialog(
+        context: context,
+        builder: (context) {
+          return SuggestAnEditDialog(
+            name: place.searchName,
+            place: place,
+            user: User.instance,
+          );
+        });
+    if (suggestionType == 'edit') {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (BuildContext context) {
+        return EditPlace(
+          suggestionType: suggestionType,
+          place: place,
+        );
+      }));
+    } else if (suggestionType == "close") {}
   }
 }
 
@@ -340,12 +337,12 @@ class ImageLoader extends StatelessWidget {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
-                return Text('');
               case ConnectionState.waiting:
               case ConnectionState.active:
-                return Icon(
-                  Icons.account_circle,
-                  size: MediaQuery.of(context).size.width * 0.2,
+                return Placeholder(
+                  fallbackHeight: MediaQuery.of(context).size.width * 0.2,
+                  fallbackWidth: MediaQuery.of(context).size.width * 0.2,
+                  strokeWidth: 0.2,
                 );
               case ConnectionState.done:
                 dynamic data = snapshot.data;
@@ -356,9 +353,10 @@ class ImageLoader extends StatelessWidget {
                     snapshot.data,
                   );
                 else
-                  return Icon(
-                    Icons.account_box,
-                    size: MediaQuery.of(context).size.width * 0.2,
+                  return Placeholder(
+                    fallbackHeight: MediaQuery.of(context).size.width * 0.2,
+                    fallbackWidth: MediaQuery.of(context).size.width * 0.2,
+                    strokeWidth: 0.2,
                   );
             }
           },
@@ -366,15 +364,20 @@ class ImageLoader extends StatelessWidget {
   }
 
   getImage() async {
-    if (gsPath.startsWith('gs://bmsce-flutter.appspot.com')) {
+    if (gsPath is String &&
+        gsPath.startsWith('gs://bmsce-flutter.appspot.com')) {
       if (imageMap.containsKey(gsPath)) return imageMap[gsPath];
-      final imageData = await FirebaseStorage.instance
-          .ref()
-          .child(gsPath.replaceFirst('gs://bmsce-flutter.appspot.com', ''))
-          .getData(oneMb);
-      imageMap[gsPath] = imageData;
-      return imageData;
-    } else if (gsPath != null)
+      try {
+        final imageData = await FirebaseStorage.instance
+            .ref()
+            .child(gsPath.replaceFirst('gs://bmsce-flutter.appspot.com', ''))
+            .getData(oneMb);
+        imageMap[gsPath] = imageData;
+        return imageData;
+      } catch (err) {
+        return null;
+      }
+    } else if (gsPath != null && await canLaunch(gsPath))
       return gsPath;
     else
       return null;

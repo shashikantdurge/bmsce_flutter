@@ -53,7 +53,7 @@ class ManageDeptUsersState extends State<ManageDeptUsers> {
               if (snapshot.hasData && snapshot.data.exists) {
                 users = snapshot.data.data.entries.toList();
                 return _widgetListView();
-              } else if (!snapshot.data.exists) {
+              } else if (snapshot.hasData && !snapshot.data.exists) {
                 return Center(child: Text('Data Not Found.'));
               } else {
                 return Center(

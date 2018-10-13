@@ -65,11 +65,11 @@ class CourseProviderSqf {
       await open();
     }
     final cols = [courseName, courseCode, totalCredits];
-    l ? cols.add(this.l) : null;
-    t ? cols.add(this.t) : null;
-    p ? cols.add(this.p) : null;
-    s ? cols.add(this.s) : null;
-    courseLastModifiedOn ? cols.add(this.lastModifiedOn) : null;
+    if (l) cols.add(this.l);
+    if (t) cols.add(this.t);
+    if (p) cols.add(this.p);
+    if (s) cols.add(this.s);
+    if (courseLastModifiedOn) cols.add(this.lastModifiedOn);
     List<Map> coursesMap =
         await db.query(table, columns: cols, orderBy: courseName);
     List<Course> courses = [];

@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:bmsce/academics/student_marks_detail.dart';
 import 'package:bmsce/academics/students_academics.dart';
 import 'package:bmsce/authentication/sign_in.dart';
+import 'package:bmsce/course/course_dept_sem.dart';
 import 'package:bmsce/roles/manage_dept_users.dart';
 import 'package:bmsce/roles/roles_management.dart';
 import 'package:bmsce/user_profile/user.dart';
@@ -11,138 +10,153 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfile extends StatelessWidget {
-  final FirebaseUser firebaseUser;
-  UserProfile({Key key, @required this.firebaseUser}) : super(key: key);
+  UserProfile({Key key}) : super(key: key);
   final stateKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: stateKey,
-      appBar: AppBar(),
-      body: Column(
-        children: <Widget>[
-          CircleAvatar(
-            radius: 40.0,
-            backgroundImage: NetworkImage(firebaseUser.photoUrl),
+      appBar: AppBar(
+        title: Row(
+          children: <Widget>[
+            CircleAvatar(
+              backgroundImage: NetworkImage(User.instance.photoUrl),
+            ),
+            Text(
+              User.instance.displayName,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {},
           ),
-          Text(firebaseUser.displayName),
-          FutureBuilder<User>(
-            future: getUser(),
-            builder: (context, user) {
-              switch (user.connectionState) {
-                case ConnectionState.none:
-                  return Spacer();
-                case ConnectionState.waiting:
-                case ConnectionState.active:
-                  return CircularProgressIndicator();
-                case ConnectionState.done:
-                  if (user.hasData)
-                    return buildProfileEnv(user.data);
-                  else
-                    return Spacer();
-              }
+          PopupMenuButton(
+            onSelected: (value) {
+              if (value == 'logout') logout(context);
             },
-          ),
-          Spacer(),
-          FlatButton(
-            child: Text('LOG OUT'),
-            onPressed: () {
-              FirebaseAuth.instance.signOut().then((onValue) {
-                SharedPreferences.getInstance().then((pref) {
-                  pref.clear();
-                });
-              });
-              //TODO:remove all data. ISSUE IS THERE. its not getting replaced
-              Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (context) {
-                return Login();
-              }));
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  child: Text('Logout'),
+                  value: 'logout',
+                )
+              ];
             },
           )
+        ],
+      ),
+      body: Column(
+        children: <Widget>[
+          getUserDetailsCard(User.instance),
+          getAccessibilityCard(User.instance),
+          getAboutUsCard()
         ],
       ),
     );
   }
 
-  Future<User> getUser() async {
-    final preferences = await SharedPreferences.getInstance();
-    final role = preferences.getString('user_property_role');
-    User user = User.fromRole(role,
-        dept: preferences.getString('user_property_dept'),
-        displayName: firebaseUser.displayName,
-        email: firebaseUser.email,
-        photoUrl: firebaseUser.photoUrl,
-        usn: preferences.getString('user_property_usn'));
-    return user;
+  logout(context) {
+    FirebaseAuth.instance.signOut().then((onValue) {
+      SharedPreferences.getInstance().then((pref) {
+        pref.clear();
+      });
+    });
+    //TODO:remove all data. ISSUE IS THERE. its not getting replaced
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+      return Login();
+    }));
   }
 
-  getUsn(user) {
-    if (user is Student) {
-      return Text('USN   : ${user?.usn ?? 'NA'}');
-    }
-  }
-
-  getStudentAcademicRecord(String usn) {
-    return ListTile(
-      title: Text('Academic Record'),
-      onTap: () {
-        Navigator.of(stateKey.currentContext)
-            .push(MaterialPageRoute(builder: (context) {
-          return StudentDetailView(
-            name: 'Academic Record',
-            usn: usn ?? 'USN is Empty',
-          );
-        }));
-      },
+  getUserDetailsCard(User user) {
+    return Card(
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            leading: Icon(Icons.email),
+            title: Text(user.email ?? 'Email Not Available'),
+            // subtitle: Text('Email'),
+          ),
+          ListTile(
+            leading: Icon(Icons.widgets),
+            title: user.dept != null
+                ? Text(deptNameFromPrefix(user.dept).item2)
+                : Text('Dept Not Available'),
+            // subtitle: Text('Department'),
+          ),
+          ListTile(
+            leading: Icon(Icons.assignment_ind),
+            title:
+                user.usn != null ? Text(user.usn) : Text('USN Not Available'),
+            // subtitle: Text('Department'),
+          ),
+        ],
+      ),
     );
   }
 
-  getAcademicRecord(User user) {
-    if (user.isPermittedFor(Activity.ACADEMIC_PROCTOR_VIEW)) {
-      return ListTile(
-        title: Text('My Students'),
-        onTap: () {
-          Navigator.of(stateKey.currentContext)
-              .push(MaterialPageRoute(builder: (context) {
-            return StudentDataTable();
-          }));
-        },
-      );
-    }
+  getAboutUsCard() {
+    return Card(
+      child: ListTile(
+        leading: Icon(Icons.info_outline),
+        title: Text('About us'),
+        trailing: Icon(Icons.keyboard_arrow_right),
+      ),
+    );
   }
 
-  getRolesManagement(User user) {
-    if (user.isPermittedFor(Activity.ROLE_MANAGE)) {
-      return ListTile(
-        title: Text('Role Management'),
-        onTap: () {
-          Navigator.of(stateKey.currentContext)
-              .push(MaterialPageRoute(builder: (context) {
-            return user.isAdmin
-                ? RolesManagement(user: user)
-                : ManageDeptUsers(user: user, dept: user.dept);
-          }));
-        },
-      );
-    }
-  }
-
-  Widget buildProfileEnv(User user) {
-    return Column(
-      children: <Widget>[
-        Text('Email : ${user.email}'),
-        Text('Dept : ${user?.dept ?? 'NA'}'),
-        getUsn(user) ?? Text(''),
-        user is Student ? getStudentAcademicRecord(user.usn) : Text(''),
-        getAcademicRecord(user) ?? Text(''),
-        getRolesManagement(user) ?? Text('')
-        // ,Row(
-        //   children: <Widget>[
-        //     Text('Email'),
-        //     Text(user.displayName)
-        //   ],
-        // )
-      ],
+  getAccessibilityCard(User user) {
+    return Card(
+      child: Column(
+        children: [
+          ListTile(
+            title: Text('Academic Record'),
+            leading: Icon(Icons.school),
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Navigator.of(stateKey.currentContext)
+                  .push(MaterialPageRoute(builder: (context) {
+                return StudentDetailView(
+                  name: 'Academic Record',
+                  usn: user.usn ?? '1BM14XX000',
+                );
+              }));
+            },
+          ),
+          User.instance.isPermittedFor(Activity.ACADEMIC_PROCTOR_VIEW)
+              ? ListTile(
+                  title: Text('My Students'),
+                  leading: Icon(Icons.people),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                  onTap: () {
+                    Navigator.of(stateKey.currentContext)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return StudentDataTable();
+                    }));
+                  },
+                )
+              : Padding(padding: EdgeInsets.all(0.0)),
+          User.instance.isPermittedFor(Activity.ROLE_MANAGE)
+              ? ListTile(
+                  title: Text('Role Management'),
+                  leading: Icon(Icons.supervisor_account),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                  onTap: () {
+                    Navigator.of(stateKey.currentContext)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return User.instance.isAdmin
+                          ? RolesManagement(user: User.instance)
+                          : ManageDeptUsers(
+                              user: User.instance, dept: User.instance.dept);
+                    }));
+                  },
+                )
+              : Padding(padding: EdgeInsets.all(0.0))
+        ],
+      ),
     );
   }
 }

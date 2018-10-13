@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   final firestore = Firestore.instance;
@@ -138,7 +137,10 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
                       if (user != null)
                         Navigator.of(context).pushReplacement(
                             MaterialPageRoute(builder: (BuildContext context) {
-                          return HomePage(user);
+                          return Splash(
+                            from: 'sign_in',
+                            userDetails: accountDetails,
+                          );
                         }));
                       else
                         setState(() {
@@ -250,13 +252,16 @@ class LoginState extends State<Login> with TickerProviderStateMixin {
 
         GoogleSignInAuthentication googleAuthentication =
             await googleSignInAccount.authentication;
-        final user = await widget.auth.signInWithGoogle(
+        await widget.auth.signInWithGoogle(
             idToken: googleAuthentication.idToken,
             accessToken: googleAuthentication.accessToken);
         Navigator.of(context)
             .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
-          return HomePage(user);
-        })).then(setEntryUserData(userSnap.data, googleSignInAccount.email));
+          return Splash(
+            from: 'sign_in',
+            userDetails: userSnap.data,
+          );
+        }));
       }
     } catch (error) {
       print(error);

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bmsce/academics/student.dart';
 import 'package:sqflite/sqflite.dart';
-import 'cgpa_sgpa_chart.dart';
 
 class StudentDbProvider {
   final tableDb = "studentDb";

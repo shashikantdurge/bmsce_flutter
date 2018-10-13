@@ -1,21 +1,25 @@
+import 'dart:async';
+
 import 'package:bmsce/authentication/sign_in.dart';
-import 'package:bmsce/home_tabs/syllabus_tabs.dart' as syllabus;
-import 'package:bmsce/map/college_map.dart';
-import 'package:bmsce/user_profile/user_profile.dart';
+import 'package:bmsce/home.dart';
+import 'package:bmsce/temp/search.dart';
+import 'package:bmsce/user_profile/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   final mainTheme = ThemeData(
     primarySwatch: const MaterialColor(
-      0xFFF44336,
+      0xFF0097A7,
       const <int, Color>{
         50: const Color(0xFFFFEBEE),
         100: const Color(0xFFFFCDD2),
         200: const Color(0xFFEF9A9A),
         300: const Color(0xFFE57373),
         400: const Color(0xFFEF5350),
-        500: const Color(0xFFF44336),
+        500: const Color(0xFF0097A7),
         600: const Color(0xFFE53935),
         700: const Color(0xFFD32F2F),
         800: const Color(0xFFC62828),
@@ -25,86 +29,166 @@ void main() async {
     inputDecorationTheme:
         InputDecorationTheme(contentPadding: EdgeInsets.all(12.0)),
     buttonColor: const Color(0xFFE53935),
-    primaryColor: Colors.red[500],
+    primaryColor: Colors.cyan[500],
   );
-
-  dynamic entryPage;
-  FirebaseUser user = await FirebaseAuth.instance.currentUser();
-  if (user != null) {
-    entryPage = HomePage(user);
-    print('${user.email}');
-  } else
-    entryPage = Login();
 
   runApp(MaterialApp(
     title: 'BMSCE',
     theme: mainTheme,
-    home: entryPage,
+    home: Splash(from: 'main'),
   ));
 }
 
-class HomePage extends StatefulWidget {
-  final FirebaseUser user;
-  HomePage(this.user) : assert(user != null);
-  HomePageState createState() => HomePageState();
+class Splash extends StatefulWidget {
+  final String from;
+  final Map userDetails;
+
+  const Splash({Key key, @required this.from, this.userDetails})
+      : super(key: key);
+  @override
+  State<StatefulWidget> createState() {
+    return SplashState();
+  }
 }
 
-class HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
-  int currentIndex = 1;
-  dynamic currentHomeTab;
-  // final FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
-
+class SplashState extends State<Splash> {
+  SharedPreferences pref;
+  // AnimationController animationController;
   @override
   void initState() {
     super.initState();
-    currentHomeTab = CollegeMap();
+    // animationController = AnimationController(
+    //     vsync: this, duration: Duration(milliseconds: 10000))
+    //   ..repeat();
+  }
+
+  @override
+  void dispose() {
+    // animationController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: currentHomeTab,
+    return Scaffold(
+      body: Center(
+        child: FutureBuilder(
+          future: process(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+              case ConnectionState.active:
+                return Image.asset(
+                  'assets/images/bmsce_logo.png',
+                  scale: 3.0,
+                );
+                break;
+              case ConnectionState.done:
+                if (snapshot.data == null || snapshot.hasError) {
+                  WidgetsBinding.instance.addPostFrameCallback((d) {
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (BuildContext context) {
+                      return Login();
+                    }));
+                  });
+                  return Image.asset(
+                    'assets/images/bmsce_logo.png',
+                    scale: 3.0,
+                  );
+                } else {
+                  WidgetsBinding.instance.addPostFrameCallback((d) {
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (BuildContext context) {
+                      User.instance = snapshot.data;
+                      return HomePage(User.instance);
+                    }));
+                  });
+                  return Image.asset(
+                    'assets/images/bmsce_logo.png',
+                    scale: 3.0,
+                  );
+                }
+            }
+          },
         ),
-        Theme(
-          data: Theme.of(context).copyWith(
-              //canvasColor: Colors.red[400],
-              ),
-          child: BottomNavigationBar(
-              onTap: (botNavBarIndex) {
-                setState(() {
-                  currentIndex = botNavBarIndex;
-                  switch (currentIndex) {
-                    case 0:
-                      currentHomeTab = syllabus.SyllabusTabs();
-                      break;
-                    case 1:
-                      currentHomeTab = CollegeMap();
-                      break;
-                    case 2:
-                      currentHomeTab = UserProfile(
-                        firebaseUser: widget.user,
-                      );
-                      break;
-                  }
-                });
-              },
-              currentIndex: currentIndex,
-              items: [
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.book), title: Text('syllabus')),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.map), title: Text('map')),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.account_circle), title: Text('user')),
-              ]),
-        )
-      ],
+      ),
     );
+  }
+
+  // load() {
+  //   return Stack(
+  //     fit: StackFit.expand,
+  //     alignment: AlignmentDirectional.center,
+  //     children: <Widget>[
+  //       RotationTransition(
+  //         turns: animationController,
+  //         child: Image.asset(
+  //           'assets/images/bmsce_logo_outer_2.png',
+  //           scale: 3.0,
+  //         ),
+  //       ),
+  //       Image.asset(
+  //         'assets/images/bmsce_logo_inner.png',
+  //         scale: 3.0,
+  //       )
+  //     ],
+  //   );
+  // }
+
+  process() async {
+    FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
+    if (firebaseUser == null)
+      return null;
+    else {
+      pref = await SharedPreferences.getInstance();
+      return await getUser(firebaseUser);
+    }
+  }
+
+  Future<String> getRoleInfo(String email, String dept) async {
+    return await Firestore.instance
+        .collection('roles')
+        .document(dept)
+        .get()
+        .then((doc) {
+      if (doc.data.containsKey(email))
+        return doc.data[email]['role'];
+      else
+        return 'default';
+    }).catchError((err) {
+      return 'default';
+    });
+  }
+
+  setDataOffline(String role) {
+    widget.userDetails.forEach((key, value) {
+      if (value is String) {
+        pref.setString("user_property_" + key, value);
+      }
+    });
+    pref.setString('user_property_role', role);
+  }
+
+  Future<User> getUser(FirebaseUser firebaseUser) async {
+    String role, dept, usn;
+    if (widget.from == 'sign_in') {
+      role = await getRoleInfo(firebaseUser.email, widget.userDetails['dept']);
+      dept = widget.userDetails['dept'];
+      usn = widget.userDetails['usn'];
+      setDataOffline(role);
+    } else {
+      role = pref.getString('user_property_role');
+      dept = pref.getString('user_property_dept');
+      usn = pref.getString('user_property_usn');
+    }
+
+    final user = User.fromRole(role,
+        dept: dept,
+        displayName: firebaseUser.displayName,
+        email: firebaseUser.email,
+        photoUrl: firebaseUser.photoUrl,
+        usn: usn);
+    return user;
   }
 }

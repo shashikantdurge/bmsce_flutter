@@ -12,6 +12,9 @@ const Map<Block, String> BlockIdPrefixMap = {
   Block.ME: "ME",
   Block.AS: "AS",
   Block.NB: "NB",
+  Block.SCIENCE: "SC",
+  Block.LIB: "LB",
+  Block.INDOOR: "IND"
 };
 
 const Map<Block, String> BlockNameMap = {
@@ -20,13 +23,19 @@ const Map<Block, String> BlockNameMap = {
   Block.CS: "CSE Block",
   Block.ME: "Mech Block",
   Block.AS: "Account Section Block",
-  Block.NB: "Platinum Jubilee Block"
+  Block.NB: "Platinum Jubilee Block",
+  Block.SCIENCE: "Science Block",
+  Block.LIB: "Library",
+  Block.INDOOR: "Indoor Stadium",
 };
 
 const Map<Block, List<String>> BlockFloors = {
   Block.PG: ["7", "6", "5", "4", "3", "2", "1", "G"],
   Block.CR: ["3", "2", "1", "G"],
   Block.CS: ["3", "2", "1", "G"],
+  Block.SCIENCE: ["1", "G"],
+  Block.LIB: ["4", "3", "2", "1", "G"],
+  Block.INDOOR: ["3", "2", "1", "G"],
   Block.ME: ["4", "3", "2", "1", "G"],
   Block.AS: ["1", "G"],
   Block.NB: ["7", "6", "5", "4", "3", "2", "1", "G", "UB", "LB"],
@@ -52,10 +61,14 @@ const Map<Block, double> BlockHeightMap = {
   Block.CR: 68.0,
   Block.CS: 59.0,
   Block.ME: 68.0,
-  Block.AS: 42.0,
+  Block.AS: 40.0,
   Block.NB: 86.0,
+  Block.SCIENCE: 38.0,
+  Block.LIB: 42.0,
+  Block.INDOOR: 42.0,
 };
 
+// WIDTH/HEIGHT
 const Map<Block, double> BlockAspectRatioMap = {
   Block.PG: 2.09,
   Block.CR: 0.176,
@@ -63,9 +76,12 @@ const Map<Block, double> BlockAspectRatioMap = {
   Block.ME: 0.471,
   Block.AS: 0.643,
   Block.NB: 0.708,
+  Block.SCIENCE: 0.526,
+  Block.LIB: 0.619,
+  Block.INDOOR: 1.0
 };
 
-enum Block { PG, CS, CR, ME, AS, NB }
+enum Block { PG, CS, CR, ME, AS, NB, SCIENCE, LIB, INDOOR }
 
 String meghanaDept, meghanaCategory, meghanaFloor;
 Block meghanablock;

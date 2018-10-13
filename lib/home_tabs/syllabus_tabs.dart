@@ -4,7 +4,6 @@ import 'package:bmsce/syllabus/course_add.dart';
 import 'package:bmsce/syllabus/course_list.dart';
 import 'package:bmsce/syllabus/portion_create.dart';
 import 'package:flutter/material.dart';
-import 'package:bmsce/syllabus/notes.dart';
 import 'package:bmsce/syllabus/portion_list.dart';
 
 class SyllabusTabs extends StatefulWidget {

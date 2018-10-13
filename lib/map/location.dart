@@ -1,14 +1,10 @@
-import 'dart:typed_data';
-
 import 'package:bmsce/map/block_widget.dart';
 import 'package:bmsce/map/building_constants.dart';
 import 'package:bmsce/my_widgets/floor_radio_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:ui' as ui;
 import 'package:tuple/tuple.dart';
 
-//TODO: Some issue in floor selection
 class LocationMarker extends StatefulWidget {
   final String initLocationId;
 
@@ -44,6 +40,15 @@ class LocationMarker extends StatefulWidget {
       }).key;
     } catch (err) {}
     return Tuple2(block, floor);
+  }
+
+  static String getLocationHrFrmId(String locationId) {
+    if (locationId is String) {
+      final locTuple = getBlockFloorFrmLocationId(locationId);
+      return '${BlockNameMap[locTuple.item1]}, ${FloorNameMap[locTuple.item2]}';
+    } else {
+      return null;
+    }
   }
 }
 
@@ -86,14 +91,8 @@ class LocationMarkerState extends State<LocationMarker> {
               }
               String selectedLocationId =
                   rawSelLocationId.replaceFirst('somefloor', selectedFloor);
-              final boundary = previewContainer.currentContext
-                  .findRenderObject() as RenderRepaintBoundary;
-              ui.Image image = await boundary.toImage();
-              ByteData byteData =
-                  await image.toByteData(format: ui.ImageByteFormat.png);
-              Uint8List pngBytes = byteData.buffer.asUint8List();
-              Navigator.pop(
-                  context, Tuple3(pngBytes, selectedLocationId, selectedBlock));
+
+              Navigator.pop(context, selectedLocationId);
             },
           )
         ],

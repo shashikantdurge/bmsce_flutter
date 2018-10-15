@@ -41,7 +41,7 @@ abstract class User {
 
 class Student extends User {
   final String usn;
-  static final List<Activity> myActivities = [];
+  static final List<Activity> myActivities = [Activity.ACADEMIC_STUDENT_VIEW];
   static final List<Role> mySubRoles = [];
   Student(
       String displayName, String photoUrl, String email, String dept, this.usn,
@@ -105,6 +105,7 @@ class SuperStudent extends Student {
   static final List<Activity> myActivities = [
     Activity.COLLEGE_MAP,
     Activity.PORTION_SEND,
+    Activity.ACADEMIC_STUDENT_VIEW
   ];
   static final List<Role> mySubRoles = [];
   SuperStudent(String displayName, String photoUrl, String email, String dept,
@@ -141,6 +142,7 @@ enum Activity {
   COLLEGE_MAP,
   ROLE_MANAGE,
   ACADEMIC_PROCTOR_VIEW,
+  ACADEMIC_STUDENT_VIEW,
   PORTION_SEND,
   BROADCAST_MESSAGE,
 }

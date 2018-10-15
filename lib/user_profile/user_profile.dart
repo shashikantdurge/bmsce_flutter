@@ -51,7 +51,7 @@ class UserProfile extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          getUserDetailsCard(User.instance),
+          getUserDetailsCard(User.instance, context),
           getAccessibilityCard(User.instance),
           getAboutUsCard()
         ],
@@ -71,7 +71,7 @@ class UserProfile extends StatelessWidget {
     }));
   }
 
-  getUserDetailsCard(User user) {
+  Widget getUserDetailsCard(User user, context) {
     return Card(
       child: Column(
         children: <Widget>[
@@ -88,11 +88,18 @@ class UserProfile extends StatelessWidget {
             // subtitle: Text('Department'),
           ),
           ListTile(
-            leading: Icon(Icons.assignment_ind),
-            title:
-                user.usn != null ? Text(user.usn) : Text('USN Not Available'),
-            // subtitle: Text('Department'),
-          ),
+              leading: Icon(Icons.assignment_ind),
+              title: user.usn != null
+                  ? Text(user.usn)
+                  : Text(
+                      'USN not set',
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: Theme.of(context).textTheme.caption.color,
+                      ),
+                    )
+              // subtitle: Text('Department'),
+              ),
         ],
       ),
     );
@@ -112,20 +119,22 @@ class UserProfile extends StatelessWidget {
     return Card(
       child: Column(
         children: [
-          ListTile(
-            title: Text('Academic Record'),
-            leading: Icon(Icons.school),
-            trailing: Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              Navigator.of(stateKey.currentContext)
-                  .push(MaterialPageRoute(builder: (context) {
-                return StudentDetailView(
-                  name: 'Academic Record',
-                  usn: user.usn ?? '1BM14XX000',
-                );
-              }));
-            },
-          ),
+          User.instance.isPermittedFor(Activity.ACADEMIC_STUDENT_VIEW)
+              ? ListTile(
+                  title: Text('Academic Record'),
+                  leading: Icon(Icons.school),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                  onTap: () {
+                    Navigator.of(stateKey.currentContext)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return StudentDetailView(
+                        name: 'Academic Record',
+                        usn: user.usn ?? '1BM14XX000',
+                      );
+                    }));
+                  },
+                )
+              : Padding(padding: EdgeInsets.all(0.0)),
           User.instance.isPermittedFor(Activity.ACADEMIC_PROCTOR_VIEW)
               ? ListTile(
                   title: Text('My Students'),

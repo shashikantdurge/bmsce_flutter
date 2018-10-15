@@ -19,8 +19,10 @@ class CollegeMapState extends State<CollegeMap> {
   void initState() {
     super.initState();
     longList = [];
-    getSearchNames(fromOnline: false).then((onValue) {
+    getSearchNames(fromOnline: false).then((onValue) async {
+      // await Future.delayed(Duration(seconds: 7), () {});
       setState(() {
+        //Future delayed 5 secs check. TODO:
         longList = onValue;
       });
     });
@@ -47,16 +49,11 @@ class CollegeMapState extends State<CollegeMap> {
     }
   }
 
-  final ValueNotifier<List<String>> notifier = ValueNotifier([]);
-  final ScrollController controller = ScrollController();
-
-  final stateKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: stateKey,
       appBar: AppBar(
-        title: Text('Map'),
+        title: Text('College search'),
         actions: <Widget>[
           PopupMenuButton(
             onSelected: (value) {

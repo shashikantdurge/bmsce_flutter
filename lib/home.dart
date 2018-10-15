@@ -1,5 +1,6 @@
 import 'package:bmsce/home_tabs/syllabus_tabs.dart';
 import 'package:bmsce/map/college_map.dart';
+import 'package:bmsce/temp/search.dart';
 import 'package:bmsce/user_profile/user.dart';
 import 'package:bmsce/user_profile/user_profile.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     print('user @ home ${widget.user.dept}');
-    currentHomeTab = CollegeMap();
+    currentHomeTab = SearchDemo();
   }
 
   @override
@@ -46,7 +47,7 @@ class HomePageState extends State<HomePage>
                       currentHomeTab = SyllabusTabs();
                       break;
                     case 1:
-                      currentHomeTab = CollegeMap();
+                      currentHomeTab = SearchDemo();
                       break;
                     case 2:
                       currentHomeTab = UserProfile();
@@ -59,7 +60,7 @@ class HomePageState extends State<HomePage>
                 BottomNavigationBarItem(
                     icon: Icon(Icons.book), title: Text('syllabus')),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.map), title: Text('map')),
+                    icon: Icon(Icons.search), title: Text('search')),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.account_circle), title: Text('user')),
               ]),

@@ -40,9 +40,6 @@ class SearchFutureWidgetState extends State<SearchFutureWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.searchValue),
-      ),
       body: CollegeMapWidget(
         notifier: notifier,
       ),

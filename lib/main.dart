@@ -35,6 +35,7 @@ void main() async {
   runApp(MaterialApp(
     title: 'BMSCE',
     theme: mainTheme,
+    // home: SearchDemo(),
     home: Splash(from: 'main'),
   ));
 }

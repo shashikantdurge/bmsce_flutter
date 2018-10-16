@@ -115,17 +115,18 @@ class PortionCreate extends StatelessWidget {
         .indexOf(toggleHighlight[UnitContent.totalWordsCount - 1]));
     String toggleBordIndexesStr = saveToggleBorderIndexes.join(",");
     String toggleColorIndexesStr = toggleColorIndexes.join(",");
-    await PortionProvider().insert(Portion(
-        courseCode: course.courseCode,
-        courseName: course.courseName,
-        codeVersion: course.codeVersion,
-        createdBy: User.instance.displayName,
-        createdOn: DateTime.now().millisecondsSinceEpoch,
-        description: description,
-        isOutdated: 0,
-        isTeacherSignature: 0,
-        toggleBordColorIndexes: toggleBordIndexesStr,
-        toggleColorIndexes: toggleColorIndexesStr));
+    await PortionProvider().insert(
+        portion: Portion(
+            courseCode: course.courseCode,
+            courseName: course.courseName,
+            codeVersion: course.codeVersion,
+            createdBy: User.instance.displayName,
+            createdOn: DateTime.now().millisecondsSinceEpoch,
+            description: description,
+            isOutdated: 0,
+            isTeacherSignature: 0,
+            toggleBordColorIndexes: toggleBordIndexesStr,
+            toggleColorIndexes: toggleColorIndexesStr));
     Navigator.of(context).pop();
   }
 }

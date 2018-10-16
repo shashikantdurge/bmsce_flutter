@@ -1,24 +1,38 @@
 import 'dart:async';
 
 import 'package:bmsce/course/course_provider_sqf.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tuple/tuple.dart';
 import 'package:bmsce/portion/portion_provider_sqf.dart';
 import 'package:bmsce/syllabus/portion_create.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:share/share.dart';
 
 class PortionView extends StatelessWidget {
   final String courseName;
   final String createdBy;
   final int createdOn;
   final String description;
+  final Portion portion;
 
   PortionView(
       {Key key,
-      @required this.createdBy,
-      @required this.createdOn,
+      this.createdBy,
+      this.createdOn,
+      this.portion,
       @required this.courseName,
       @required this.description})
-      : super(key: key);
+      : assert(createdOn != null && createdBy != null || portion != null),
+        super(key: key);
+
+  factory PortionView.fromPortionObj(Portion portion) {
+    return PortionView(
+      courseName: portion.courseName,
+      description: portion.description,
+      portion: portion,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +55,15 @@ class PortionView extends StatelessWidget {
         ),
         actions: <Widget>[
           IconButton(icon: Icon(Icons.info_outline), onPressed: () {}),
+          IconButton(
+              icon: Icon(Icons.share),
+              onPressed: () {
+                share(context);
+              })
         ],
       ),
       body: FutureBuilder<Tuple2<List<CourseContentPart>, List<Color>>>(
-        future: processPortion(createdBy, createdOn),
+        future: processPortion(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -67,6 +86,71 @@ class PortionView extends StatelessWidget {
         },
       ),
     );
+  }
+
+  share(BuildContext context) async {
+    final portion = await PortionProvider().getPortion(createdBy, createdOn);
+    final link = await showDialog<String>(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) {
+          return AlertDialog(
+            // height: 100.0,
+            // width: MediaQuery.of(context).size.width * 0.6,
+            // padding: EdgeInsets.all(15.0),
+            content: FutureBuilder(
+              future: getLink(portion),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  WidgetsBinding.instance.addPostFrameCallback((d) {
+                    Navigator.of(context).pop(snapshot.data);
+                  });
+                  return Text(snapshot.data);
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  return Text('Something went wrong.');
+                } else {
+                  return Row(
+                    children: [
+                      CircularProgressIndicator(),
+                      Padding(
+                          padding: EdgeInsets.only(left: 20.0),
+                          child: Text('Creating link...'))
+                    ],
+                  );
+                }
+              },
+            ),
+          );
+        });
+    if (link is String)
+      Share.share(
+          'Portion for ${portion.courseName}\n${portion.description}\n$link');
+  }
+
+//IOS DYNAMIC LINK SETUP
+  Future<String> getLink(Portion portion) async {
+    final link = portion.dynamicLink != null
+        ? portion.dynamicLink
+        : (await Firestore.instance
+                .collection('portions')
+                .add(PortionProvider().portionToMap(portion)))
+            .path;
+    if (portion.dynamicLink == null) {
+      portion.dynamicLink = link;
+      PortionProvider().updateDynamicLink(portion);
+    }
+    final linkParams = DynamicLinkParameters(
+      domain: 'bmsce.page.link',
+      link: Uri.parse(
+          'https://bmsce.ac.in/?link=$link&st=${portion.courseName}&sd=${portion.description}'),
+      androidParameters: AndroidParameters(
+          packageName: 'com.shashikant.bmsce', minimumVersion: 0),
+      dynamicLinkParametersOptions: DynamicLinkParametersOptions(
+        shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
+      ),
+    );
+    final shortLink = await linkParams.buildShortLink();
+    return shortLink.shortUrl.toString();
   }
 
   buildCourseContent(
@@ -104,9 +188,11 @@ class PortionView extends StatelessWidget {
     );
   }
 
-  Future<Tuple2<List<CourseContentPart>, List<Color>>> processPortion(
-      String createdBy, int createdOn) async {
-    final portion = await PortionProvider().getPortion(createdBy, createdOn);
+  Future<Tuple2<List<CourseContentPart>, List<Color>>> processPortion() async {
+    //TODO: get portion  include courseCode in where
+    final portion = this.portion != null
+        ? this.portion
+        : await PortionProvider().getPortion(createdBy, createdOn);
     final courseContentParts =
         await processSyllabus(portion.courseCode, portion.codeVersion);
     List<int> toggleBordColorIndexes = [];

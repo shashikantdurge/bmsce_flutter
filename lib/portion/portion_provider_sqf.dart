@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 class Portion {
   final String courseCode;
   final String codeVersion;
+  String dynamicLink;
 
   final int createdOn;
   final String createdBy;
@@ -28,7 +29,8 @@ class Portion {
       this.toggleColorIndexes,
       this.toggleBordColorIndexes,
       this.isOutdated,
-      this.isTeacherSignature});
+      this.isTeacherSignature,
+      this.dynamicLink});
 }
 
 class PortionProvider {
@@ -43,6 +45,7 @@ class PortionProvider {
   final String createdOn = 'createdOn';
   final String isOutdated = 'isOutdated';
   final String isTeacherSignature = 'teacherSignature';
+  final String dynamicLink = 'dynamicLink';
   Database db;
 
   Future open() async {
@@ -51,7 +54,7 @@ class PortionProvider {
     db = await openDatabase(path, version: 1, onCreate: (db, version) async {
       await db.execute(
           '''CREATE TABLE $table ($courseCode text, $createdBy text, $courseName text, $description text, $toggleColorIndexes text, $toggleBordColorIndexes text
-          , $codeVersion integer, $createdOn integer, $isOutdated integer, $isTeacherSignature integer);''');
+          , $codeVersion integer, $createdOn integer, $isOutdated integer, $isTeacherSignature integer, $dynamicLink text);''');
     });
     assert(db != null);
   }
@@ -62,17 +65,17 @@ class PortionProvider {
 
   Portion portionFrmMap(Map<String, dynamic> map) {
     return Portion(
-      courseCode: map[courseCode],
-      createdBy: map[createdBy],
-      courseName: map[courseName],
-      description: map[description],
-      toggleColorIndexes: map[toggleColorIndexes],
-      toggleBordColorIndexes: map[toggleBordColorIndexes],
-      codeVersion: map[codeVersion],
-      createdOn: map[createdOn],
-      isOutdated: map[isOutdated],
-      isTeacherSignature: map[isTeacherSignature],
-    );
+        courseCode: map[courseCode],
+        createdBy: map[createdBy],
+        courseName: map[courseName],
+        description: map[description],
+        toggleColorIndexes: map[toggleColorIndexes],
+        toggleBordColorIndexes: map[toggleBordColorIndexes],
+        codeVersion: map[codeVersion],
+        createdOn: map[createdOn],
+        isOutdated: map[isOutdated],
+        isTeacherSignature: map[isTeacherSignature],
+        dynamicLink: map[dynamicLink]);
   }
 
   Map<String, dynamic> portionToMap(Portion portion) {
@@ -87,6 +90,7 @@ class PortionProvider {
       createdOn: portion.createdOn,
       isOutdated: portion.isOutdated,
       isTeacherSignature: portion.isTeacherSignature,
+      dynamicLink: portion.dynamicLink
     };
   }
 
@@ -136,11 +140,32 @@ class PortionProvider {
     return portions;
   }
 
-  Future<void> insert(Portion portion) async {
+  ///Either specify `portion` or `portionMap`
+  Future<void> insert(
+      {Portion portion, Map<String, dynamic> portionMap}) async {
+    assert(portion == null && portionMap != null ||
+        portion != null && portionMap == null);
     if (this.db == null) {
       await open();
     }
-    await db.insert(table, portionToMap(portion));
+    final _portionMap = portion != null ? portionToMap(portion) : portionMap;
+    if (_portionMap[dynamicLink] != null) {
+      final res = await db.query(table,
+          where: '$dynamicLink="${_portionMap[dynamicLink]}"');
+      if (res.isNotEmpty) return;
+    }
+
+    await db.insert(table, _portionMap);
+  }
+
+  Future updateDynamicLink(Portion portion) async {
+    if (this.db == null) {
+      await open();
+    }
+    if (portion.dynamicLink != null)
+      db.update(table, {dynamicLink: portion.dynamicLink},
+          where:
+              "$courseCode='${portion.courseCode}' AND $createdBy='${portion.createdBy}' AND $createdOn=${portion.createdOn}");
   }
 
   Future remove(String courseCode, String codeVersion, int createdOn,

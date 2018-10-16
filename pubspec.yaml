@@ -18,6 +18,8 @@ dependencies:
   google_sign_in: ^3.0.4
   charts_flutter: ^0.4.0
   material_search: ^0.2.8
+  firebase_dynamic_links: ^0.1.0+1
+  share: ^0.5.3
   shared_preferences: ^0.4.2
   firebase_messaging: any
   url_launcher: ^4.0.0

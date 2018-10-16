@@ -63,8 +63,8 @@ class PortionState extends State<PortionList> {
             onSelected: (item) {
               if (item == "remove")
                 PortionProvider()
-                    .remove(portion.courseCode, portion.courseLastModifiedOn,
-                        portion.createdOn)
+                    .remove(portion.courseCode, portion.codeVersion,
+                        portion.createdOn, portion.createdBy)
                     .then((onValue) {
                   setState(() {});
                 });

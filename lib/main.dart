@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bmsce/authentication/sign_in.dart';
 import 'package:bmsce/home.dart';
-import 'package:bmsce/temp/search.dart';
 import 'package:bmsce/user_profile/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

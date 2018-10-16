@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:bmsce/course/course.dart';
+import 'package:bmsce/course/course_provider_sqf.dart';
 import 'package:bmsce/my_widgets/color_radio_button.dart';
 import 'package:bmsce/portion/portion_provider_sqf.dart';
-import 'package:bmsce/syllabus/course_content_view.dart';
+import 'package:bmsce/user_profile/user.dart';
 import 'package:flutter/material.dart';
 import 'dart:collection';
 
@@ -48,7 +49,7 @@ class PortionCreate extends StatelessWidget {
         ],
       ),
       body: FutureBuilder<List<CourseContentPart>>(
-        future: processSyllabus(course.courseCode, course.lastModifiedOn),
+        future: processSyllabus(course.courseCode, course.codeVersion),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           print(
               'PortionCreate ${snapshot.connectionState} hasData:${snapshot.hasData} hasError:${snapshot.hasError}');
@@ -65,12 +66,9 @@ class PortionCreate extends StatelessWidget {
   }
 
   Future<List<CourseContentPart>> processSyllabus(
-      String courseCode, int courseLastModifiedOn) async {
-    String courseContent = (await CourseContentViewState.fetchCourseContent(
-            courseCode: courseCode,
-            courseLastModifiedOn: courseLastModifiedOn,
-            isFetchFromOnline: false))
-        .content;
+      String courseCode, String codeVersion) async {
+    String courseContent =
+        (await CourseProviderSqf().getOnlyContent(courseCode, codeVersion));
     final List<CourseContentPart> courseContentParts = [];
 
     int processUnit(String unitContent) {
@@ -120,8 +118,8 @@ class PortionCreate extends StatelessWidget {
     await PortionProvider().insert(Portion(
         courseCode: course.courseCode,
         courseName: course.courseName,
-        courseLastModifiedOn: course.lastModifiedOn,
-        createdBy: "admin",
+        codeVersion: course.codeVersion,
+        createdBy: User.instance.displayName,
         createdOn: DateTime.now().millisecondsSinceEpoch,
         description: description,
         isOutdated: 0,

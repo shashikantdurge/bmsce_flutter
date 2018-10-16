@@ -43,7 +43,7 @@ class MyCourseStateList extends State<MyCourseList> {
                 if (snapshot.data.isNotEmpty) {
                   return RefreshIndicator(
                     onRefresh: () async {
-                      await updateCourses(snapshot.data);
+                      await checkForUpdates(snapshot.data);
                     },
                     child: ListView(
                       children: List.generate(snapshot.data.length, (index) {
@@ -65,59 +65,30 @@ class MyCourseStateList extends State<MyCourseList> {
         });
   }
 
-  updateCourse(Course myCOurse) async {
-    Course course;
-    final doc = await Firestore.instance
-        .collection('courses')
-        .where('courseCodeSuffix',
-            isEqualTo: myCOurse.courseCode.substring(2, 10))
-        .getDocuments();
-    if (doc.documents.isEmpty) {
-      courseSqf.removeCourse(myCOurse.courseCode);
-    } else if (doc.documents.length >= 1) {
-      doc.documents.sort((courseSnap1, courseSnap2) {
-        if (courseSnap1.data["lastModifiedOn"] >
-            courseSnap2.data["lastModifiedOn"]) return 1;
-        if (courseSnap1.data["lastModifiedOn"] <
-            courseSnap2.data["lastModifiedOn"])
-          return -1;
-        else
-          return 0;
-      });
-      final courseSnap = doc.documents.first;
-      course = Course(
-          courseName: courseSnap.data["courseName"],
-          courseCode: courseSnap.documentID,
-          l: courseSnap.data["l"],
-          t: courseSnap.data["t"],
-          p: courseSnap.data["p"],
-          s: courseSnap.data["s"],
-          lastModifiedOn:
-              courseSnap.data["lastModifiedOn"].millisecondsSinceEpoch,
-          isInMyCourses: true);
-    }
-    if (course != null && myCOurse.lastModifiedOn < course?.lastModifiedOn) {
-      await courseSqf.removeCourse(myCOurse.courseCode);
-      await courseSqf.insertCourse(course);
-      CourseContentViewState.fetchCourseContent(
-          courseCode: course.courseCode,
-          courseLastModifiedOn: course.lastModifiedOn,
-          isFetchFromOnline: false);
-      return true;
-    }
-    return false;
-  }
-
-  updateCourses(List<Course> myCourses) async {
-    bool isUpdated = false;
-    for (int i = 0; i < myCourses.length; i++) {
-      if (await updateCourse(myCourses[i])) {
-        isUpdated = true;
+//TODO: CODE_VERSION //PY2ICPHY_D_1539608763657
+  checkForUpdates(List<Course> myCourses) async {
+    for (Course course in myCourses) {
+      final curTimeInEpoch = DateTime.now().millisecondsSinceEpoch.toString();
+      final codeSuffix = course.codeVersion.split('_D_').first;
+      final docs = await Firestore.instance
+          .collection('courses')
+          .where('codeVersion', isGreaterThan: course.codeVersion)
+          .where('codeVersion', isLessThan: codeSuffix + '_D_' + curTimeInEpoch)
+          .orderBy('codeVersion', descending: true)
+          .getDocuments();
+      if (docs != null && docs.documents.length > 0) {
+        final latestDoc = docs.documents.first;
+        final latestCourse =
+            Course.fromMap(latestDoc.data, latestDoc.documentID);
+        await latestCourse.setContent().then((onValue) async {
+          if (onValue) {
+            await CourseProviderSqf().insertCourse(latestCourse);
+            await CourseProviderSqf().processExit(course);
+          }
+        });
       }
     }
-    if (isUpdated) {
-      setState(() {});
-    }
+    setState(() {});
   }
 
   ListTile getCourseTile(Course course) {

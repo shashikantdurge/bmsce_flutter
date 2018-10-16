@@ -1,5 +1,4 @@
 import 'package:bmsce/home_tabs/syllabus_tabs.dart';
-import 'package:bmsce/map/college_map.dart';
 import 'package:bmsce/temp/search.dart';
 import 'package:bmsce/user_profile/user.dart';
 import 'package:bmsce/user_profile/user_profile.dart';

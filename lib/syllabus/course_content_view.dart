@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:bmsce/course/course.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:bmsce/course/course_content_provider_sqf.dart';
 import 'package:bmsce/course/course_provider_sqf.dart';
 
 class CourseContentView extends StatefulWidget {
@@ -14,16 +13,9 @@ class CourseContentView extends StatefulWidget {
   final Course course;
   final bool isFetchFromOnline;
   final firestore = Firestore.instance;
-  final CourseContentProvider contentProvider = CourseContentProvider();
 }
 
 class CourseContentViewState extends State<CourseContentView> {
-  @override
-  void initState() {
-    super.initState();
-    widget.contentProvider.open();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,16 +36,13 @@ class CourseContentViewState extends State<CourseContentView> {
         controller: ScrollController(),
         child: Padding(
           padding: EdgeInsets.all(12.0),
-          child: FutureBuilder<CourseContent>(
-            future: fetchCourseContent(
-                courseCode: widget.course.courseCode,
-                courseLastModifiedOn: widget.course.lastModifiedOn,
-                isFetchFromOnline: widget.isFetchFromOnline),
+          child: FutureBuilder<String>(
+            future: getCourseContent(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
                 return Text(
-                  snapshot.data.content,
+                  snapshot.data,
                   textAlign: TextAlign.justify,
                   textScaleFactor: 1.1,
                 );
@@ -70,48 +59,56 @@ class CourseContentViewState extends State<CourseContentView> {
     );
   }
 
-  static Future<CourseContent> fetchCourseContent(
-      {@required String courseCode,
-      @required int courseLastModifiedOn,
-      bool isFetchFromOnline: true}) async {
-    CourseContent courseContent;
-    Future<CourseContent> fetchFromFirestore() async {
-      CourseContent courseContent;
-      final courseSnapshot = await Firestore.instance
-          .collection('course_content')
-          .document(courseCode)
-          .get();
-      if (courseSnapshot.exists) {
-        courseContent = CourseContent(
-            courseSnapshot.documentID,
-            courseSnapshot.data['courseLastModifiedOn'],
-            courseSnapshot.data['content'],
-            courseSnapshot.data['lastModifiedBy']);
-        if (!isFetchFromOnline) {
-          CourseContentProvider().insert(courseContent);
-        }
-      } else {
-        courseContent = CourseContent(
-            courseCode, courseLastModifiedOn, 'Syllabus unavailable', 'None');
-      }
-      return courseContent;
+  Future<String> getCourseContent() async {
+    if (widget.isFetchFromOnline) {
+      await widget.course.setContent();
+      return widget.course.content;
     }
 
-    if (isFetchFromOnline) {
-      courseContent = await fetchFromFirestore();
-    } else {
-      courseContent = (await CourseContentProvider()
-              .getCourseContent(courseCode, courseLastModifiedOn)) ??
-          (await fetchFromFirestore());
-    }
-
-    return courseContent;
+    return await CourseProviderSqf()
+        .getOnlyContent(widget.course.courseCode, widget.course.codeVersion);
   }
+
+//ONLY course content
+  // static Future<String> fetchCourseContent(
+  //     {@required String courseCode,
+  //     @required String codeVersion,
+  //     bool isFetchFromOnline: true}) async {
+  //   String courseContent;
+  //   Future<String> fetchFromFirestore() async {
+  //     String courseContent;
+  //     final courseSnapshot = await Firestore.instance
+  //         .collection('course_content')
+  //         .document(courseCode)
+  //         .get();
+  //     if (courseSnapshot.exists) {
+  //       courseContent = courseSnapshot.data['content'];
+  //       //TODO: save offline
+  //       // if (!isFetchFromOnline) {
+  //       //   CourseContentProvider().insert(courseContent);
+  //       // }
+  //     } else {
+  //       courseContent = 'Syllabus unavailable';
+  //     }
+  //     return courseContent;
+  //   }
+
+  //   if (isFetchFromOnline) {
+  //     courseContent = await fetchFromFirestore();
+  //   } else {
+  //     courseContent =
+  //         (await CourseProviderSqf().getCourse(courseCode, codeVersion))
+  //                 ?.content ??
+  //             (await fetchFromFirestore());
+  //   }
+
+  //   return courseContent;
+  // }
 
   getCourseDetailsFrmOffline() async {
     CourseProviderSqf courseProviderSqf = CourseProviderSqf();
     return await courseProviderSqf.getCourse(
-        widget.course.courseCode, widget.course.lastModifiedOn);
+        widget.course.courseCode, widget.course.codeVersion);
   }
 
   showLtpsTable() async {
@@ -149,7 +146,7 @@ class CourseContentViewState extends State<CourseContentView> {
                           ],
                         ),
                         Text(
-                            'Updated on ${DateTime.fromMillisecondsSinceEpoch(course.lastModifiedOn).toString().substring(0, 10)}')
+                            'Updated on ${DateTime.fromMillisecondsSinceEpoch(course.lastModifiedOn).toString()}')
                       ],
                     ),
                   );

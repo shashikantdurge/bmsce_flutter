@@ -47,7 +47,6 @@ class ManageStudentsState extends State<ManageStudents> {
   CrossFadeState crossFadeState;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     widget.offlineStudents.forEach((st) {
       usnControllers.add(TextEditingController(text: st?.usn ?? "usn"));
@@ -87,14 +86,6 @@ class ManageStudentsState extends State<ManageStudents> {
       Navigator.pop(context, dataChanged);
     });
     //
-  }
-
-  returnBack() {}
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
   }
 
   @override

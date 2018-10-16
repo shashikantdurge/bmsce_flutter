@@ -171,16 +171,10 @@ class AddCourseState extends State<AddCourse> {
           break;
       }
 
-      final course = Course(
-          courseName: courseDocument.data["courseName"],
-          courseCode: courseDocument.documentID,
-          l: courseDocument.data["l"],
-          t: courseDocument.data["t"],
-          p: courseDocument.data["p"],
-          s: courseDocument.data["s"],
-          lastModifiedOn:
-              courseDocument.data["lastModifiedOn"].millisecondsSinceEpoch,
-          isInMyCourses: localCourses.contains(courseDocument.documentID));
+      final course =
+          Course.fromMap(courseDocument.data, courseDocument.documentID);
+      course.isInMyCourses = localCourses.contains(courseDocument.documentID);
+
       var courseGrp = courseGrpMap[courseCat] ??
           CourseGroup(courseGroup: courseCat, courses: []);
       courseGrp.courses.add(course);
@@ -224,11 +218,16 @@ class AddCourseState extends State<AddCourse> {
         firstChild: IconButton(
             icon: Icon(Icons.add_circle_outline),
             onPressed: () {
-              widget.courseProviderSqf.insertCourse(course);
-              CourseContentViewState.fetchCourseContent(
-                  courseCode: course.courseCode,
-                  courseLastModifiedOn: course.lastModifiedOn,
-                  isFetchFromOnline: false);
+              //TODO: CODE_VERSION
+              course.setContent().then((onValue) {
+                if (onValue)
+                  widget.courseProviderSqf.insertCourse(course);
+                else {
+                  setState(() {
+                    course.isInMyCourses = false;
+                  });
+                }
+              });
               setState(() {
                 course.isInMyCourses = true;
               });

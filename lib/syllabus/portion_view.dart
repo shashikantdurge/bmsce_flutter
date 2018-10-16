@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:bmsce/course/course_provider_sqf.dart';
 import 'package:tuple/tuple.dart';
 import 'package:bmsce/portion/portion_provider_sqf.dart';
-import 'package:bmsce/syllabus/course_content_view.dart';
 import 'package:bmsce/syllabus/portion_create.dart';
 import 'package:flutter/material.dart';
 
@@ -108,7 +108,7 @@ class PortionView extends StatelessWidget {
       String createdBy, int createdOn) async {
     final portion = await PortionProvider().getPortion(createdBy, createdOn);
     final courseContentParts =
-        await processSyllabus(portion.courseCode, portion.courseLastModifiedOn);
+        await processSyllabus(portion.courseCode, portion.codeVersion);
     List<int> toggleBordColorIndexes = [];
     portion.toggleBordColorIndexes.split(",").forEach((i) {
       toggleBordColorIndexes.add(int.parse(i));
@@ -130,12 +130,9 @@ class PortionView extends StatelessWidget {
   }
 
   Future<List<CourseContentPart>> processSyllabus(
-      String courseCode, int courseLastModifiedOn) async {
-    String courseContent = (await CourseContentViewState.fetchCourseContent(
-            courseCode: courseCode,
-            courseLastModifiedOn: courseLastModifiedOn,
-            isFetchFromOnline: false))
-        .content;
+      String courseCode, String codeVersion) async {
+    String courseContent =
+        (await CourseProviderSqf().getOnlyContent(courseCode, codeVersion));
     final List<CourseContentPart> courseContentParts = [];
 
     int processUnit(String unitContent) {

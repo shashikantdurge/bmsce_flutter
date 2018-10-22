@@ -1,7 +1,9 @@
 import 'package:bmsce/academics/student_marks_detail.dart';
 import 'package:bmsce/academics/students_academics.dart';
-import 'package:bmsce/authentication/sign_in.dart';
+import 'package:bmsce/authentication/sign_in1.dart';
 import 'package:bmsce/course/course_dept_sem.dart';
+import 'package:bmsce/main.dart';
+import 'package:bmsce/notification/announcement.dart';
 import 'package:bmsce/roles/manage_dept_users.dart';
 import 'package:bmsce/roles/roles_management.dart';
 import 'package:bmsce/user_profile/user.dart';
@@ -11,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfile extends StatelessWidget {
   UserProfile({Key key}) : super(key: key);
+  final bool debugMode = true;
   final stateKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -37,13 +40,26 @@ class UserProfile extends StatelessWidget {
           PopupMenuButton(
             onSelected: (value) {
               if (value == 'logout') logout(context);
+              if (value == "edit_profile")
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  return ProfileEdit(
+                    user: User.instance,
+                  );
+                }));
             },
             itemBuilder: (BuildContext context) {
               return [
                 PopupMenuItem(
-                  child: Text('Logout'),
+                  child:
+                      Row(children: [Icon(Icons.edit), Text('Edit profile')]),
+                  value: 'edit_profile',
+                ),
+                PopupMenuItem(
+                  child: Row(
+                      children: [Icon(Icons.exit_to_app), Text('Sign out')]),
                   value: 'logout',
-                )
+                ),
               ];
             },
           )
@@ -59,15 +75,15 @@ class UserProfile extends StatelessWidget {
     );
   }
 
-  logout(context) {
-    FirebaseAuth.instance.signOut().then((onValue) {
+  logout(context) async {
+    await FirebaseAuth.instance.signOut().then((onValue) {
       SharedPreferences.getInstance().then((pref) {
         pref.clear();
       });
     });
-    //TODO:remove all data. ISSUE IS THERE. its not getting replaced
+    //FIXME:remove all data. ISSUE IS THERE. its not getting replaced
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-      return Login();
+      return Splash(from: 'main');
     }));
   }
 
@@ -84,22 +100,20 @@ class UserProfile extends StatelessWidget {
             leading: Icon(Icons.widgets),
             title: user.dept != null
                 ? Text(deptNameFromPrefix(user.dept).item2)
-                : Text('Dept Not Available'),
+                : Text(
+                    'Department Not Set',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: Theme.of(context).textTheme.caption.color),
+                  ),
             // subtitle: Text('Department'),
           ),
-          ListTile(
-              leading: Icon(Icons.assignment_ind),
-              title: user.usn != null
-                  ? Text(user.usn)
-                  : Text(
-                      'USN not set',
-                      style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        color: Theme.of(context).textTheme.caption.color,
-                      ),
-                    )
-              // subtitle: Text('Department'),
-              ),
+          user.usn != null
+              ? ListTile(
+                  leading: Icon(Icons.assignment_ind), title: Text(user.usn)
+                  // subtitle: Text('Department'),
+                  )
+              : Padding(padding: EdgeInsets.all(0.0)),
         ],
       ),
     );
@@ -119,7 +133,8 @@ class UserProfile extends StatelessWidget {
     return Card(
       child: Column(
         children: [
-          User.instance.isPermittedFor(Activity.ACADEMIC_STUDENT_VIEW)
+          User.instance.isPermittedFor(Activity.ACADEMIC_STUDENT_VIEW) ||
+                  debugMode
               ? ListTile(
                   title: Text('Academic Record'),
                   leading: Icon(Icons.school),
@@ -135,10 +150,11 @@ class UserProfile extends StatelessWidget {
                   },
                 )
               : Padding(padding: EdgeInsets.all(0.0)),
-          User.instance.isPermittedFor(Activity.ACADEMIC_PROCTOR_VIEW)
+          User.instance.isPermittedFor(Activity.ACADEMIC_PROCTOR_VIEW) ||
+                  debugMode
               ? ListTile(
                   title: Text('My Students'),
-                  leading: Icon(Icons.people),
+                  leading: Icon(Icons.school),
                   trailing: Icon(Icons.keyboard_arrow_right),
                   onTap: () {
                     Navigator.of(stateKey.currentContext)
@@ -148,7 +164,7 @@ class UserProfile extends StatelessWidget {
                   },
                 )
               : Padding(padding: EdgeInsets.all(0.0)),
-          User.instance.isPermittedFor(Activity.ROLE_MANAGE)
+          User.instance.isPermittedFor(Activity.ROLE_MANAGE) || debugMode
               ? ListTile(
                   title: Text('Role Management'),
                   leading: Icon(Icons.supervisor_account),
@@ -163,7 +179,20 @@ class UserProfile extends StatelessWidget {
                     }));
                   },
                 )
-              : Padding(padding: EdgeInsets.all(0.0))
+              : Padding(padding: EdgeInsets.all(0.0)),
+          User.instance.isPermittedFor(Activity.BROADCAST_MESSAGE) || debugMode
+              ? ListTile(
+                  title: Text('Announcement'),
+                  leading: Icon(Icons.ac_unit),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                  onTap: () {
+                    Navigator.of(stateKey.currentContext)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return Announcement();
+                    }));
+                  },
+                )
+              : Padding(padding: EdgeInsets.all(0.0)),
         ],
       ),
     );

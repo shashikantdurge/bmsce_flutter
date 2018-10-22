@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bmsce/authentication/sign_in.dart';
+import 'package:bmsce/authentication/sign_in1.dart';
 import 'package:bmsce/home.dart';
 import 'package:bmsce/user_profile/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,26 +10,30 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   final mainTheme = ThemeData(
-    primarySwatch: const MaterialColor(
-      0xFF0097A7,
-      const <int, Color>{
-        50: const Color(0xFFFFEBEE),
-        100: const Color(0xFFFFCDD2),
-        200: const Color(0xFFEF9A9A),
-        300: const Color(0xFFE57373),
-        400: const Color(0xFFEF5350),
-        500: const Color(0xFF0097A7),
-        600: const Color(0xFFE53935),
-        700: const Color(0xFFD32F2F),
-        800: const Color(0xFFC62828),
-        900: const Color(0xFFB71C1C),
-      },
-    ),
-    inputDecorationTheme:
-        InputDecorationTheme(contentPadding: EdgeInsets.all(12.0)),
-    buttonColor: const Color(0xFFE53935),
-    primaryColor: Colors.cyan[500],
-  );
+      primarySwatch: const MaterialColor(
+        0xFF0097A7,
+        const <int, Color>{
+          50: const Color(0xFFFFEBEE),
+          100: const Color(0xFFFFCDD2),
+          200: const Color(0xFFEF9A9A),
+          300: const Color(0xFFE57373),
+          400: const Color(0xFFEF5350),
+          500: const Color(0xFF0097A7),
+          600: const Color(0xFFE53935),
+          700: const Color(0xFFD32F2F),
+          800: const Color(0xFFC62828),
+          900: const Color(0xFFB71C1C),
+        },
+      ),
+      inputDecorationTheme:
+          InputDecorationTheme(contentPadding: EdgeInsets.all(12.0)),
+      buttonColor: const Color(0xFFE53935),
+      primaryColor: Colors.cyan[500],
+      textTheme: TextTheme(
+        body1: TextStyle(fontFamily: 'K2D'),
+        body2: TextStyle(fontFamily: 'K2D'),
+        title: TextStyle(fontFamily: 'K2D'),
+      ));
 
   runApp(MaterialApp(
     title: 'BMSCE',
@@ -40,6 +44,7 @@ void main() async {
 }
 
 class Splash extends StatefulWidget {
+  ///`main` or `sign_in`
   final String from;
   final Map userDetails;
 
@@ -89,7 +94,8 @@ class SplashState extends State<Splash> {
                   WidgetsBinding.instance.addPostFrameCallback((d) {
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (BuildContext context) {
-                      return Login();
+                      return SignIn();
+                      // return Login();
                     }));
                   });
                   return Image.asset(
@@ -171,16 +177,20 @@ class SplashState extends State<Splash> {
   }
 
   Future<User> getUser(FirebaseUser firebaseUser) async {
-    String role, dept, usn;
+    String role, dept, usn, semester, section;
     if (widget.from == 'sign_in') {
       role = await getRoleInfo(firebaseUser.email, widget.userDetails['dept']);
       dept = widget.userDetails['dept'];
       usn = widget.userDetails['usn'];
+      semester = widget.userDetails['semester'];
+      section = widget.userDetails['section'];
       setDataOffline(role);
     } else {
       role = pref.getString('user_property_role');
       dept = pref.getString('user_property_dept');
       usn = pref.getString('user_property_usn');
+      section = pref.getString('user_property_section');
+      semester = pref.getString('user_property_semester');
     }
 
     final user = User.fromRole(role,
@@ -188,7 +198,9 @@ class SplashState extends State<Splash> {
         displayName: firebaseUser.displayName,
         email: firebaseUser.email,
         photoUrl: firebaseUser.photoUrl,
-        usn: usn);
+        usn: usn,
+        semester: semester,
+        section: section);
     return user;
   }
 }

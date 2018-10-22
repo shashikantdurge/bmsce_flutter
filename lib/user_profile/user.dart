@@ -2,15 +2,16 @@ import 'package:meta/meta.dart';
 
 abstract class User {
   static User instance;
-  final String displayName, photoUrl, email, dept;
+  final String displayName, photoUrl, email;
   final bool isAdmin;
   final Role whoAmI;
-  final String usn;
+  String usn, dept, semester, section;
   final List<Activity> permittedActivities;
   final List<Role> subRoles;
 
   User(this.displayName, this.photoUrl, this.email, this.dept, this.isAdmin,
-      this.permittedActivities, this.subRoles, this.whoAmI, this.usn);
+      this.permittedActivities, this.subRoles, this.whoAmI,
+      {this.usn, this.semester, this.section});
   // get isAdmin() => isAdmin;
   bool isPermittedFor(Activity activity) {
     return this.permittedActivities.contains(activity);
@@ -21,7 +22,9 @@ abstract class User {
       @required String photoUrl,
       @required String email,
       @required String dept,
-      String usn}) {
+      String usn,
+      String semester,
+      String section}) {
     switch (role) {
       case 'admin':
       case 'hod':
@@ -29,33 +32,48 @@ abstract class User {
       case 'teacher':
         return Teacher(displayName, photoUrl, email, dept);
       case 'super_student':
-        return SuperStudent(displayName, photoUrl, email, dept, usn);
+        return SuperStudent(
+            displayName, photoUrl, email, dept, usn, semester, section);
       default:
-        if (usn != null)
-          return Student(displayName, photoUrl, email, dept, usn);
+        if (usn != null && usn.isNotEmpty)
+          return Student(
+              displayName, photoUrl, email, dept, usn, semester, section);
         else
           return DefaultUser(displayName, photoUrl, email, dept);
     }
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "name": this.displayName,
+      "dept": this.dept,
+      "photoUrl": this.photoUrl,
+      "usn": this.usn,
+      "semester": this.semester,
+      "section": this.section
+    };
+  }
 }
 
 class Student extends User {
-  final String usn;
   static final List<Activity> myActivities = [Activity.ACADEMIC_STUDENT_VIEW];
   static final List<Role> mySubRoles = [];
-  Student(
-      String displayName, String photoUrl, String email, String dept, this.usn,
+  Student(String displayName, String photoUrl, String email, String dept,
+      String usn, String semester, String section,
       [List<Activity> myActivities, List<Role> mySubRoles, Role role])
       : super(
-            displayName,
-            photoUrl,
-            email,
-            dept,
-            false,
-            myActivities ?? Student.myActivities,
-            mySubRoles ?? Student.mySubRoles,
-            role ?? Role.STUDENT,
-            usn);
+          displayName,
+          photoUrl,
+          email,
+          dept,
+          false,
+          myActivities ?? Student.myActivities,
+          mySubRoles ?? Student.mySubRoles,
+          role ?? Role.STUDENT,
+          usn: usn,
+          section: section,
+          semester: semester,
+        );
 }
 
 class Teacher extends User {
@@ -79,8 +97,7 @@ class Teacher extends User {
             isAdmin ?? false,
             myActivities ?? Teacher.myActivities,
             mySubRoles ?? Teacher.mySubRoles,
-            role ?? Role.TEACHER,
-            null);
+            role ?? Role.TEACHER);
 }
 
 class HodOrAdmin extends Teacher {
@@ -109,8 +126,9 @@ class SuperStudent extends Student {
   ];
   static final List<Role> mySubRoles = [];
   SuperStudent(String displayName, String photoUrl, String email, String dept,
-      String usn)
-      : super(displayName, photoUrl, email, dept, usn, myActivities);
+      String usn, String semester, String section)
+      : super(displayName, photoUrl, email, dept, usn, semester, section,
+            myActivities);
 }
 
 class DefaultUser extends User {
@@ -118,7 +136,7 @@ class DefaultUser extends User {
   static final List<Role> mySubRoles = [];
   DefaultUser(String displayName, String photoUrl, String email, String dept)
       : super(displayName, photoUrl, email, dept, false, myActivities,
-            mySubRoles, Role.SUPER_STUDENT, null);
+            mySubRoles, Role.SUPER_STUDENT);
 }
 
 enum Role { STUDENT, SUPER_STUDENT, TEACHER, HOD_ADMIN, DEFAULT }

@@ -46,6 +46,32 @@ class CourseGroup {
   }
 }
 
+getNumberText(str) {
+  switch (str.toString()) {
+    case "1":
+      return '1st';
+    case "2":
+      return '2nd';
+    case "3":
+      return '3rd';
+    default:
+      return '${str}th';
+  }
+}
+
+const List<String> Semesters = [
+  "1", //st
+  "2", //nd
+  "3", //rd
+  "4", //th
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "X"
+];
+const List<dynamic> Sections = ["A", "B", "C", "D"];
 //IMPORTANT NOTE: true comes FIRST, false comes LAST. 3rd item indicates if it is a Branch
 const Departments = [
   Tuple3("AT", "Architecture", true),
@@ -66,7 +92,7 @@ const Departments = [
   Tuple3("CY", "Chemistry", false),
   Tuple3("MA", "Mathematics", false),
   Tuple3("ADMIN", "Administration", false),
-  Tuple3("ZZ", "Other", false),
+  Tuple3(null, "Other", false),
 ];
 
 Tuple3 deptNameFromPrefix(String deptId) => Departments.firstWhere((tuple) {

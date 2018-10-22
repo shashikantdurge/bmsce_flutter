@@ -275,14 +275,9 @@ class PlaceDetailsWidget extends StatelessWidget {
               icon: Icon(Icons.email),
               onPressed: place.email != null ? () {} : null,
             ),
-            FlatButton(
-              child: Row(
-                children: <Widget>[
-                  Text('MORE DETAILS'),
-                  Icon(Icons.open_in_new)
-                ],
-                mainAxisSize: MainAxisSize.min,
-              ),
+            FlatButton.icon(
+              label: Text('MORE DETAILS'),
+              icon: Icon(Icons.open_in_browser),
               onPressed: place.website != null
                   ? () async {
                       if (await canLaunch(place.website)) {

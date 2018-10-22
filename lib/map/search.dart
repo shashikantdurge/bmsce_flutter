@@ -5,19 +5,20 @@
 import 'package:bmsce/map/edit_place.dart';
 import 'package:bmsce/map/search_result.dart';
 import 'package:bmsce/map/suggestions_list.dart';
+import 'package:bmsce/user_profile/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SearchDemo extends StatefulWidget {
+class Search extends StatefulWidget {
   static const String routeName = '/material/search';
 
   @override
-  _SearchDemoState createState() => _SearchDemoState();
+  _SearchState createState() => _SearchState();
 }
 
-class _SearchDemoState extends State<SearchDemo> {
-  _SearchDemoSearchDelegate _delegate = _SearchDemoSearchDelegate();
+class _SearchState extends State<Search> {
+  _SearchDelegate _delegate = _SearchDelegate();
 
   static Future<List<String>> getSearchNames({bool fromOnline = true}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -62,7 +63,7 @@ class _SearchDemoState extends State<SearchDemo> {
                 }));
             },
             itemBuilder: (BuildContext context) {
-              return [
+              List<PopupMenuEntry<dynamic>> popUps = [
                 PopupMenuItem(
                   child: Row(
                     children: <Widget>[
@@ -72,7 +73,9 @@ class _SearchDemoState extends State<SearchDemo> {
                   ),
                   value: 'add_place',
                 ),
-                PopupMenuItem(
+              ];
+              if (User.instance.isPermittedFor(Activity.COLLEGE_MAP))
+                popUps.add(PopupMenuItem(
                   child: Row(
                     children: <Widget>[
                       Icon(Icons.view_list),
@@ -80,8 +83,8 @@ class _SearchDemoState extends State<SearchDemo> {
                     ],
                   ),
                   value: 'suggestions',
-                )
-              ];
+                ));
+              return popUps;
             },
           ),
         ],
@@ -100,7 +103,7 @@ class _SearchDemoState extends State<SearchDemo> {
   }
 }
 
-class _SearchDemoSearchDelegate extends SearchDelegate<String> {
+class _SearchDelegate extends SearchDelegate<String> {
   List<String> _data = ["BMSCE"];
   List<String> _history = [];
   bool fetxhing = false;
@@ -120,7 +123,7 @@ class _SearchDemoSearchDelegate extends SearchDelegate<String> {
   }
 
   addSearchItems(context) async {
-    final list = await _SearchDemoState.getSearchNames(fromOnline: false);
+    final list = await _SearchState.getSearchNames(fromOnline: false);
     print(list.toString());
     _data.addAll(list);
   }

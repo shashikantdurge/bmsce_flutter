@@ -2,7 +2,7 @@
 //Set the initial value to place.{respective values}
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
+//TODO: Improper dialog  title for adding and editing
 import 'dart:async';
 
 import 'package:bmsce/course/course_dept_sem.dart';

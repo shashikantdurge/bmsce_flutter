@@ -84,10 +84,8 @@ class SyllabusTabsState extends State<SyllabusTabs>
               break;
           }
         },
-        backgroundColor: Colors.white,
         child: Icon(
           Icons.add,
-          color: Colors.redAccent,
         ),
       ),
     );

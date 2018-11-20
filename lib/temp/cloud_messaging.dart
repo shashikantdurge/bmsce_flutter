@@ -94,25 +94,25 @@ class _PushMessagingExampleState extends State<PushMessagingExample> {
   final TextEditingController _topicController =
       new TextEditingController(text: 'topic');
 
-  Widget _buildDialog(BuildContext context, Item item) {
-    return new AlertDialog(
-      content: new Text("Item ${item.itemId} has been updated"),
-      actions: <Widget>[
-        new FlatButton(
-          child: const Text('CLOSE'),
-          onPressed: () {
-            Navigator.pop(context, false);
-          },
-        ),
-        new FlatButton(
-          child: const Text('SHOW'),
-          onPressed: () {
-            Navigator.pop(context, true);
-          },
-        ),
-      ],
-    );
-  }
+  // Widget _buildDialog(BuildContext context, Item item) {
+  //   return new AlertDialog(
+  //     content: new Text("Item ${item.itemId} has been updated"),
+  //     actions: <Widget>[
+  //       new FlatButton(
+  //         child: const Text('CLOSE'),
+  //         onPressed: () {
+  //           Navigator.pop(context, false);
+  //         },
+  //       ),
+  //       new FlatButton(
+  //         child: const Text('SHOW'),
+  //         onPressed: () {
+  //           Navigator.pop(context, true);
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
 
   void _showItemDialog(Map<String, dynamic> message) {
     // showDialog<bool>(

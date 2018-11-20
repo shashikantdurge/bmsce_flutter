@@ -89,7 +89,19 @@ class _SearchState extends State<Search> {
           ),
         ],
       ),
-      body: Center(child: Text('Search Teacher, Class room, Lab etc...')),
+      body: Center(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Opacity(
+            opacity: 0.4,
+            child: Image.asset('assets/images/detective_duck.png')),
+        Text(
+          'Search Teacher, Class room, Lab etc...',
+          style: TextStyle(
+              fontFamily: 'Ubuntu',
+              color: Theme.of(context).textTheme.caption.color,
+              fontSize: Theme.of(context).textTheme.subhead.fontSize),
+        )
+      ])),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           showSearch<String>(

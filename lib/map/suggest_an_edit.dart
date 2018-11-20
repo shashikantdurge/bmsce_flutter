@@ -32,6 +32,9 @@ class SuggestAnEditDialog extends StatelessWidget {
             leading: Icon(Icons.location_off),
             title: Text('Remove this place'),
             subtitle: Text('Mark as closed, non-existent or duplicate'),
+            onTap: (){
+              Navigator.of(context).pop('close');
+            },
           ),
           Divider()
         ],

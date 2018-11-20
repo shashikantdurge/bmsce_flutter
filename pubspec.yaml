@@ -39,6 +39,9 @@ flutter:
   - assets/images/bmsce_logo.png
   - assets/images/bmsce_logo_inner.png
   - assets/images/bmsce_logo_outer_2.png
+  - assets/images/detective_duck.png
+  - assets/images/minion_sad.png
+  - assets/images/bmsce_tree.jpg
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -71,6 +74,30 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-  #
+  fonts:
+     - family: OpenSans
+       fonts:
+         - asset: assets/fonts/OpenSans-Light.ttf
+         - asset: assets/fonts/OpenSans-Regular.ttf
+     - family: Roboto
+       fonts:
+         - asset: assets/fonts/Roboto-Regular.ttf
+     - family: RobotoSlab
+       fonts:
+         - asset: assets/fonts/RobotoSlab-Bold.ttf
+         - asset: assets/fonts/RobotoSlab-Light.ttf
+     - family: Ubuntu
+       fonts:
+         - asset: assets/fonts/Ubuntu-LightItalic.ttf
+           style: italic
+         - asset: assets/fonts/Ubuntu-Regular.ttf
+           style: normal
+     - family: UbuntuMono
+       fonts:
+         - asset: assets/fonts/UbuntuMono-Regular.ttf
+
+
+         #          style: italic
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages

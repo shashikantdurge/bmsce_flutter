@@ -40,11 +40,16 @@ class Place {
     }
     return {
       'name': name,
-      'website': website.trim().isNotEmpty ? website.trim() : null,
+      'website': website == null
+          ? null
+          : website.trim().isNotEmpty ? website.trim() : null,
       'location': location,
-      'phoneNumber': phoneNumber.trim().isNotEmpty ? phoneNumber.trim() : null,
-      'email': email.trim().isNotEmpty ? email.trim() : null,
-      'placeCategory': placeCategory.toString(),
+      'phoneNumber': phoneNumber == null
+          ? null
+          : phoneNumber.trim().isNotEmpty ? phoneNumber.trim() : null,
+      'email':
+          email == null ? null : email.trim().isNotEmpty ? email.trim() : null,
+      'placeCategory': placeCategory?.toString(),
       'collegeMapDocRef': collegeMapDocRef,
       'designation': designation,
       "dept": dept,
@@ -58,7 +63,7 @@ class Place {
     };
   }
 
-  factory Place.fromMap(Map<String, dynamic> placeMapObj) {
+  factory Place.fromMap(Map<String, dynamic> placeMapObj, {String documentId}) {
     Place place = Place();
     place.name = placeMapObj["name"];
     place.website = placeMapObj["website"];
@@ -69,7 +74,7 @@ class Place {
     place.designation = placeMapObj["designation"];
     place.dept = placeMapObj["dept"];
     place.photoUrl = placeMapObj["photoUrl"];
-    place.collegeMapDocRef = placeMapObj["collegeMapDocRef"];
+    place.collegeMapDocRef = placeMapObj["collegeMapDocRef"] ?? documentId;
     place.suggestionType = placeMapObj["suggestionType"];
     place.suggestedByName = placeMapObj["suggestedByName"];
     place.suggestedByEmail = placeMapObj["suggestedByEmail"];

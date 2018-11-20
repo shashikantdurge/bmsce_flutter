@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:bmsce/course/course_provider_sqf.dart';
+import 'package:bmsce/notification/announcement_preview.dart';
+import 'package:bmsce/notification/notification_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tuple/tuple.dart';
 import 'package:bmsce/portion/portion_provider_sqf.dart';
@@ -56,9 +58,16 @@ class PortionView extends StatelessWidget {
         actions: <Widget>[
           IconButton(icon: Icon(Icons.info_outline), onPressed: () {}),
           IconButton(
+              tooltip: 'Share with link',
               icon: Icon(Icons.share),
               onPressed: () {
-                share(context);
+                _share(context);
+              }),
+          IconButton(
+              tooltip: 'Send portion notification',
+              icon: Icon(Icons.send),
+              onPressed: () {
+                _share(context, sendNoti: true);
               })
         ],
       ),
@@ -88,7 +97,7 @@ class PortionView extends StatelessWidget {
     );
   }
 
-  share(BuildContext context) async {
+  _share(BuildContext context, {bool sendNoti = false}) async {
     final portion = await PortionProvider().getPortion(createdBy, createdOn);
     final link = await showDialog<String>(
         context: context,
@@ -122,9 +131,28 @@ class PortionView extends StatelessWidget {
             ),
           );
         });
-    if (link is String)
+    if (link is String && !sendNoti)
       Share.share(
           'Portion for ${portion.courseName}\n${portion.description}\n$link');
+    else if (link is String && sendNoti)
+      _sendNotification(context, portion, link);
+  }
+
+  void _sendNotification(context, Portion portion, String link) {
+    NotiBuilder notiBuilder = NotiBuilder();
+    notiBuilder.link = link;
+    notiBuilder.notificationType = NotificationType.PORTION;
+    notiBuilder.title = "${portion.courseName}, ${portion.description} portion";
+    notiBuilder.body =
+        "${portion.courseName} portion for ${portion.description}. All the best.";
+    notiBuilder.topic = portion.courseCode;
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return NotiUploadDialog(
+              myNotification: notiBuilder.getMyNotificationObj());
+        });
   }
 
 //IOS DYNAMIC LINK SETUP
@@ -149,8 +177,15 @@ class PortionView extends StatelessWidget {
         shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
       ),
     );
-    final shortLink = await linkParams.buildShortLink();
-    return shortLink.shortUrl.toString();
+    final longUrl = await linkParams.buildUrl();
+    final ShortDynamicLink shortenedLink =
+        await DynamicLinkParameters.shortenUrl(
+      longUrl,
+      new DynamicLinkParametersOptions(
+          shortDynamicLinkPathLength: ShortDynamicLinkPathLength.unguessable),
+    );
+
+    return shortenedLink.shortUrl.toString();
   }
 
   buildCourseContent(

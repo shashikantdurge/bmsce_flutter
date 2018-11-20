@@ -76,48 +76,51 @@ class AddUserRolesState extends State<AddUserRoles> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(12.0),
-          child: Column(
-            children: List.generate(usersKeys.length, (index) {
-              return AddUserWidget(
-                dept: widget.user.dept,
-                key: usersKeys[index],
-                isAdmin: widget.user.isAdmin,
-                onClose: () {
+        child: Column(
+          children: List.generate(usersKeys.length, (index) {
+            return AddUserWidget(
+              dept: widget.user.dept,
+              key: usersKeys[index],
+              isAdmin: widget.user.isAdmin,
+              onClose: () {
+                setState(() {
+                  usersKeys.removeAt(index);
+                });
+              },
+              subRoles: widget.user.subRoles,
+              notifier: uploadNotifier,
+              onNotify: (tuple) {
+                if (usersKeys.contains(tuple.item6)) usersToBeAdded.add(tuple);
+              },
+            );
+          })
+            ..add(Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                iconSize: 42.0,
+                onPressed: () {
                   setState(() {
-                    usersKeys.removeAt(index);
+                    usersKeys.add(UniqueKey());
                   });
                 },
-                subRoles: widget.user.subRoles,
-                notifier: uploadNotifier,
-                onNotify: (tuple) {
-                  if (usersKeys.contains(tuple.item6))
-                    usersToBeAdded.add(tuple);
-                },
-              );
-            })
-              ..add(Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  iconSize: 42.0,
-                  onPressed: () {
-                    setState(() {
-                      usersKeys.add(UniqueKey());
-                    });
-                  },
-                  icon: Icon(
-                    Icons.add_circle_outline,
-                  ),
+                icon: Icon(
+                  Icons.add_circle_outline,
                 ),
-              )),
-          ),
+              ),
+            )),
         ),
       ),
     );
   }
 }
 
+/// Tuple6 user
+/// @item1 dept
+/// @item2 email
+/// @item3 name
+/// @item4 role
+/// @item5 validUser
+/// @item6 Widget key
 class AddUserWidget extends StatefulWidget {
   final VoidCallback onClose;
   final List<Role> subRoles;
@@ -135,6 +138,7 @@ class AddUserWidget extends StatefulWidget {
       @required this.notifier,
       @required this.onNotify})
       : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return AddUserWidgetState();
@@ -149,6 +153,7 @@ class AddUserWidgetState extends State<AddUserWidget>
   String name, dept;
   bool validUser;
   String errText, helperText;
+
   @override
   void initState() {
     super.initState();
@@ -219,8 +224,8 @@ class AddUserWidgetState extends State<AddUserWidget>
                     hintText: 'User Email address',
                     border: UnderlineInputBorder(),
                     filled: true,
-                    icon: Icon(Icons.email),
-                    labelText: 'E-mail',
+
+//                    labelText: 'E-mail',
                     helperText: helperText,
                     suffixIcon: AnimatedCrossFade(
                       crossFadeState: validUser
@@ -228,14 +233,18 @@ class AddUserWidgetState extends State<AddUserWidget>
                           : CrossFadeState.showSecond,
                       duration: Duration(milliseconds: 500),
                       firstChild: Icon(Icons.check),
-                      secondChild: Icon(Icons.error),
+                      secondChild: Icon(
+                        Icons.error,
+                        color: Theme.of(context).errorColor,
+                      ),
                     ),
                     errorText: errText,
-                    suffixText: '@bmsce.ac.in',
+//                    suffixText: '@bmsce.ac.in',
                   ),
                 ),
               ),
               IconButton(
+                padding: EdgeInsets.all(0.0),
                 icon: RotationTransition(
                   child: Icon(Icons.refresh),
                   turns: animationController,

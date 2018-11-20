@@ -10,10 +10,13 @@ class RolesManagement extends StatelessWidget {
   final User user;
 
   const RolesManagement({Key key, @required this.user}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Manage User Roles')),
+      appBar: AppBar(
+        title: Text('Manage User Roles'),
+      ),
       body: FutureBuilder<List<DocumentSnapshot>>(
         future: getRolesDocs(),
         builder: (context, snapshot) {
@@ -40,7 +43,7 @@ class RolesManagement extends StatelessWidget {
                           return ManageDeptUsers(
                             dept: snapshot.data[i].documentID,
                             user: user,
-                            deptRolesSnap: snapshot.data[i],
+                            //deptRolesSnap: snapshot.data[i],
                           );
                         }));
                       },

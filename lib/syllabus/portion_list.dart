@@ -32,7 +32,19 @@ class PortionState extends State<PortionList> {
                   return getPortionListView(snapshot.data);
                 } else if (snapshot.data.isEmpty) {
                   return Center(
-                    child: Text('Empty'),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      Opacity(
+                          opacity: 0.4,
+                          child: Image.asset('assets/images/minion_sad.png')),
+                      Text(
+                        'No portions ',
+                        style: TextStyle(
+                            fontFamily: 'Ubuntu',
+                            color: Theme.of(context).textTheme.caption.color,
+                            fontSize:
+                                Theme.of(context).textTheme.subhead.fontSize),
+                      )
+                    ]),
                   );
                 }
               } else {

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bmsce/notification/notification_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
@@ -8,6 +9,7 @@ class UploaderDialog extends StatefulWidget {
   final List<Tuple6> users;
 
   const UploaderDialog({Key key, @required this.users}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return UploaderDialogState(users.length);
@@ -20,6 +22,7 @@ class UploaderDialogState extends State<UploaderDialog> {
   List<Tuple6> successfulUsers, failedUsers;
 
   UploaderDialogState(this.totalUsers);
+
   @override
   void initState() {
     super.initState();
@@ -31,9 +34,9 @@ class UploaderDialogState extends State<UploaderDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(
+    return AlertDialog(
       contentPadding: EdgeInsets.all(8.0),
-      title: Row(
+      content: Row(
         children: <Widget>[
           CircularProgressIndicator(
             value: usersProcessed / totalUsers,
@@ -57,6 +60,7 @@ class UploaderDialogState extends State<UploaderDialog> {
         .document(user.item1)
         .setData(data, merge: true)
         .then((onValue) {
+      NotiProvider.sendRoleNoti(user.item2, user.item4);
       isSuccessful = true;
     }).catchError((err) {
       isSuccessful = false;

@@ -6,17 +6,19 @@ import 'package:bmsce/map/college_map.dart';
 import 'package:bmsce/map/college_map_widget.dart';
 import 'package:bmsce/map/edit_place.dart';
 import 'package:bmsce/map/place.dart';
+import 'package:bmsce/map/publish_dialog.dart';
 import 'package:bmsce/map/suggest_an_edit.dart';
 import 'package:bmsce/user_profile/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 var imageMap = {};
 
 class SearchFutureWidget extends StatefulWidget {
   final String searchValue;
+
   SearchFutureWidget(
       {Key key, @required this.searchValue}) //, @required this.notifier})
       : super(key: key);
@@ -78,11 +80,13 @@ class SearchFutureWidgetState extends State<SearchFutureWidget> {
         .where('searchName', isEqualTo: widget.searchValue)
         .getDocuments();
     if (docsSnap.documents.length == 1) {
-      return Place.fromMap(docsSnap.documents.first.data);
+      return Place.fromMap(docsSnap.documents.first.data,
+          documentId: docsSnap.documents.first.documentID);
     }
     if (docsSnap.documents.length > 1) {
       return List.generate(docsSnap.documents.length, (index) {
-        return Place.fromMap(docsSnap.documents[index].data);
+        return Place.fromMap(docsSnap.documents[index].data,
+            documentId: docsSnap.documents.first.documentID);
       });
     }
     CollegeMapState.getSearchNames();
@@ -97,6 +101,7 @@ class PlaceBottomSheet extends StatefulWidget {
   const PlaceBottomSheet(
       {Key key, @required this.data, @required this.onPlaceChanged})
       : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return PlaceBottomSheetState();
@@ -207,9 +212,9 @@ class PlaceBottomSheetState extends State<PlaceBottomSheet>
 class PlaceDetailsWidget extends StatelessWidget {
   final String location;
   final Place place;
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
 
-  const PlaceDetailsWidget(
-      {Key key, @required this.location, @required this.place})
+  PlaceDetailsWidget({Key key, @required this.location, @required this.place})
       : super(key: key);
 
   @override
@@ -269,11 +274,19 @@ class PlaceDetailsWidget extends StatelessWidget {
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.phone),
-              onPressed: place.phoneNumber != null ? () {} : null,
+              onPressed: place.phoneNumber != null
+                  ? () {
+                      launch("tel: ${place.phoneNumber}");
+                    }
+                  : null,
             ),
             IconButton(
               icon: Icon(Icons.email),
-              onPressed: place.email != null ? () {} : null,
+              onPressed: place.email != null
+                  ? () {
+                      launch("mailto: ${place.email}");
+                    }
+                  : null,
             ),
             FlatButton.icon(
               label: Text('MORE DETAILS'),
@@ -310,7 +323,16 @@ class PlaceDetailsWidget extends StatelessWidget {
           place: place,
         );
       }));
-    } else if (suggestionType == "close") {}
+    } else if (suggestionType == "close") {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return PublishDialog(
+              placeMapObj: place.toMap(User.instance, suggestionType),
+            );
+          });
+    }
   }
 }
 
@@ -319,6 +341,7 @@ class ImageLoader extends StatelessWidget {
   final oneMb = 1024 * 1024;
 
   const ImageLoader({Key key, @required this.gsPath}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(

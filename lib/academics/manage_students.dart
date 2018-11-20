@@ -19,30 +19,6 @@ class ManageStudents extends StatefulWidget {
 //It should be in Firestore obj
 class ManageStudentsState extends State<ManageStudents> {
   bool dataChanged = false;
-  // List<Student> students = [
-  //   StudentAbstractDetail(
-  //       approxSemester: "sem 4",
-  //       cgpa: 6.6,
-  //       creditsPending: 24,
-  //       cumulativeCreditsEarned: 148,
-  //       isYearBack: true,
-  //       name: "Poornesh V",
-  //       num5thAttemptCourses: 1,
-  //       numOfBackLogs: 2,
-  //       sgpa: 7.08,
-  //       usn: "1BM14CS070"),
-  //   StudentAbstractDetail(
-  //       approxSemester: "sem 3",
-  //       cgpa: 8.6,
-  //       creditsPending: 2,
-  //       cumulativeCreditsEarned: 148,
-  //       isYearBack: false,
-  //       name: "SHASHIKANT",
-  //       num5thAttemptCourses: 0,
-  //       numOfBackLogs: 1,
-  //       sgpa: 8.08,
-  //       usn: "1BM14CS084"),
-  // ]; //students list comes from the offline db
   List<TextEditingController> usnControllers = [];
   CrossFadeState crossFadeState;
   @override
@@ -159,7 +135,7 @@ class UsnTextFieldState extends State<UsnTextField> {
       title: Form(
         key: formKey,
         child: TextFormField(
-          //TODO: name appears below the editing box hen usn is entered. the documnet is saved in a Map<string,student> obj.
+          //TODO: name appears below the editing box when usn is entered. the documnet is saved in a Map<string,student> obj.
           //TODO: remove the red color from this textfield
 
           autovalidate: true,

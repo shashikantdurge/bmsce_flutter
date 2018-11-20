@@ -1,9 +1,11 @@
+import 'package:bmsce/academics/student.dart';
 import 'package:bmsce/academics/student_marks_detail.dart';
 import 'package:bmsce/academics/students_academics.dart';
 import 'package:bmsce/authentication/sign_in1.dart';
 import 'package:bmsce/course/course_dept_sem.dart';
 import 'package:bmsce/main.dart';
 import 'package:bmsce/notification/announcement.dart';
+import 'package:bmsce/notification/notifications.dart';
 import 'package:bmsce/roles/manage_dept_users.dart';
 import 'package:bmsce/roles/roles_management.dart';
 import 'package:bmsce/user_profile/user.dart';
@@ -13,8 +15,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfile extends StatelessWidget {
   UserProfile({Key key}) : super(key: key);
-  final bool debugMode = true;
+  final bool debugMode = false;
   final stateKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +29,7 @@ class UserProfile extends StatelessWidget {
               backgroundImage: NetworkImage(User.instance.photoUrl),
             ),
             Text(
-              User.instance.displayName,
+              '  ${User.instance.displayName}',
               overflow: TextOverflow.ellipsis,
               softWrap: false,
             ),
@@ -35,7 +38,13 @@ class UserProfile extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.notifications),
-            onPressed: () {},
+            tooltip: 'Notifications',
+            onPressed: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (BuildContext context) {
+                return Notifications();
+              }));
+            },
           ),
           PopupMenuButton(
             onSelected: (value) {
@@ -65,12 +74,14 @@ class UserProfile extends StatelessWidget {
           )
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          getUserDetailsCard(User.instance, context),
-          getAccessibilityCard(User.instance),
-          getAboutUsCard()
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            getUserDetailsCard(User.instance, context),
+            getAccessibilityCard(User.instance),
+            getAboutUsCard()
+          ],
+        ),
       ),
     );
   }
@@ -81,7 +92,6 @@ class UserProfile extends StatelessWidget {
         pref.clear();
       });
     });
-    //FIXME:remove all data. ISSUE IS THERE. its not getting replaced
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
       return Splash(from: 'main');
     }));
@@ -193,8 +203,82 @@ class UserProfile extends StatelessWidget {
                   },
                 )
               : Padding(padding: EdgeInsets.all(0.0)),
+          StudentUsnChecker(
+            debug: debugMode,
+          )
         ],
       ),
     );
+  }
+}
+
+class StudentUsnChecker extends StatefulWidget {
+  final bool debug;
+
+  const StudentUsnChecker({Key key, this.debug = false}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return StudentUsnCheckerState();
+  }
+}
+
+class StudentUsnCheckerState extends State<StudentUsnChecker> {
+  TextEditingController controller = TextEditingController(text: '1BM');
+  String helperText = "";
+  StudentAbstractDetail studentDetails;
+
+  @override
+  Widget build(BuildContext context) {
+    return User.instance.isPermittedFor(Activity.BROADCAST_MESSAGE) ||
+            widget.debug
+        ? ListTile(
+            contentPadding: EdgeInsets.all(4.0),
+            title: TextFormField(
+              autovalidate: true,
+              controller: controller,
+              textCapitalization: TextCapitalization.characters,
+              decoration: InputDecoration(
+                  hintText: 'Enter USN', helperText: helperText),
+//              validator: (str) {
+//                if (str.length == 10)
+//                  checkUsn();
+//                else if (helperText.isNotEmpty) {
+//
+//                }
+//              },
+            ),
+            leading: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Icon(Icons.school),
+            ),
+            trailing: IconButton(
+              padding: EdgeInsets.all(0.0),
+              icon: Icon(Icons.keyboard_arrow_right),
+              onPressed: checkUsn,
+            ),
+          )
+        : Padding(padding: EdgeInsets.all(0.0));
+  }
+
+  checkUsn() async {
+    setState(() {
+      helperText = "Checking USN...";
+    });
+    studentDetails = await StudentDetailView.getStudentDetails(controller.text);
+    if (studentDetails == null) {
+      WidgetsBinding.instance.addPostFrameCallback((d) {
+        setState(() {
+          helperText = "Not found";
+        });
+      });
+    } else {
+      setState(() {
+        helperText = "";
+      });
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        return StudentDetailView(usn: studentDetails.usn, name: studentDetails.name);
+      }));
+    }
   }
 }

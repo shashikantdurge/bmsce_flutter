@@ -17,6 +17,7 @@ class ManageDeptUsers extends StatefulWidget {
   const ManageDeptUsers(
       {Key key, @required this.user, this.deptRolesSnap, @required this.dept})
       : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     final users =
@@ -27,8 +28,15 @@ class ManageDeptUsers extends StatefulWidget {
 
 class ManageDeptUsersState extends State<ManageDeptUsers> {
   List<MapEntry<String, dynamic>> users;
+
   ManageDeptUsersState(this.users);
+
   final stateKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +60,10 @@ class ManageDeptUsersState extends State<ManageDeptUsers> {
             case ConnectionState.done:
               if (snapshot.hasData && snapshot.data.exists) {
                 users = snapshot.data.data.entries.toList();
+                if (users.isEmpty)
+                  return Center(
+                    child: Text('No one is here!'),
+                  );
                 return _widgetListView();
               } else if (snapshot.hasData && !snapshot.data.exists) {
                 return Center(child: Text('Data Not Found.'));
@@ -67,6 +79,15 @@ class ManageDeptUsersState extends State<ManageDeptUsers> {
       key: stateKey,
       appBar: AppBar(
         title: Text(deptNameFromPrefix(widget.dept).item2),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.sync),
+              onPressed: () {
+                setState(() {
+                  users = null;
+                });
+              })
+        ],
       ),
       body: body,
       floatingActionButton: FloatingActionButton(
@@ -194,6 +215,7 @@ class EditRoleDialog extends StatefulWidget {
       this.dept, this.email, this.name, this.role, this.subRoles,
       {Key key})
       : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return EditRoleDialogState();
@@ -202,6 +224,7 @@ class EditRoleDialog extends StatefulWidget {
 
 class EditRoleDialogState extends State<EditRoleDialog> {
   String role;
+
   @override
   void initState() {
     super.initState();

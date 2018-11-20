@@ -1,18 +1,25 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bmsce/academics/semester_details.dart';
 import 'package:bmsce/academics/student.dart';
 import 'package:bmsce/academics/student_db_provider.dart';
+import 'package:bmsce/my_widgets/card_header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
 import 'cgpa_sgpa_chart.dart';
-import 'dart:convert';
 
 class StudentDetailView extends StatelessWidget {
   final String usn;
   final String name;
+  final StudentAbstractDetail studentAbstractDetail;
 
-  const StudentDetailView({Key key, @required this.usn, @required this.name})
+  const StudentDetailView(
+      {Key key,
+      @required this.usn,
+      @required this.name,
+      this.studentAbstractDetail})
       : super(key: key);
 
   @override
@@ -36,34 +43,34 @@ class StudentDetailView extends StatelessWidget {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: FutureBuilder<StudentAbstractDetail>(
-          future: getStudentDetails(),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-              case ConnectionState.waiting:
-              case ConnectionState.active:
+      body: FutureBuilder<StudentAbstractDetail>(
+        initialData: studentAbstractDetail,
+        future: studentAbstractDetail == null ? getStudentDetails(usn) : null,
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            case ConnectionState.done:
+              print(
+                  "snapshot hasdata:${snapshot.hasData} has Error:${snapshot.hasError}");
+              if (!snapshot.hasData || snapshot.hasError) {
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: Text("Could not find the Data."),
                 );
-              case ConnectionState.done:
-                print(
-                    "snapshot hasdata:${snapshot.hasData} has Error:${snapshot.hasError}");
-                if (!snapshot.hasData || snapshot.hasError) {
-                  return Center(
-                    child: Text("Could not find the Data."),
-                  );
-                }
-                if (snapshot.data == null) {
-                  return Center(
-                    child: Text("Could not find the Data."),
-                  );
-                }
-                final studentDetail = StudentDetail.fromFirestoreObj(
-                    json.decode(snapshot.data.detailDataJson),
-                    snapshot.data.usn);
-                return Column(
+              }
+              if (snapshot.data == null) {
+                return Center(
+                  child: Text("Could not find the Data."),
+                );
+              }
+              final studentDetail = StudentDetail.fromFirestoreObj(
+                  json.decode(snapshot.data.detailDataJson), snapshot.data.usn);
+              return SingleChildScrollView(
+                child: Column(
                   children: <Widget>[
                     GpaBarChart.fromStudentDetail(studentDetail),
                     getLastSemDetails(snapshot.data),
@@ -74,10 +81,10 @@ class StudentDetailView extends StatelessWidget {
                       semesters: studentDetail.semestersGps,
                     )
                   ],
-                );
-            }
-          },
-        ),
+                ),
+              );
+          }
+        },
       ),
     );
   }
@@ -86,15 +93,8 @@ class StudentDetailView extends StatelessWidget {
     TextStyle textStyle =
         TextStyle(fontSize: 16.0, wordSpacing: 2.0, letterSpacing: 1.4);
     List<Widget> abstractWidgets = [];
-    abstractWidgets.add(Container(
-      width: double.maxFinite,
-      padding: EdgeInsets.all(8.0),
-      color: Colors.grey[200],
-      child: Text(
-        'Details of ${abstractDetails.approxSemester}',
-        style: textStyle,
-      ),
-    ));
+    abstractWidgets
+        .add(CardHeader('Details of ${abstractDetails.approxSemester}'));
     abstractWidgets.add(Text(
       'CGPA  ${abstractDetails.cgpa.toStringAsFixed(2)}',
       style: textStyle,
@@ -182,18 +182,18 @@ class StudentDetailView extends StatelessWidget {
             children: abstractWidgets));
   }
 
-  Future<StudentAbstractDetail> getStudentDetails() async {
-    var studentabstract = await StudentDbProvider().getStudentDetails(usn);
-    if (studentabstract == null) {
+  static Future<StudentAbstractDetail> getStudentDetails(String usn) async {
+    var studentAbstract = await StudentDbProvider().getStudentDetails(usn);
+    if (studentAbstract == null) {
       final firestoreObj = await Firestore.instance
           .collection('academic_marks')
           .document(usn)
           .get();
       if (firestoreObj.exists) {
-        studentabstract = StudentAbstractDetail.fromFirestoreObj(
+        studentAbstract = StudentAbstractDetail.fromFirestoreObj(
             firestoreObj.documentID, firestoreObj.data);
       }
     }
-    return studentabstract;
+    return studentAbstract;
   }
 }

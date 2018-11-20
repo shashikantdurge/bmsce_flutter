@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bmsce/academics/student.dart';
+import 'package:bmsce/my_widgets/card_header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -65,31 +66,34 @@ class SemesterDetailsState extends State<SemesterDetails> {
       secondChild: Card(
         child: Column(
           children: <Widget>[
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              reverse: true,
-              child: ButtonBar(
-                children: List.generate(widget.semesters.length, (index) {
-                  return FlatButton(
-                    // color: index==selectedSem?Colors.grey[300],
-                    shape: selectedSem == index
-                        ? BeveledRectangleBorder(
-                            side:
-                                BorderSide(color: Colors.red[100], width: 0.4))
-                        : null,
-                    child: Text(widget.semesters[index].sem),
-                    onPressed: () {
-                      setState(() {
-                        getSemesterTableFunct =
-                            getSemesterTable(widget.semesters[index].semKey);
-                        semester = widget.semesters[index].sem;
-                        sgpa = widget.semesters[index].sgpa;
-                        cgpa = widget.semesters[index].cgpa;
-                        selectedSem = index;
-                      });
-                    },
-                  );
-                }),
+            CardHeader('Semester wise results',paddingAround: true,),
+            Scrollbar(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                reverse: true,
+                child: ButtonBar(
+                  children: List.generate(widget.semesters.length, (index) {
+                    return FlatButton(
+                      // color: index==selectedSem?Colors.grey[300],
+                      shape: selectedSem == index
+                          ? BeveledRectangleBorder(
+                              side:
+                                  BorderSide(color: Theme.of(context).buttonColor, width: 0.4))
+                          : null,
+                      child: Text(widget.semesters[index].sem),
+                      onPressed: () {
+                        setState(() {
+                          getSemesterTableFunct =
+                              getSemesterTable(widget.semesters[index].semKey);
+                          semester = widget.semesters[index].sem;
+                          sgpa = widget.semesters[index].sgpa;
+                          cgpa = widget.semesters[index].cgpa;
+                          selectedSem = index;
+                        });
+                      },
+                    );
+                  }),
+                ),
               ),
             ),
             Divider(),

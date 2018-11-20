@@ -7,6 +7,7 @@ class UploadResult extends StatefulWidget {
   const UploadResult(
       {Key key, @required this.successfulUsers, @required this.failedUsers})
       : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return UploadResultState();
@@ -15,6 +16,7 @@ class UploadResult extends StatefulWidget {
 
 class UploadResultState extends State<UploadResult> {
   bool successExpand = false, failExpand = false;
+
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
@@ -40,7 +42,9 @@ class UploadResultState extends State<UploadResult> {
             ExpansionPanel(
                 isExpanded: successExpand,
                 headerBuilder: (BuildContext context, bool isExpanded) {
-                  return Text('${widget.successfulUsers.length} Successful');
+                  return ListTile(
+                    title: Text('${widget.successfulUsers.length} Successful'),
+                  );
                 },
                 body: Column(
                   children: List.generate(widget.successfulUsers.length, (i) {
@@ -50,7 +54,9 @@ class UploadResultState extends State<UploadResult> {
             ExpansionPanel(
                 isExpanded: failExpand,
                 headerBuilder: (BuildContext context, bool isExpanded) {
-                  return Text('${widget.failedUsers.length} Failed');
+                  return ListTile(
+                    title: Text('${widget.failedUsers.length} Failed'),
+                  );
                 },
                 body: Column(
                   children: List.generate(widget.failedUsers.length, (i) {

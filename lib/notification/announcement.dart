@@ -1,6 +1,6 @@
 import 'package:bmsce/course/course_dept_sem.dart';
 import 'package:bmsce/notification/announcement_preview.dart';
-import 'package:bmsce/notification/notification.dart';
+import 'package:bmsce/notification/notification_provider.dart';
 import 'package:bmsce/user_profile/user.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';

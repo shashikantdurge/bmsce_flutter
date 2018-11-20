@@ -45,6 +45,7 @@ class CourseContentViewState extends State<CourseContentView> {
                   snapshot.data,
                   textAlign: TextAlign.justify,
                   textScaleFactor: 1.1,
+                  style: TextStyle(fontFamily: 'OpenSans',fontSize: 14.0,letterSpacing: 0.8),
                 );
               } else {
                 print(

@@ -1,11 +1,14 @@
 import 'package:bmsce/home_tabs/syllabus_tabs.dart';
 import 'package:bmsce/map/search.dart';
+import 'package:bmsce/notification/notification_sqf.dart';
+import 'package:bmsce/notification/notifications.dart';
 import 'package:bmsce/portion/portion_provider_sqf.dart';
 import 'package:bmsce/syllabus/portion_view.dart';
 import 'package:bmsce/user_profile/user.dart';
 import 'package:bmsce/user_profile/user_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,6 +21,7 @@ class HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int currentIndex = 1;
   dynamic currentHomeTab;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   // final FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
 
   @override
@@ -26,6 +30,7 @@ class HomePageState extends State<HomePage>
     print('user @ home ${widget.user.dept}');
     currentHomeTab = Search();
     _retrieveDynamicLink();
+    configureFcm();
   }
 
   push(screen) {
@@ -55,6 +60,42 @@ class HomePageState extends State<HomePage>
       }
 
       // }
+    }
+  }
+
+  configureFcm() async {
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        NotiSqf().insert(message['data'] ?? message);
+        print("onMessage: $message");
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        final notiData = message['data'] ?? message;
+        NotiSqf().insert(notiData);
+        _handleNotiLaunch(notiData['type']);
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        NotiSqf().insert(message['data'] ?? message);
+        print("onResume: $message");
+      },
+    );
+
+    _firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print("Settings registered: $settings");
+    });
+  }
+
+  _handleNotiLaunch(String type) {
+    switch (type) {
+      default:
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (BuildContext context) {
+          return Notifications();
+        }));
     }
   }
 

@@ -65,6 +65,17 @@ class StudentDbProvider {
     );
   }
 
+  Future update(List<StudentAbstractDetail> students)async{
+    if (this.db == null) {
+      await open();
+    }
+    Batch batch = db.batch();
+    students.forEach((student){
+      batch.update(tableDb, studentToMap(student));
+    });
+    return await batch.commit();
+  }
+
   Future insertStudents(List<StudentAbstractDetail> students,
       List<Student> deleteStudents) async {
     if (this.db == null) {

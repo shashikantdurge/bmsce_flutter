@@ -11,7 +11,7 @@ class PublishDialog extends StatefulWidget {
   const PublishDialog({Key key, @required this.placeMapObj}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
-    return PublishDialogState();
+    return PublishDialogState("${placeMapObj['suggestionType'].toString().toUpperCase()} ${placeMapObj["searchName"]}");
   }
 }
 
@@ -23,6 +23,9 @@ class PublishDialogState extends State<PublishDialog> {
   bool isSucceeded = true;
   List<Widget> similarPlaces = [];
 
+  PublishDialogState(this.title);
+
+
   addData() {
     Firestore.instance
         .collection("college_map_suggestions")
@@ -31,14 +34,12 @@ class PublishDialogState extends State<PublishDialog> {
       setState(() {
         isSucceeded = true;
         isUploading = false;
-        title = "Added ${widget.placeMapObj["name"]}";
         successText = "Successful";
       });
     }).catchError((onError) {
       setState(() {
         isSucceeded = false;
         isUploading = false;
-        title = "${widget.placeMapObj["searchName"]}";
         errorText = 'Failed to Add.';
       });
     });
@@ -95,7 +96,6 @@ class PublishDialogState extends State<PublishDialog> {
 
   @override
   void initState() {
-    title = "Adding ${widget.placeMapObj["searchName"]}";
     errorText = "";
     successText = "";
     super.initState();

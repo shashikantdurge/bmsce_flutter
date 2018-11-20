@@ -11,6 +11,7 @@ class SignIn extends StatefulWidget {
 }
 
 class SignInState extends State<SignIn> {
+  bool isSigningIn = false;
   final GoogleSignIn _googleSignIn = new GoogleSignIn(
     //hostedDomain: "bmsce.ac.in",
     scopes: [
@@ -19,7 +20,7 @@ class SignInState extends State<SignIn> {
     ],
   );
 
-  _handleSignIn() async {
+  Future _handleSignIn() async {
     try {
       GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
       final userDoc = await _isUserExists(googleSignInAccount.email);
@@ -60,43 +61,86 @@ class SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset('assets/images/bmsce_logo.png',
-                      height: 40.0, width: 40.0),
-                  Text(
-                    'BMSCE',
-                    style: Theme.of(context).textTheme.headline,
-                  )
-                ],
-              ),
-              const SizedBox(height: 24.0),
-              Expanded(
-                child: Placeholder(),
-              ),
-              const SizedBox(height: 24.0),
-              RaisedButton(
-                child: Text('Continue with Google'),
-                onPressed: () {
-                  _handleSignIn();
-                },
-              ),
-              Align(
-                child: Text(
-                  'Note: sign in with \'@bmsce.ac.in\'',
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
-                alignment: Alignment.bottomLeft,
-              )
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: <Color>[
+              Theme.of(context).primaryColorDark.withAlpha(0),
+              Theme.of(context).primaryColorDark.withAlpha(50),
+              Theme.of(context).primaryColorDark.withAlpha(100),
+              Theme.of(context).primaryColorDark.withAlpha(150),
+              Theme.of(context).primaryColorDark.withAlpha(200),
+              Theme.of(context).primaryColorDark.withAlpha(250),
+              Theme.of(context).primaryColorDark.withAlpha(255),
             ],
           ),
+        ),
+        padding: EdgeInsets.all(40.0),
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Hero(
+                  tag: 'bmsce_logo',
+                  child: Image.asset('assets/images/bmsce_logo.png',
+                      height: 56.0, width: 56.0),
+                ),
+                Text(
+                  'BMSCE',
+                  style: TextStyle(
+                      fontFamily: 'RobotoMono',
+                      fontSize: 50.0,
+                      fontStyle: FontStyle.normal),
+                )
+              ],
+            ),
+            const SizedBox(height: 56.0),
+            ButtonTheme(
+              minWidth: double.maxFinite,
+              child: FlatButton(
+                shape: BeveledRectangleBorder(
+                    side: BorderSide(color: Colors.white70),
+                    borderRadius: BorderRadius.all(Radius.circular(3.0))),
+                color: Theme.of(context).primaryColorDark.withAlpha(20),
+                textColor: Colors.white70,
+                child: isSigningIn
+                    ? SizedBox(
+                        height: 24.0,
+                        width: 24.0,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1.6,
+                        ),
+                      )
+                    : Text(
+                        'Continue with Google',
+                        style: TextStyle(fontFamily: 'Ubuntu', fontSize: 16.0),
+                      ),
+                onPressed: () {
+                  setState(() {
+                    isSigningIn = true;
+                  });
+                  _handleSignIn().whenComplete(() {
+                    setState(() {
+                      isSigningIn = false;
+                    });
+                  });
+                },
+              ),
+            ),
+            Align(
+              child: Text(
+                'Note: sign in with \'@bmsce.ac.in\'',
+                style: Theme.of(context)
+                    .textTheme
+                    .caption
+                    .copyWith(fontStyle: FontStyle.italic),
+              ),
+              alignment: Alignment.bottomLeft,
+            )
+          ],
         ),
       ),
     );

@@ -1,10 +1,7 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:bmsce/academics/manage_students.dart';
 import 'package:bmsce/academics/student.dart';
 import 'package:bmsce/academics/student_db_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -16,8 +13,8 @@ class StudentDataSource extends DataTableSource {
     notifyListeners();
   }
 
-  void _sort<T>(
-      Comparable<T> getField(StudentAbstractDetail d), bool ascending) {
+  void _sort<T>(Comparable<T> getField(StudentAbstractDetail d),
+      bool ascending) {
     _students.sort((StudentAbstractDetail a, StudentAbstractDetail b) {
       if (!ascending) {
         final StudentAbstractDetail c = a;
@@ -71,7 +68,8 @@ class StudentDataSource extends DataTableSource {
   int get selectedRowCount => _selectedCount;
 
   void _selectAll(bool checked) {
-    for (StudentAbstractDetail student in _students) student.selected = checked;
+    for (StudentAbstractDetail student in _students)
+      student.selected = checked;
     _selectedCount = checked ? _students.length : 0;
     notifyListeners();
   }
@@ -84,7 +82,7 @@ class StudentDataSource extends DataTableSource {
   }
 }
 
-enum StudentsPopup { manage }
+enum StudentsPopup { manage, update }
 
 class StudentDataTable extends StatefulWidget {
   static const String routeName = '/material/data-table';
@@ -98,6 +96,7 @@ class _DataTableDemoState extends State<StudentDataTable> {
   int _sortColumnIndex;
   bool _sortAscending = true;
   final StudentDataSource _studentsDataSource = StudentDataSource();
+  final GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
 
   void _sort<T>(Comparable<T> getField(StudentAbstractDetail d),
       int columnIndex, bool ascending) {
@@ -106,6 +105,33 @@ class _DataTableDemoState extends State<StudentDataTable> {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
     });
+  }
+
+  _updateAcademics() async {
+    final updatingSnack = scaffoldState.currentState
+        .showSnackBar(SnackBar(content: Text('Updating...')));
+    final db = StudentDbProvider();
+    final students = _studentsDataSource._students;
+    final List<StudentAbstractDetail> updates = [];
+    for (int i = 0, l = students.length; i < l; i++) {
+      await Firestore.instance
+          .collection('academic_marks')
+          .document(students[i].usn)
+          .get()
+          .then((onValue) {
+        final newDetails = StudentAbstractDetail.fromFirestoreObj(
+            onValue.documentID, onValue.data);
+        updates.add(newDetails);
+      });
+    }
+    await db.insertStudents(updates, students);
+    setState(() {
+      _studentsDataSource._students.clear();
+      _studentsDataSource.addStudents(updates);
+    });
+    updatingSnack.close();
+    scaffoldState.currentState.showSnackBar(SnackBar(content: Text('Updated')));
+
   }
 
   @override
@@ -120,7 +146,8 @@ class _DataTableDemoState extends State<StudentDataTable> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Data tables')),
+      key: scaffoldState,
+        appBar: AppBar(title: const Text('My Students')),
         body: SingleChildScrollView(
             padding: const EdgeInsets.all(5.0),
             child: PaginatedDataTable(
@@ -131,7 +158,8 @@ class _DataTableDemoState extends State<StudentDataTable> {
                         case StudentsPopup.manage:
                           bool isChanged = await Navigator.of(context)
                               .push<bool>(MaterialPageRoute(
-                                  builder: (context) => ManageStudents(
+                              builder: (context) =>
+                                  ManageStudents(
                                       offlineStudents: _studentsDataSource
                                           ._students
                                           .cast<Student>())));
@@ -140,6 +168,8 @@ class _DataTableDemoState extends State<StudentDataTable> {
                             _studentsDataSource.dataChanged();
                           }
                           break;
+                        case StudentsPopup.update:
+                          _updateAcademics();
                       }
                     },
                     itemBuilder: (BuildContext context) {
@@ -147,7 +177,11 @@ class _DataTableDemoState extends State<StudentDataTable> {
                         const PopupMenuItem<StudentsPopup>(
                           value: StudentsPopup.manage,
                           child: const Text('Add/Remove'),
-                        )
+                        ),
+                        const PopupMenuItem<StudentsPopup>(
+                          value: StudentsPopup.update,
+                          child: const Text('Update results'),
+                        ),
                       ];
                     },
                   )
@@ -178,50 +212,56 @@ class _DataTableDemoState extends State<StudentDataTable> {
                   DataColumn(
                       label: const Text('CGPA'),
                       numeric: true,
-                      onSort: (int columnIndex, bool ascending) => _sort<num>(
-                          (StudentAbstractDetail d) => d.cgpa,
-                          columnIndex,
-                          ascending)),
+                      onSort: (int columnIndex, bool ascending) =>
+                          _sort<num>(
+                                  (StudentAbstractDetail d) => d.cgpa,
+                              columnIndex,
+                              ascending)),
                   DataColumn(
                       label: const Text('Backlogs'),
                       tooltip: 'Number of Backlogs.',
                       numeric: true,
-                      onSort: (int columnIndex, bool ascending) => _sort<num>(
-                          (StudentAbstractDetail d) => d.numOfBackLogs,
-                          columnIndex,
-                          ascending)),
+                      onSort: (int columnIndex, bool ascending) =>
+                          _sort<num>(
+                                  (StudentAbstractDetail d) => d.numOfBackLogs,
+                              columnIndex,
+                              ascending)),
                   DataColumn(
                       label: const Text('5th Attempt'),
                       tooltip: 'Number of Subjects with 5th attempt.',
                       numeric: true,
-                      onSort: (int columnIndex, bool ascending) => _sort<num>(
-                          (StudentAbstractDetail d) => d.num5thAttemptCourses,
-                          columnIndex,
-                          ascending)),
+                      onSort: (int columnIndex, bool ascending) =>
+                          _sort<num>(
+                                  (StudentAbstractDetail d) =>
+                              d.num5thAttemptCourses,
+                              columnIndex,
+                              ascending)),
                   DataColumn(
                       label: const Text('Credits Earned'),
                       tooltip: 'Total Credits Earned.',
                       numeric: true,
-                      onSort: (int columnIndex, bool ascending) => _sort<num>(
-                          (StudentAbstractDetail d) =>
+                      onSort: (int columnIndex, bool ascending) =>
+                          _sort<num>(
+                                  (StudentAbstractDetail d) =>
                               d.cumulativeCreditsEarned,
-                          columnIndex,
-                          ascending)),
+                              columnIndex,
+                              ascending)),
                   DataColumn(
                       label: const Text('Credits Pending'),
                       tooltip: 'Total Credits Pending.',
                       numeric: true,
-                      onSort: (int columnIndex, bool ascending) => _sort<num>(
-                          (StudentAbstractDetail d) => d.creditsPending,
-                          columnIndex,
-                          ascending)),
+                      onSort: (int columnIndex, bool ascending) =>
+                          _sort<num>(
+                                  (StudentAbstractDetail d) => d.creditsPending,
+                              columnIndex,
+                              ascending)),
                   DataColumn(
                       label: const Text('Semester'),
                       tooltip: 'The data shown is of the mentioned Semester.',
                       numeric: false,
                       onSort: (int columnIndex, bool ascending) =>
                           _sort<String>(
-                              (StudentAbstractDetail d) => d.approxSemester,
+                                  (StudentAbstractDetail d) => d.approxSemester,
                               columnIndex,
                               ascending)),
                 ],
